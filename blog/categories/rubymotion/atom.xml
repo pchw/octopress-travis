@@ -1,100 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
 
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  <title>ぽっちぽちにしてやんよ</title>
-  <meta name="author" content="pchw">
-
-  
-  <meta name="description" content="今日はRubyMotionでGCD(Grand Central Dispatch)を使う話です． GCD とは GCDというのは， 非常に効率的なシステム機能と使い勝手のよいプログラミングモデルを併用して，マルチプロセッサを最大限に活用するために必要なコードを徹底的に簡素化 するものらしいです &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  
-  <link rel="canonical" href="http://pchw.github.com">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/atom.xml" rel="alternate" title="ぽっちぽちにしてやんよ" type="application/atom+xml">
-  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
-<link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
-
-  
-
-</head>
-
-<body   >
-  <header role="banner"><hgroup>
-  <h1><a href="/">ぽっちぽちにしてやんよ</a></h1>
-  
-    <h2>技術ネタとかアプリに関する話とか</h2>
-  
-</hgroup>
-
-</header>
-  <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="http://google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:pchw.github.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav>
-  <div id="main">
-    <div id="content">
-      <div class="blog-index">
-  
-  
-  
-    <article>
-      
-  <header>
+  <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
+  <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
+  <link href="http://pchw.github.com/"/>
+  <updated>2012-05-22T22:10:43+09:00</updated>
+  <id>http://pchw.github.com/</id>
+  <author>
+    <name><![CDATA[pchw]]></name>
     
-      <h1 class="entry-title"><a href="/blog/2012/05/22/gcd/">RubyMotionでGCDを使う</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
 
   
-
-
-<time datetime="2012-05-22T22:35:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><img src="https://lh6.googleusercontent.com/-nEOFLDxo0SE/T7cKmnkUM3I/AAAAAAAAAac/F_9TagXzXTE/s300/gcd.png" alt="GCD" /></p>
+  <entry>
+    <title type="html"><![CDATA[RubyMotionでGCDを使う]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/22/gcd/"/>
+    <updated>2012-05-22T22:35:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/22/gcd</id>
+    <content type="html"><![CDATA[<p><img src="https://lh6.googleusercontent.com/-nEOFLDxo0SE/T7cKmnkUM3I/AAAAAAAAAac/F_9TagXzXTE/s300/gcd.png" alt="GCD" /></p>
 
 <p>今日はRubyMotionでGCD(Grand Central Dispatch)を使う話です．</p>
 
@@ -217,42 +141,15 @@ end
 <p>シミュレータが立ち上がり，Buttonを押すとLabelの文字列がちょっと待ったあとに変わります．
 連打すると次々変わると思います．
 その間Buttonが押せないとかそういうことが起こらないのが分かると思います．</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/22/storyboard/">Storyboardを使ってRubyMotionで開発する方法</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-22T21:53:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><img src="https://lh6.googleusercontent.com/-ptxn4wJhqOc/T69nu2xHtLI/AAAAAAAAAYY/JKxXu3OAsYE/B6AD8776-C7D5-4F4A-A9AA-A8143868D413.jpg" alt="" /></p>
+  <entry>
+    <title type="html"><![CDATA[Storyboardを使ってRubyMotionで開発する方法]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/22/storyboard/"/>
+    <updated>2012-05-22T21:53:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/22/storyboard</id>
+    <content type="html"><![CDATA[<p><img src="https://lh6.googleusercontent.com/-ptxn4wJhqOc/T69nu2xHtLI/AAAAAAAAAYY/JKxXu3OAsYE/B6AD8776-C7D5-4F4A-A9AA-A8143868D413.jpg" alt="" /></p>
 
 <p>RubyMotionでもStoryBoardが使えるらしいので，試してみた．</p>
 
@@ -334,42 +231,15 @@ end
 <p><img src="https://lh4.googleusercontent.com/-XyNt1C6cfKo/T69nxjkqNrI/AAAAAAAAAYs/V4i7HQ9rDV8/8619164C-B90D-4D8F-913F-ED11086D700A.jpg" alt="" /></p>
 
 <p><img src="https://lh5.googleusercontent.com/-4ugWozivZrg/T69nziIvs3I/AAAAAAAAAZA/HYZfkyB-WEQ/22854A71-7125-43CF-802C-7630629537F5.jpg" alt="" /></p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/22/ib/">[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-22T21:53:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><img src="https://lh4.googleusercontent.com/-_NT2-Tz_5I4/T6vRbwXZyHI/AAAAAAAAAXM/nYYnYrq0AWQ/8B0A2DB1-E3D7-4847-A0EF-006C171E8B43.jpg" alt="catch" /></p>
+  <entry>
+    <title type="html"><![CDATA[[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/22/ib/"/>
+    <updated>2012-05-22T21:53:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/22/ib</id>
+    <content type="html"><![CDATA[<p><img src="https://lh4.googleusercontent.com/-_NT2-Tz_5I4/T6vRbwXZyHI/AAAAAAAAAXM/nYYnYrq0AWQ/8B0A2DB1-E3D7-4847-A0EF-006C171E8B43.jpg" alt="catch" /></p>
 
 <p>RubyMotionはいいんだけど，UIをコードで作るのはめんどくさい．
 そのため，InterfaceBuilderで作りたい．</p>
@@ -466,42 +336,15 @@ end
 <p><img src="https://lh5.googleusercontent.com/-3DmRBCOWUjs/T6vRdl7j0xI/AAAAAAAAAXY/5cnHlb61Lbw/658F46A6-8C07-485C-A589-6E32327BD13F.jpg" alt="" /></p>
 
 <p>出来ました！</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/22/spec/">[Rubymotion] Rake Specをカラフルにしよう！</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-22T21:52:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><img src="https://lh3.googleusercontent.com/-i-36UEH1H1s/T6_Myv_1m1I/AAAAAAAAAZk/-jGU9jUlXSU/F45FE6D0-B302-438F-ABBE-3E67018268CD.jpg" alt="" /></p>
+  <entry>
+    <title type="html"><![CDATA[[rubymotion] rake specをカラフルにしよう！]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/22/spec/"/>
+    <updated>2012-05-22T21:52:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/22/spec</id>
+    <content type="html"><![CDATA[<p><img src="https://lh3.googleusercontent.com/-i-36UEH1H1s/T6_Myv_1m1I/AAAAAAAAAZk/-jGU9jUlXSU/F45FE6D0-B302-438F-ABBE-3E67018268CD.jpg" alt="" /></p>
 
 <p>RubyMotionはBaconというテストフレームワークを使っています．
 RSpecとの違いがよく分からない．</p>
@@ -568,42 +411,15 @@ end
 <p><img src="https://lh4.googleusercontent.com/-iXVNZArvvxU/T6_M0ixSIsI/AAAAAAAAAZ0/f3_Irg2MqM8/CCDD4D42-D3EB-405B-BA59-9BED5C685ECD.jpg" alt="" /></p>
 
 <p><img src="https://lh6.googleusercontent.com/-ImTqn7jZiR8/T6_M11kTpsI/AAAAAAAAAZ8/-fVYGOMWifM/8A8B0EBF-3173-486C-AD54-EE1BAAB49511.jpg" alt="" /></p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/21/pointer/">[RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-21T23:53:00+09:00" pubdate data-updated="true">May 21<span>st</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>iOS SDK 使ってると，こんな感じのコードがよくあります．</p>
+  <entry>
+    <title type="html"><![CDATA[[RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/21/pointer/"/>
+    <updated>2012-05-21T23:53:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/21/pointer</id>
+    <content type="html"><![CDATA[<p>iOS SDK 使ってると，こんな感じのコードがよくあります．</p>
 
 <pre><code>NSHTTPURLResponse *res;
 NSError *error;
@@ -629,165 +445,7 @@ data = NSURLConnection.sendSynchronousRequest(
 </code></pre>
 
 <p>簡単に言うと，<code>(NSError**)</code>とかを渡す所になっているメソッドは，Pointerのインスタンスを渡してあげて，<code>error = err_ptr[0]</code>とかしてデリファレンスして使ってやるといいです．</p>
-</div>
+]]></content>
+  </entry>
   
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/21/first/">Octopress始めてみた</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-21T22:43:00+09:00" pubdate data-updated="true">May 21<span>st</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>あいさつ</h2>
-
-<p>Posterous→Bloggerと来て次はOctopressでやってみようと思います．</p>
-
-<h2>なんでOctopressでやってみようと思ったか？</h2>
-
-<p>最近RubyMotionをやってて，それ関連の記事を書くことが何回ありました．
-基本的に調べながらやってるんですけど，その時はDayOneとかを使ってやってるわけです．</p>
-
-<p>そこで，BloggerがMarkdownでそのまま投稿出来ないのが辛かった．</p>
-
-<p>DayOneで書いて，MouにコピペしてHTMLとして吐かせてコピペしてました．苦行．
-それに更に最近ではKobitoにもコピペしてQiitaにも投稿してました．</p>
-
-<p>これはもうMarkdownで統一するしかないだろうということで，
-Octopressをやってみようということになったのですよ．</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
-</div>
-<aside class="sidebar">
-  
-    <section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/blog/2012/05/22/gcd/">RubyMotionでGCDを使う</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/05/22/storyboard/">Storyboardを使ってRubyMotionで開発する方法</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/05/22/ib/">[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/05/22/spec/">[rubymotion] rake specをカラフルにしよう！</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/05/21/pointer/">[RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか</a>
-      </li>
-    
-  </ul>
-</section>
-
-
-<section>
-  <h1>Latest Tweets</h1>
-  <ul id="tweets">
-    <li class="loading">Status updating&#8230;</li>
-  </ul>
-  <script type="text/javascript">
-    $.domReady(function(){
-      getTwitterFeed("pchw", 0, false);
-    });
-  </script>
-  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
-  
-    <a href="http://twitter.com/pchw" class="twitter-follow-button" data-show-count="false">Follow @pchw</a>
-  
-</section>
-
-
-
-
-
-  
-</aside>
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2012 - pchw -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
-</footer>
-  
-
-<script type="text/javascript">
-      var disqus_shortname = 'pchw';
-      
-        
-        var disqus_script = 'count.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
-</script>
-
-
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
-</html>
+</feed>

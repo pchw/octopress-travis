@@ -1,0 +1,357 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう - ぽっちぽちにしてやんよ</title>
+  <meta name="author" content="pchw">
+
+  
+  <meta name="description" content="RubyMotionはいいんだけど，UIをコードで作るのはめんどくさい．
+そのため，InterfaceBuilderで作りたい． RubyMotionの進化が早くて，もう1.3のアップデートが来てます．
+このエントリーは1.3にアップデートしてからやってね． $ sudo motion &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/22/ib">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="ぽっちぽちにしてやんよ" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">ぽっちぽちにしてやんよ</a></h1>
+  
+    <h2>技術ネタとかアプリに関する話とか</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pchw.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-22T21:53:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p><img src="https://lh4.googleusercontent.com/-_NT2-Tz_5I4/T6vRbwXZyHI/AAAAAAAAAXM/nYYnYrq0AWQ/8B0A2DB1-E3D7-4847-A0EF-006C171E8B43.jpg" alt="catch" /></p>
+
+<p>RubyMotionはいいんだけど，UIをコードで作るのはめんどくさい．
+そのため，InterfaceBuilderで作りたい．</p>
+
+<p>RubyMotionの進化が早くて，もう1.3のアップデートが来てます．
+このエントリーは1.3にアップデートしてからやってね．</p>
+
+<pre><code>$ sudo motion update
+</code></pre>
+
+<p>やってみます．まずはひな形作成．</p>
+
+<pre><code>$ motion create IB
+$ cd IB
+</code></pre>
+
+<p><code>app/app_delegate.rb</code> を編集します．</p>
+
+<pre><code>class AppDelegate
+  def application(application, didFinishLaunchingWithOptions:launchOptions)
+    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
+    @window.rootViewController = NSBundle.mainBundle.loadNibNamed(
+        'MyView', 
+        owner: self,
+        options: nil).first
+    @window.rootViewController.wantsFullScreenLayout = true
+    @window.makeKeyAndVisible
+    true
+  end
+end
+</code></pre>
+
+<p>こんな感じで，MyViewっていうNibを読み込んでやることにします．</p>
+
+<p>おもむろにXCodeをたちあげて，（すでに開いている人は開いてるProjectを閉じろ！）File>New>File(Cmd + N)を選んで新規ファイル作成する．
+iOSのUser InterfaceのEmptyを選んで，<code>resources/MyView.xib</code>として保存する．</p>
+
+<p>このままだと，ただの方眼紙なので，オブジェクトを追加していきます．</p>
+
+<p>ObjectLibrary(Cmd+Shift+Alt+3)からViewControllerを追加．</p>
+
+<p><img src="https://lh4.googleusercontent.com/-NJi7vxGoKU0/T6vRejaSSwI/AAAAAAAAAXk/NANN6sYn43s/75A106D3-E836-4771-A3B2-23F0711E9F75.jpg" alt="viewcontroller" /></p>
+
+<p>CustomClassの所で，<code>MyViewController</code>とする．</p>
+
+<p><img src="https://lh6.googleusercontent.com/-9WOU446JvMM/T6vRZBfeFOI/AAAAAAAAAW8/8EttpBF8QbM/C3CE5E58-2F05-48FB-8EAF-0E8C400B86CE.jpg" alt="" /></p>
+
+<p>ObjectLibraryからViewを追加．</p>
+
+<p><img src="https://lh5.googleusercontent.com/-F13DxPSNxEw/T6vRczq6fNI/AAAAAAAAAXQ/ZhLWZFvZ8HI/62F0D7FB-D117-4FED-8CBC-65AEC3ECC194.jpg" alt="" /></p>
+
+<p>ObjectLibraryからButtonとLabelを追加．</p>
+
+<p><img src="https://lh3.googleusercontent.com/-lXNWDyg3b3s/T6vRYFzTWvI/AAAAAAAAAW0/7MpGkaUa3a4/386D9AF1-8520-41B6-975D-02D2D80A777A.jpg" alt="" /></p>
+
+<p>この部分が重要で、それぞれのTagに1とか2とかつけます</p>
+
+<p><img src="https://lh6.googleusercontent.com/-Ror1NoaBxkM/T6vRfzELJRI/AAAAAAAAAXs/iQi_iMXKNh8/40DC78B0-948E-4DCE-804F-EC366856DC31.jpg" alt="" /></p>
+
+<p>保存して終了．</p>
+
+<p>次に<code>app/my_view_controller.rb</code>を作成します．</p>
+
+<pre><code>class MyViewController &lt; UIViewController
+    def viewDidLoad
+        @button = view.viewWithTag 1
+        @label = view.viewWithTag 2
+        @button.addTarget(
+        self, 
+        action:'onClicked', 
+        forControlEvents:UIControlEventTouchUpInside)
+end
+
+def onClicked
+    @label.text = "Clicked"
+end
+end
+</code></pre>
+
+<p>1のTagを付けたのをbuttonとして，クリックのイベントをonClickedメソッドに登録．
+2のTagを付けたのをlabelとして，クリックされた時に変更したりするようにしました．</p>
+
+<pre><code>$ rake
+</code></pre>
+
+<p>でビルドしてシミュレータが立ち上がります．</p>
+
+<p><img src="https://lh6.googleusercontent.com/-O4MoAszjcnA/T6vRaVj5WmI/AAAAAAAAAXE/rptfrEs0b9A/624D2637-6D50-4DF1-9001-C0505A3B0B25.jpg" alt="" /></p>
+
+<p>押します．</p>
+
+<p>変わります！</p>
+
+<p><img src="https://lh5.googleusercontent.com/-3DmRBCOWUjs/T6vRdl7j0xI/AAAAAAAAAXY/5cnHlb61Lbw/658F46A6-8C07-485C-A589-6E32327BD13F.jpg" alt="" /></p>
+
+<p>出来ました！</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">pchw</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-22T21:53:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rubymotion/'>RubyMotion</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/22/ib/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/22/ib/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/22/ib/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/05/22/spec/" title="Previous Post: [rubymotion] rake specをカラフルにしよう！">&laquo; [rubymotion] rake specをカラフルにしよう！</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/05/22/storyboard/" title="Next Post: Storyboardを使ってRubyMotionで開発する方法">Storyboardを使ってRubyMotionで開発する方法 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/05/22/gcd/">RubyMotionでGCDを使う</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/05/22/storyboard/">Storyboardを使ってRubyMotionで開発する方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/05/22/ib/">[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/05/22/spec/">[rubymotion] rake specをカラフルにしよう！</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/05/21/pointer/">[RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("pchw", 0, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/pchw" class="twitter-follow-button" data-show-count="false">Follow @pchw</a>
+  
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - pchw -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'pchw';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/22/ib/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/05/22/ib/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
