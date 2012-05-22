@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-05-23T00:37:00+09:00</updated>
+  <updated>2012-05-23T01:05:23+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,71 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotionが1.4->1.5->1.6とアップデートしたよ！]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/23/update/"/>
+    <updated>2012-05-23T01:03:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/23/update</id>
+    <content type="html"><![CDATA[<p>気づいたら，RubyMotionの更新が1.5・1.6と続いてありました．</p>
+
+<pre><code>$ sudo motion update
+</code></pre>
+
+<p>しましょう．</p>
+
+<h2>RubyMotion 1.5 更新内容</h2>
+
+<pre><code>= RubyMotion 1.5 =
+
+  * Improved the REPL to support multi-line expressions.
+  * Fixed a bug when compiling Core Data model files where the `momc' utility
+    was not given absolute paths.
+  * Removed legacy MacRuby code that was using the private `isaForAutonotifying'
+    selector and causing a warning during an App Store submission.
+  * Fixed a bug in Enumerable#sort_by that would lead to a crash.
+  * Fixed a bug in the REPL where it would not detect the iOS Simulator window
+    if certain windows were in front or created later.
+  * Fixed a bug in the build system where framework dependencies would not be
+    properly handled.
+  * Added support for .lproj directories (i18n). Thanks Aaron Hurley.
+  * Fixed a bug where objects from pure Ruby classes sent to KVO would not be
+    properly handled later (because KVO inserts a new singleton class).
+  * Fixed attr_writer to emit KVO notifications (will/didChangeValueForKey).
+</code></pre>
+
+<ul>
+<li>REPLが複数行をサポート</li>
+<li>CoreDataモデルファイルをコンパイル時のバグを修正</li>
+<li>レガシーなMacRubyコードを撤去した．</li>
+<li>Enumerable#sort_byがクラッシュを引き起こす問題を修正</li>
+<li>ウィンドウがシミュレータウィンドウの前に複数あるなどの原因でREPLがシミュレータを見つけれないバグを修正</li>
+<li>ビルド時にフレームワークの依存関係を正しく扱えなかったバグを修正</li>
+<li>.lprojディレクトリをサポート</li>
+<li>pure RubyのクラスのオブジェクトをKVOに送った時に正しくハンドリング出来なかったバグを修正</li>
+<li>attr_writerがKVO notificationを上げるように修正</li>
+</ul>
+
+
+<h2>RubyMotion 1.6 更新内容</h2>
+
+<pre><code>= RubyMotion 1.6 =
+
+  * Fixed a regression in the build system introduced by the previous update
+    (when compiling .xib files).
+  * Fixed the vendoring system to include all source code files. Merged patch
+    from https://groups.google.com/d/msg/rubymotion/tPCxSMCA2f4/w2DIHFo2AVAJ
+  * Fixed the REPL to not crash if you give it an empty expression.
+</code></pre>
+
+<ul>
+<li>ビルド時の再発バグの修正</li>
+<li>外部ライブラリ読み込み不具合修正</li>
+<li>REPLに空を渡した時にクラッシュする不具合の修正</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[RubyMotionでGCDを使う]]></title>
@@ -411,40 +476,6 @@ end
 <p><img src="https://lh4.googleusercontent.com/-iXVNZArvvxU/T6_M0ixSIsI/AAAAAAAAAZ0/f3_Irg2MqM8/CCDD4D42-D3EB-405B-BA59-9BED5C685ECD.jpg" alt="" /></p>
 
 <p><img src="https://lh6.googleusercontent.com/-ImTqn7jZiR8/T6_M11kTpsI/AAAAAAAAAZ8/-fVYGOMWifM/8A8B0EBF-3173-486C-AD54-EE1BAAB49511.jpg" alt="" /></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[[RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか]]></title>
-    <link href="http://pchw.github.com/blog/2012/05/21/pointer/"/>
-    <updated>2012-05-21T23:53:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/05/21/pointer</id>
-    <content type="html"><![CDATA[<p>iOS SDK 使ってると，こんな感じのコードがよくあります．</p>
-
-<pre><code>NSHTTPURLResponse *res;
-NSError *error;
-NSURL *url = [NSURL URLWithString:@"http://google.com"];
-NSURLRequest *req = [NSURLRequest requestWithURL:url];
-NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:&amp;res error:&amp;error];
-</code></pre>
-
-<p>最後の<code>[NSURLConnection sendSynchronousRequest: returningResponse: error:]</code>の部分で，<code>(NSHTTPURLResponse**)</code>とか<code>(NSError**)</code>とかを引数に取ります．</p>
-
-<p>この場合は，RubyMotionで書くとこうなります．</p>
-
-<pre><code>err_ptr = Pointer.new(:object)
-res_ptr = Pointer.new(:object)
-url = NSURL.URLWithString("http://google.com")
-req = NSURLRequest.requestWithURL(url)
-data = NSURLConnection.sendSynchronousRequest(
-    req, 
-    returningResponse:res_ptr,
-    error:err_ptr)
-
-@label.text = res_ptr[0].statusCode.to_s
-</code></pre>
-
-<p>簡単に言うと，<code>(NSError**)</code>とかを渡す所になっているメソッドは，Pointerのインスタンスを渡してあげて，<code>error = err_ptr[0]</code>とかしてデリファレンスして使ってやるといいです．</p>
 ]]></content>
   </entry>
   

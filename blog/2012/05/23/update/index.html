@@ -5,14 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>[rubymotion] rake specをカラフルにしよう！ - ぽっちぽちにしてやんよ</title>
+  <title>RubyMotionが1.4->1.5->1.6とアップデートしたよ！ - ぽっちぽちにしてやんよ</title>
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="RubyMotionはBaconというテストフレームワークを使っています．
-RSpecとの違いがよく分からない． $ rake spec とやると，spec以下のテストが実行されるっぽいです． ところが，普通に $ motion crate redgreen
-$ cd redgreen
-$ &hellip;">
+  <meta name="description" content="気づいたら，RubyMotionの更新が1.5・1.6と続いてありました． $ sudo motion update しましょう． RubyMotion 1.5 更新内容 = RubyMotion 1.5 = * Improved the REPL to support multi-line &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +18,7 @@ $ &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/22/spec">
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/23/update">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -71,7 +68,7 @@ $ &hellip;">
   
   <header>
     
-      <h1 class="entry-title">[Rubymotion] Rake Specをカラフルにしよう！</h1>
+      <h1 class="entry-title">RubyMotionが1.4->1.5->1.6とアップデートしたよ！</h1>
     
     
       <p class="meta">
@@ -87,80 +84,70 @@ $ &hellip;">
   
 
 
-<time datetime="2012-05-22T21:52:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
+<time datetime="2012-05-23T01:03:00+09:00" pubdate data-updated="true">May 23<span>rd</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p><img src="https://lh3.googleusercontent.com/-i-36UEH1H1s/T6_Myv_1m1I/AAAAAAAAAZk/-jGU9jUlXSU/F45FE6D0-B302-438F-ABBE-3E67018268CD.jpg" alt="" /></p>
+<div class="entry-content"><p>気づいたら，RubyMotionの更新が1.5・1.6と続いてありました．</p>
 
-<p>RubyMotionはBaconというテストフレームワークを使っています．
-RSpecとの違いがよく分からない．</p>
-
-<pre><code>$ rake spec
+<pre><code>$ sudo motion update
 </code></pre>
 
-<p>とやると，<code>spec</code>以下のテストが実行されるっぽいです．</p>
+<p>しましょう．</p>
 
-<p>ところが，普通に</p>
+<h2>RubyMotion 1.5 更新内容</h2>
 
-<pre><code>$ motion crate redgreen
-$ cd redgreen
-$ rake spec
+<pre><code>= RubyMotion 1.5 =
+
+  * Improved the REPL to support multi-line expressions.
+  * Fixed a bug when compiling Core Data model files where the `momc' utility
+    was not given absolute paths.
+  * Removed legacy MacRuby code that was using the private `isaForAutonotifying'
+    selector and causing a warning during an App Store submission.
+  * Fixed a bug in Enumerable#sort_by that would lead to a crash.
+  * Fixed a bug in the REPL where it would not detect the iOS Simulator window
+    if certain windows were in front or created later.
+  * Fixed a bug in the build system where framework dependencies would not be
+    properly handled.
+  * Added support for .lproj directories (i18n). Thanks Aaron Hurley.
+  * Fixed a bug where objects from pure Ruby classes sent to KVO would not be
+    properly handled later (because KVO inserts a new singleton class).
+  * Fixed attr_writer to emit KVO notifications (will/didChangeValueForKey).
 </code></pre>
 
-<p>とやると，ビルドされてシミュレータが立ち上がりテストが実行されますが，白黒です．</p>
+<ul>
+<li>REPLが複数行をサポート</li>
+<li>CoreDataモデルファイルをコンパイル時のバグを修正</li>
+<li>レガシーなMacRubyコードを撤去した．</li>
+<li>Enumerable#sort_byがクラッシュを引き起こす問題を修正</li>
+<li>ウィンドウがシミュレータウィンドウの前に複数あるなどの原因でREPLがシミュレータを見つけれないバグを修正</li>
+<li>ビルド時にフレームワークの依存関係を正しく扱えなかったバグを修正</li>
+<li>.lprojディレクトリをサポート</li>
+<li>pure RubyのクラスのオブジェクトをKVOに送った時に正しくハンドリング出来なかったバグを修正</li>
+<li>attr_writerがKVO notificationを上げるように修正</li>
+</ul>
 
-<p><img src="https://lh4.googleusercontent.com/-MaF986VQLXQ/T6_MzjUWnKI/AAAAAAAAAZs/0kTlIiLoETE/25518394-DF4D-4FC5-A0AD-FC1AAB8C3DCE.jpg" alt="" /></p>
 
-<p>そこで，<code>spec</code>フォルダで一番初めに読み込まれる .rbの中でカラー表示にさせるスクリプトを実行させれば，カラー表示になるようです．
-（そのため， <code>00***.rb</code>のような名前にすれば良いようです．）</p>
+<h2>RubyMotion 1.6 更新内容</h2>
 
-<p>RedGreenというrake specをカラフルにするライブラリがあるらしいのですが，それをRubyMotion用にアレンジしたものがgithubで公開されています．</p>
+<pre><code>= RubyMotion 1.6 =
 
-<p><a href="https://github.com/mdks/rm-redgreen">rm-redgreen</a></p>
-
-<p>spec/00-redgreen.rb
-app/app.rb
-app/kernel.rb
-app/rm-ansiterm.rb
-app/string.rb
-を自分のとこに持ってくれば使えます．</p>
-
-<p>先程の<code>motion create</code>しただけのやつにコピーして再度テストをすると，このようになります．</p>
-
-<p>カラフルになりましたね．</p>
-
-<p><img src="https://lh5.googleusercontent.com/-2YNpuBaKr6E/T6_M3QeAYUI/AAAAAAAAAaM/h5NFJ1YEO2g/8C43CDC6-042C-4899-9532-BDD6890057ED.jpg" alt="" /></p>
-
-<p>デフォルトのテストはWindowがあるのを調べるテストなので，実装を書いてGreenにしましょう．</p>
-
-<p><code>./app/app_delegate.rb</code></p>
-
-<pre><code>class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    true
-  end
-end
+  * Fixed a regression in the build system introduced by the previous update
+    (when compiling .xib files).
+  * Fixed the vendoring system to include all source code files. Merged patch
+    from https://groups.google.com/d/msg/rubymotion/tPCxSMCA2f4/w2DIHFo2AVAJ
+  * Fixed the REPL to not crash if you give it an empty expression.
 </code></pre>
 
-<p>テストを再実行します．</p>
+<ul>
+<li>ビルド時の再発バグの修正</li>
+<li>外部ライブラリ読み込み不具合修正</li>
+<li>REPLに空を渡した時にクラッシュする不具合の修正</li>
+</ul>
 
-<pre><code>$ rake spec
-</code></pre>
-
-<p>Greenになりました．</p>
-
-<p><img src="https://lh6.googleusercontent.com/-qQcnS4YpH98/T6_M2qdo6qI/AAAAAAAAAaE/NvQU_ZKe9qc/D3BC7FB7-D043-4EA1-AB2F-DB837A7632FA.jpg" alt="" /></p>
-
-<p><code>./spec/00-redgreen.rb</code>の<code>style = :focused</code>となっている部分を<code>style = :full</code>とすると長めのログが出ます．</p>
-
-<p><img src="https://lh4.googleusercontent.com/-iXVNZArvvxU/T6_M0ixSIsI/AAAAAAAAAZ0/f3_Irg2MqM8/CCDD4D42-D3EB-405B-BA59-9BED5C685ECD.jpg" alt="" /></p>
-
-<p><img src="https://lh6.googleusercontent.com/-ImTqn7jZiR8/T6_M11kTpsI/AAAAAAAAAZ8/-fVYGOMWifM/8A8B0EBF-3173-486C-AD54-EE1BAAB49511.jpg" alt="" /></p>
 </div>
 
 
@@ -183,7 +170,7 @@ end
   
 
 
-<time datetime="2012-05-22T21:52:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
+<time datetime="2012-05-23T01:03:00+09:00" pubdate data-updated="true">May 23<span>rd</span>, 2012</time>
       
 
 <span class="categories">
@@ -196,9 +183,9 @@ end
     </p>
     
       <div class="sharing">
-  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/22/spec/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/23/update/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/22/spec/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/22/spec/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/23/update/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/23/update/" >Tweet</a>
   
   
   
@@ -207,10 +194,8 @@ end
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/05/21/pointer/" title="Previous Post: [RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか">&laquo; [RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか</a>
+        <a class="basic-alignment left" href="/blog/2012/05/22/gcd/" title="Previous Post: RubyMotionでGCDを使う">&laquo; RubyMotionでGCDを使う</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/05/22/ib/" title="Next Post: [RubyMotion] InterfaceBuilderと合わせて使って楽をしよう">[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう &raquo;</a>
       
     </p>
   </footer>
@@ -293,8 +278,8 @@ end
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/22/spec/';
-        var disqus_url = 'http://pchw.github.com/blog/2012/05/22/spec/';
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/23/update/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/05/23/update/';
         var disqus_script = 'embed.js';
       
     (function () {

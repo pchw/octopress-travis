@@ -9,7 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="今日はRubyMotionでGCD(Grand Central Dispatch)を使う話です． GCD とは GCDというのは， 非常に効率的なシステム機能と使い勝手のよいプログラミングモデルを併用して，マルチプロセッサを最大限に活用するために必要なコードを徹底的に簡素化 するものらしいです &hellip;">
+  <meta name="description" content="気づいたら，RubyMotionの更新が1.5・1.6と続いてありました． $ sudo motion update しましょう． RubyMotion 1.5 更新内容 = RubyMotion 1.5 = * Improved the REPL to support multi-line &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +65,98 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/23/update/">RubyMotionが1.4->1.5->1.6とアップデートしたよ！</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-23T01:03:00+09:00" pubdate data-updated="true">May 23<span>rd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>気づいたら，RubyMotionの更新が1.5・1.6と続いてありました．</p>
+
+<pre><code>$ sudo motion update
+</code></pre>
+
+<p>しましょう．</p>
+
+<h2>RubyMotion 1.5 更新内容</h2>
+
+<pre><code>= RubyMotion 1.5 =
+
+  * Improved the REPL to support multi-line expressions.
+  * Fixed a bug when compiling Core Data model files where the `momc' utility
+    was not given absolute paths.
+  * Removed legacy MacRuby code that was using the private `isaForAutonotifying'
+    selector and causing a warning during an App Store submission.
+  * Fixed a bug in Enumerable#sort_by that would lead to a crash.
+  * Fixed a bug in the REPL where it would not detect the iOS Simulator window
+    if certain windows were in front or created later.
+  * Fixed a bug in the build system where framework dependencies would not be
+    properly handled.
+  * Added support for .lproj directories (i18n). Thanks Aaron Hurley.
+  * Fixed a bug where objects from pure Ruby classes sent to KVO would not be
+    properly handled later (because KVO inserts a new singleton class).
+  * Fixed attr_writer to emit KVO notifications (will/didChangeValueForKey).
+</code></pre>
+
+<ul>
+<li>REPLが複数行をサポート</li>
+<li>CoreDataモデルファイルをコンパイル時のバグを修正</li>
+<li>レガシーなMacRubyコードを撤去した．</li>
+<li>Enumerable#sort_byがクラッシュを引き起こす問題を修正</li>
+<li>ウィンドウがシミュレータウィンドウの前に複数あるなどの原因でREPLがシミュレータを見つけれないバグを修正</li>
+<li>ビルド時にフレームワークの依存関係を正しく扱えなかったバグを修正</li>
+<li>.lprojディレクトリをサポート</li>
+<li>pure RubyのクラスのオブジェクトをKVOに送った時に正しくハンドリング出来なかったバグを修正</li>
+<li>attr_writerがKVO notificationを上げるように修正</li>
+</ul>
+
+
+<h2>RubyMotion 1.6 更新内容</h2>
+
+<pre><code>= RubyMotion 1.6 =
+
+  * Fixed a regression in the build system introduced by the previous update
+    (when compiling .xib files).
+  * Fixed the vendoring system to include all source code files. Merged patch
+    from https://groups.google.com/d/msg/rubymotion/tPCxSMCA2f4/w2DIHFo2AVAJ
+  * Fixed the REPL to not crash if you give it an empty expression.
+</code></pre>
+
+<ul>
+<li>ビルド時の再発バグの修正</li>
+<li>外部ライブラリ読み込み不具合修正</li>
+<li>REPLに空を渡した時にクラッシュする不具合の修正</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -700,6 +792,10 @@ Octopressをやってみようということになったのですよ．</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/05/23/update/">RubyMotionが1.4->1.5->1.6とアップデートしたよ！</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/05/22/gcd/">RubyMotionでGCDを使う</a>
       </li>
     
@@ -713,10 +809,6 @@ Octopressをやってみようということになったのですよ．</p>
     
       <li class="post">
         <a href="/blog/2012/05/22/spec/">[rubymotion] rake specをカラフルにしよう！</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/05/21/pointer/">[RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか</a>
       </li>
     
   </ul>
