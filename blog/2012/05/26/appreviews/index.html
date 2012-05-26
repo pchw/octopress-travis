@@ -5,14 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>[RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか - ぽっちぽちにしてやんよ</title>
+  <title>AppReviewViewerが良い！ - ぽっちぽちにしてやんよ</title>
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="iOS SDK 使ってると，こんな感じのコードがよくあります． NSHTTPURLResponse *res;
-NSError *error;
-NSURL *url = [NSURL URLWithString:@"http://google.com"];
-NSURLRequest *req &hellip;">
+  <meta name="description" content="今日は「第２回 iphone_dev_jp 東京iPhone/Mac勉強会」に参加してきました． そこで面白いものが紹介されていて，超便利だったので紹介します． mixiのiOSアプリ開発という発表をなさっていた@ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +18,7 @@ NSURLRequest *req &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/21/pointer">
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/26/appreviews">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -71,7 +68,7 @@ NSURLRequest *req &hellip;">
   
   <header>
     
-      <h1 class="entry-title">[RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか</h1>
+      <h1 class="entry-title">AppReviewViewerが良い！</h1>
     
     
       <p class="meta">
@@ -87,39 +84,74 @@ NSURLRequest *req &hellip;">
   
 
 
-<time datetime="2012-05-21T23:53:00+09:00" pubdate data-updated="true">May 21<span>st</span>, 2012</time>
+<time datetime="2012-05-26T22:52:00+09:00" pubdate data-updated="true">May 26<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>iOS SDK 使ってると，こんな感じのコードがよくあります．</p>
+<div class="entry-content"><p>今日は「第２回 iphone_dev_jp 東京iPhone/Mac勉強会」に参加してきました．</p>
 
-<pre><code>NSHTTPURLResponse *res;
-NSError *error;
-NSURL *url = [NSURL URLWithString:@"http://google.com"];
-NSURLRequest *req = [NSURLRequest requestWithURL:url];
-NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:&amp;res error:&amp;error];
+<p>そこで面白いものが紹介されていて，超便利だったので紹介します．</p>
+
+<p><img src="/images/appreviews.png" alt="appreviews" /></p>
+
+<p>mixiのiOSアプリ開発という発表をなさっていた@k_kinukawaさんがAppReviewViewerというツールを紹介されていました．</p>
+
+<p><a href="https://github.com/punchdrunker/AppReviewViewer">AppReviewViewer</a></p>
+
+<p>これは，アプリのIDを登録すると，レビューページをスクレイピングしてどのバージョンでどんな評価が付いたかを一覧したり見やすく表示してくれるものです．</p>
+
+<p>また，mecabが入っているとレビュー文を形態素解析してくれて頻出名詞をタグクラウドみたいに見せてくれたりします．</p>
+
+<p>上記の<a href="https://github.com/punchdrunker/AppReviewViewer">github</a>ページに行ってもらうと分かりますが，依存ライブラリが書いてあるんですが，Gemfileが無くてめんどくさいので書きました．</p>
+
+<div><script src='https://gist.github.com/2793067.js?file=Gemfile'></script>
+<noscript><pre><code>source :rubygems
+
+gem 'json'
+gem 'nokogiri'
+gem 'sequel'
+gem 'sqlite3'
+gem 'sinatra'
+gem 'sinatra-reloader'
+gem 'sinatra-sequel'</code></pre></noscript></div>
+
+
+<p>AppReviewViewerをGithubからcloneした後に入れちゃってください．</p>
+
+<pre><code>$ git clone git://github.com/punchdrunker/AppReviewViewer.git
+$ cd AppReviewViewer
+$ cat &gt; Gemfile
+(上記gistを入れる)
+$ bundle install
+$ ruby app.rb
 </code></pre>
 
-<p>最後の<code>[NSURLConnection sendSynchronousRequest: returningResponse: error:]</code>の部分で，<code>(NSHTTPURLResponse**)</code>とか<code>(NSError**)</code>とかを引数に取ります．</p>
+<p>こんな感じでやれば，AppReviewViewerが<code>http://localhost:4567</code>に起動します．</p>
 
-<p>この場合は，RubyMotionで書くとこうなります．</p>
+<p>左端に<code>+Add app</code>があるので，選択してアプリのIDと名前を入れます．</p>
 
-<pre><code>err_ptr = Pointer.new(:object)
-res_ptr = Pointer.new(:object)
-url = NSURL.URLWithString("http://google.com")
-req = NSURLRequest.requestWithURL(url)
-data = NSURLConnection.sendSynchronousRequest(
-    req, 
-    returningResponse:res_ptr,
-    error:err_ptr)
+<p><img src="/images/appreviewsadd.png" alt="appreviewsadd" /></p>
 
-@label.text = res_ptr[0].statusCode.to_s
+<p>ちなみにアプリのIDはAppStoreのアプリのページを開くと，</p>
+
+<p><img src="/images/appreviewsid.png" alt="id" /></p>
+
+<p>ココらへんに書いていたりします．</p>
+
+<p>アプリのIDと名前が入れられたら，</p>
+
+<pre><code>$ ruby scripts/fetch.rb
 </code></pre>
 
-<p>簡単に言うと，<code>(NSError**)</code>とかを渡す所になっているメソッドは，Pointerのインスタンスを渡してあげて，<code>error = err_ptr[0]</code>とかしてデリファレンスして使ってやるといいです．</p>
+<p>とすれば，スクレイピングが始まるので，終わったら</p>
+
+<pre><code>$ ruby app.rb
+</code></pre>
+
+<p>としてまた<code>http://localhost:4567</code>を開いてみましょう．Reviewが見えるはずです！</p>
 </div>
 
 
@@ -142,12 +174,12 @@ data = NSURLConnection.sendSynchronousRequest(
   
 
 
-<time datetime="2012-05-21T23:53:00+09:00" pubdate data-updated="true">May 21<span>st</span>, 2012</time>
+<time datetime="2012-05-26T22:52:00+09:00" pubdate data-updated="true">May 26<span>th</span>, 2012</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/rubymotion/'>RubyMotion</a>
+    <a class='category' href='/blog/categories/appstore/'>AppStore</a>
   
 </span>
 
@@ -155,9 +187,9 @@ data = NSURLConnection.sendSynchronousRequest(
     </p>
     
       <div class="sharing">
-  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/21/pointer/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/26/appreviews/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/21/pointer/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/21/pointer/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/26/appreviews/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/26/appreviews/" >Tweet</a>
   
   
   
@@ -166,10 +198,8 @@ data = NSURLConnection.sendSynchronousRequest(
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/05/21/first/" title="Previous Post: Octopress始めてみた">&laquo; Octopress始めてみた</a>
+        <a class="basic-alignment left" href="/blog/2012/05/23/update/" title="Previous Post: RubyMotionが1.4->1.5->1.6とアップデートしたよ！">&laquo; RubyMotionが1.4->1.5->1.6とアップデートしたよ！</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/05/22/spec/" title="Next Post: [rubymotion] rake specをカラフルにしよう！">[rubymotion] rake specをカラフルにしよう！ &raquo;</a>
       
     </p>
   </footer>
@@ -252,8 +282,8 @@ data = NSURLConnection.sendSynchronousRequest(
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/21/pointer/';
-        var disqus_url = 'http://pchw.github.com/blog/2012/05/21/pointer/';
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/26/appreviews/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/05/26/appreviews/';
         var disqus_script = 'embed.js';
       
     (function () {
