@@ -4,7 +4,7 @@
   <title><![CDATA[Category: AppStore | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/appstore/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-05-26T23:11:54+09:00</updated>
+  <updated>2012-05-27T09:57:42+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -31,6 +31,8 @@
 <p>これは，アプリのIDを登録すると，レビューページをスクレイピングしてどのバージョンでどんな評価が付いたかを一覧したり見やすく表示してくれるものです．</p>
 
 <p>また，mecabが入っているとレビュー文を形態素解析してくれて頻出名詞をタグクラウドみたいに見せてくれたりします．</p>
+
+<p><strong>Gemfileが追加されたので，Gemfileを自分で追加する必要はなくなりました！</strong></p>
 
 <p>上記の<a href="https://github.com/punchdrunker/AppReviewViewer">github</a>ページに行ってもらうと分かりますが，依存ライブラリが書いてあるんですが，Gemfileが無くてめんどくさいので書きました．</p>
 
