@@ -4,7 +4,7 @@
   <title><![CDATA[ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-05-27T10:22:37+09:00</updated>
+  <updated>2012-05-27T11:38:18+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,95 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[RubyMotion]motion-liveを使ってみよう]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/27/live/"/>
+    <updated>2012-05-27T11:17:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/27/live</id>
+    <content type="html"><![CDATA[<p>RubyMotionは<code>rake</code>でBuildしてSimulatorが立ち上がります．</p>
+
+<p>その後，Terminalはインタラクティブシェルになっていて，そこで行った操作がそのままSimulatorの方に反映されます．</p>
+
+<p>ところが，そのインタラクティブシェルは1行しか打てなくて，そこで色々やろうとすると苦しいものがあります．</p>
+
+<p>そこで登場するのが<strong>motion-live</strong>です．</p>
+
+<p><a href="https://github.com/irrationalfab/motion-live">motion-live</a></p>
+
+<p>これを導入すると，<code>LiveScratchpad.rb</code>というファイルを編集してセーブしたタイミングでインタラクティブシェルに引き渡されて実行されます．</p>
+
+<h2>使い方</h2>
+
+<p>まず，motion-liveをインストールします．</p>
+
+<pre><code>$ gem install motion-live
+Fetching: colored-1.2.gem (100%)
+Fetching: rb-fsevent-0.9.1.gem (100%)
+Fetching: motion-live-0.1.gem (100%)
+Successfully installed colored-1.2
+Successfully installed rb-fsevent-0.9.1
+Successfully installed motion-live-0.1
+3 gems installed
+Installing ri documentation for colored-1.2...
+Installing ri documentation for rb-fsevent-0.9.1...
+Installing ri documentation for motion-live-0.1...
+Installing RDoc documentation for colored-1.2...
+Installing RDoc documentation for rb-fsevent-0.9.1...
+Installing RDoc documentation for motion-live-0.1...
+</code></pre>
+
+<p>その後，プロジェクトのRakefileを編集します．
+（既存の<code>motion crate</code>したのがないなら，<code>motion create &lt;hoge&gt;</code>しましょう）</p>
+
+<pre><code>$ more Rakefile
+$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+require 'motion-live'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'hoge'
+end
+</code></pre>
+
+<p>変更点は<code>require 'motion-live'</code>を追加しただけです．</p>
+
+<p>あとは，実行します．</p>
+
+<pre><code>$ rake live
+</code></pre>
+
+<p>するとSimulatorが立ち上がり，ディレクトリに<code>LiveScratchpad.rb</code>が出来上がるので，編集保存するとインタラクティブシェルで実行されます．</p>
+
+<h2>利点</h2>
+
+<p>motion-liveを使った時の利点です．</p>
+
+<h3>複数行のコードをインタラクティブシェルに読ませれる</h3>
+
+<p>これによって，何回も使う処理をclassとかmethodにして使うとかいうのも簡単にかけます．</p>
+
+<h3>自分の好きなエディタが使える</h3>
+
+<p>インタラクティブシェルではTerminalの上で書くので，補完も効かなければ，キーバインディングも違って色々不便です．</p>
+
+<p>しかし，motion-liveを使うと，<code>LiveScratchpad.rb</code>というファイルを編集出来ればいいのです．</p>
+
+<p>つまり，EmacsやVimも使えますし，補完を効かせれるTextMateやRedcarを使うことも出来ます．
+<a href="http://pchw.github.com/blog/2012/05/27/st2/">前の記事</a>で書いたようにSublime Text2も補完を効かせれるようになったので，僕はSublime Text2を使ってます．</p>
+
+<pre><code>app = UIApplication.sharedApplication
+delegate = app.delegate
+repl(delegate)
+@window
+</code></pre>
+
+<p>みたいなのを書く時でも，すごい楽なわけです．</p>
+
+<p>セットアップも有効にするのもRakefileに1行追加ですし，簡単で積極的に使って行きたいですね！</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Sublime Text 2でRubyMotionの補完が出来るようになったぞおおおお]]></title>
