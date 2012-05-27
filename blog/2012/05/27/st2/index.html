@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>AppReviewViewerが良い！ - ぽっちぽちにしてやんよ</title>
+  <title>Sublime Text 2でRubyMotionの補完が出来るようになったぞおおおお - ぽっちぽちにしてやんよ</title>
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="今日は「第２回 iphone_dev_jp 東京iPhone/Mac勉強会」に参加してきました． そこで面白いものが紹介されていて，超便利だったので紹介します． mixiのiOSアプリ開発という発表をなさっていた@ &hellip;">
+  <meta name="description" content="ついに来ました！ いままで，RubyMotionを書いていて補完が効くのはVimとredcarとTextMateだけでした！
+ところが，RubyMotionのフォーラムに「[RubyMotion] Sublime Text 2 Support」という質問が投げかけられ， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/26/appreviews">
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/27/st2">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -68,7 +69,7 @@
   
   <header>
     
-      <h1 class="entry-title">AppReviewViewerが良い！</h1>
+      <h1 class="entry-title">Sublime Text 2でRubyMotionの補完が出来るようになったぞおおおお</h1>
     
     
       <p class="meta">
@@ -84,76 +85,42 @@
   
 
 
-<time datetime="2012-05-26T22:52:00+09:00" pubdate data-updated="true">May 26<span>th</span>, 2012</time>
+<time datetime="2012-05-27T10:04:00+09:00" pubdate data-updated="true">May 27<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>今日は「第２回 iphone_dev_jp 東京iPhone/Mac勉強会」に参加してきました．</p>
+<div class="entry-content"><p><img src="/images/st2.png" alt="catch" /></p>
 
-<p>そこで面白いものが紹介されていて，超便利だったので紹介します．</p>
+<p>ついに来ました！</p>
 
-<p><img src="/images/appreviews.png" alt="appreviews" /></p>
+<p>いままで，RubyMotionを書いていて補完が効くのはVimとredcarとTextMateだけでした！
+ところが，RubyMotionのフォーラムに「[RubyMotion] Sublime Text 2 Support」という質問が投げかけられ，ついに今日そのパッケージが登場しました！</p>
 
-<p>mixiのiOSアプリ開発という発表をなさっていた@k_kinukawaさんがAppReviewViewerというツールを紹介されていました．</p>
+<p><a href="https://github.com/diemer/RubyMotionSublimeCompletions">RubyMotionSublimeCompletions</a></p>
 
-<p><a href="https://github.com/punchdrunker/AppReviewViewer">AppReviewViewer</a></p>
+<p>インストール方法は簡単で，</p>
 
-<p>これは，アプリのIDを登録すると，レビューページをスクレイピングしてどのバージョンでどんな評価が付いたかを一覧したり見やすく表示してくれるものです．</p>
-
-<p>また，mecabが入っているとレビュー文を形態素解析してくれて頻出名詞をタグクラウドみたいに見せてくれたりします．</p>
-
-<p><strong>Gemfileが追加されたので，Gemfileを自分で追加する必要はなくなりました！</strong></p>
-
-<p>上記の<a href="https://github.com/punchdrunker/AppReviewViewer">github</a>ページに行ってもらうと分かりますが，依存ライブラリが書いてあるんですが，Gemfileが無くてめんどくさいので書きました．</p>
-
-<div><script src='https://gist.github.com/2793067.js?file=Gemfile'></script>
-<noscript><pre><code>source :rubygems
-
-gem 'json'
-gem 'nokogiri'
-gem 'sequel'
-gem 'sqlite3'
-gem 'sinatra'
-gem 'sinatra-reloader'
-gem 'sinatra-sequel'</code></pre></noscript></div>
-
-
-<p>AppReviewViewerをGithubからcloneした後に入れちゃってください．</p>
-
-<pre><code>$ git clone git://github.com/punchdrunker/AppReviewViewer.git
-$ cd AppReviewViewer
-$ cat &gt; Gemfile
-(上記gistを入れる)
-$ bundle install
-$ ruby app.rb
+<pre><code>$ cd ~/Library/Application Support/Sublime Text 2/Packages
+$ git clone git://github.com/diemer/RubyMotionSublimeCompletions.git
 </code></pre>
 
-<p>こんな感じでやれば，AppReviewViewerが<code>http://localhost:4567</code>に起動します．</p>
+<p>してSublime Text2を再起動すればOKです．</p>
 
-<p>左端に<code>+Add app</code>があるので，選択してアプリのIDと名前を入れます．</p>
+<p>PackageControlを導入している人なら，</p>
 
-<p><img src="/images/appreviewsadd.png" alt="appreviewsadd" /></p>
-
-<p>ちなみにアプリのIDはAppStoreのアプリのページを開くと，</p>
-
-<p><img src="/images/appreviewsid.png" alt="id" /></p>
-
-<p>ココらへんに書いていたりします．</p>
-
-<p>アプリのIDと名前が入れられたら，</p>
-
-<pre><code>$ ruby scripts/fetch.rb
+<pre><code>Cmd+Shift+p
+Package Control: Add Repository
+https://github.com/diemer/RubyMotionSublimeCompletions
+Package Control: Install Package
+RubyMotionSublimeCompletions
 </code></pre>
 
-<p>とすれば，スクレイピングが始まるので，終わったら</p>
+<p>でインストール出来るはずです．</p>
 
-<pre><code>$ ruby app.rb
-</code></pre>
-
-<p>としてまた<code>http://localhost:4567</code>を開いてみましょう．Reviewが見えるはずです！</p>
+<p>後は，普通にエディタを起動して<code>UIApp</code>とか打てば，補完に<code>UIApplication</code>とか<code>UIAppearance</code>とか出るようになります！</p>
 </div>
 
 
@@ -176,12 +143,12 @@ $ ruby app.rb
   
 
 
-<time datetime="2012-05-26T22:52:00+09:00" pubdate data-updated="true">May 26<span>th</span>, 2012</time>
+<time datetime="2012-05-27T10:04:00+09:00" pubdate data-updated="true">May 27<span>th</span>, 2012</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/appstore/'>AppStore</a>
+    <a class='category' href='/blog/categories/rubymotion-/'>RubyMotion,</a>, <a class='category' href='/blog/categories/sublimetext2/'>SublimeText2</a>
   
 </span>
 
@@ -189,9 +156,9 @@ $ ruby app.rb
     </p>
     
       <div class="sharing">
-  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/26/appreviews/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/27/st2/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/26/appreviews/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/26/appreviews/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/27/st2/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/27/st2/" >Tweet</a>
   
   
   
@@ -200,10 +167,8 @@ $ ruby app.rb
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/05/23/update/" title="Previous Post: RubyMotionが1.4->1.5->1.6とアップデートしたよ！">&laquo; RubyMotionが1.4->1.5->1.6とアップデートしたよ！</a>
+        <a class="basic-alignment left" href="/blog/2012/05/26/appreviews/" title="Previous Post: AppReviewViewerが良い！">&laquo; AppReviewViewerが良い！</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/05/27/st2/" title="Next Post: Sublime Text 2でRubyMotionの補完が出来るようになったぞおおおお">Sublime Text 2でRubyMotionの補完が出来るようになったぞおおおお &raquo;</a>
       
     </p>
   </footer>
@@ -286,8 +251,8 @@ $ ruby app.rb
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/26/appreviews/';
-        var disqus_url = 'http://pchw.github.com/blog/2012/05/26/appreviews/';
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/27/st2/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/05/27/st2/';
         var disqus_script = 'embed.js';
       
     (function () {
