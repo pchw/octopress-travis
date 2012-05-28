@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-05-27T11:38:18+09:00</updated>
+  <updated>2012-05-28T12:32:54+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,126 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[RubyMotion]Routableを使ってみた]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/28/routable/"/>
+    <updated>2012-05-28T12:32:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/28/routable</id>
+    <content type="html"><![CDATA[<p>Routableというgemがあるみたいという話を聞いて，使ってみました．</p>
+
+<p><a href="https://github.com/clayallsopp/Routable">Routable - GitHub</a></p>
+
+<h2>インストール</h2>
+
+<pre><code>gem install routable
+</code></pre>
+
+<h2>Rakefileの編集</h2>
+
+<pre><code>$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+require 'routable'
+</code></pre>
+
+<p>のように<code>require 'routable'</code>を追加します．</p>
+
+<h2>使い方</h2>
+
+<pre><code>class AppDelegate
+  def application(application, didFinishLaunchingWithOptions:launchOptions)
+    @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.applicationFrame
+    @window.makeKeyAndVisible
+
+    @rootView = NSBundle.mainBundle.loadNibNamed(
+        'RootViewController',
+        owner: self,
+        options: nil).first
+
+    @router = Routable::Router.router
+    @router.navigation_controller = UINavigationController.alloc.init
+    @router.navigation_controller.pushViewController(@rootView, animated: false)
+    @rootView.title = "TOP"
+
+    @router.map("one", OneViewController)
+    @router.map("two/:param", TwoViewController)
+
+    @window.rootViewController = @router.navigation_controller
+
+    @one = @rootView.view.viewWithTag 1
+    @one.addTarget(
+        self, 
+        action: 'onClickOne:', 
+        forControlEvents: UIControlEventTouchUpInside)
+
+    @two = @rootView.view.viewWithTag 2
+    @two.addTarget(
+        self, 
+        action: 'onClickTwo:', 
+        forControlEvents: UIControlEventTouchUpInside)
+
+    true
+  end
+
+  def onClickOne(sender)
+    @router.open('one', true)
+  end
+
+  def onClickTwo(sender)
+    @router.open('two/100', true)
+  end
+end
+</code></pre>
+
+<p>こんな感じで使います．</p>
+
+<p><code>Routable::Router.router</code>を取得して，<code>navigation_controller</code>に<code>UINavigationController</code>を設定しておきます．</p>
+
+<p><code>map(&lt;URL&gt;, &lt;viewController&gt;)</code>のようにすると，そのURL文字列をキーにviewControllerの遷移を書けるようになります．</p>
+
+<p><URL>には<code>hoge/:id</code>のようにパラメータを記述することができて，この場合だと<code>hoge/1</code>とかいう遷移をさせれば，宛先のviewControllerに<code>1</code>というパラメータが渡されます．</p>
+
+<p>遷移する時は<code>open(&lt;URL&gt;, &lt;animation?&gt;)</code>とすれば設定したviewControllerへ遷移出来ます．</p>
+
+<h2>遷移先ViewController</h2>
+
+<pre><code>class TwoViewController &lt; UIViewController
+    attr_accessor :param
+
+    def initWithParams(params = {})
+        init()
+        self.param = params[:param]
+        self
+    end
+
+    def viewDidLoad
+        @label = UILabel.alloc.init
+        @label.bounds = [[50, 150],[300, 50]]
+        @label.text = "TwoViewController" + self.param.to_s
+    end
+end
+</code></pre>
+
+<p>のようにして，<code>initWithParams</code>で引数を受け取れます．</p>
+
+<h2>問題点</h2>
+
+<p>ViewControllerをコードで場所設定とかすごくめんどくさいので，僕はIBを使います．</p>
+
+<p>しかし，IBを使って<code>resouces/HogeViewController.xib</code>を作って，Controlを配置して，，，というフローを辿ってやると，<code>router.open</code>の時にエラーが出ます．</p>
+
+<p>routerの内部では，<code>HogeViewController.alloc.initWithParams()</code>を呼んでインスタンス化しているわけですが，
+xibを使うと，<code>NSBundle.mainBundle.loadNibNamed</code>をしないとダメっぽいんですね．</p>
+
+<p>なので，routerをいじって，mapするときにそれ用の情報を入れてあげるかしないといけません．</p>
+
+<h2>まとめ</h2>
+
+<p>僕はStoryboardを使うと思います．</p>
+
+<p>XCodeが嫌でRubyMotionをやっている人は多いと思うので，コードでControlを配置するのが苦じゃない人にとってはrouterはいいソリューションなんじゃないでしょうか．</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[RubyMotion]motion-liveを使ってみよう]]></title>
@@ -385,111 +505,6 @@ end
 <p><img src="https://lh4.googleusercontent.com/-XyNt1C6cfKo/T69nxjkqNrI/AAAAAAAAAYs/V4i7HQ9rDV8/8619164C-B90D-4D8F-913F-ED11086D700A.jpg" alt="" /></p>
 
 <p><img src="https://lh5.googleusercontent.com/-4ugWozivZrg/T69nziIvs3I/AAAAAAAAAZA/HYZfkyB-WEQ/22854A71-7125-43CF-802C-7630629537F5.jpg" alt="" /></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう]]></title>
-    <link href="http://pchw.github.com/blog/2012/05/22/ib/"/>
-    <updated>2012-05-22T21:53:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/05/22/ib</id>
-    <content type="html"><![CDATA[<p><img src="https://lh4.googleusercontent.com/-_NT2-Tz_5I4/T6vRbwXZyHI/AAAAAAAAAXM/nYYnYrq0AWQ/8B0A2DB1-E3D7-4847-A0EF-006C171E8B43.jpg" alt="catch" /></p>
-
-<p>RubyMotionはいいんだけど，UIをコードで作るのはめんどくさい．
-そのため，InterfaceBuilderで作りたい．</p>
-
-<p>RubyMotionの進化が早くて，もう1.3のアップデートが来てます．
-このエントリーは1.3にアップデートしてからやってね．</p>
-
-<pre><code>$ sudo motion update
-</code></pre>
-
-<p>やってみます．まずはひな形作成．</p>
-
-<pre><code>$ motion create IB
-$ cd IB
-</code></pre>
-
-<p><code>app/app_delegate.rb</code> を編集します．</p>
-
-<pre><code>class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    @window.rootViewController = NSBundle.mainBundle.loadNibNamed(
-        'MyView', 
-        owner: self,
-        options: nil).first
-    @window.rootViewController.wantsFullScreenLayout = true
-    @window.makeKeyAndVisible
-    true
-  end
-end
-</code></pre>
-
-<p>こんな感じで，MyViewっていうNibを読み込んでやることにします．</p>
-
-<p>おもむろにXCodeをたちあげて，（すでに開いている人は開いてるProjectを閉じろ！）File>New>File(Cmd + N)を選んで新規ファイル作成する．
-iOSのUser InterfaceのEmptyを選んで，<code>resources/MyView.xib</code>として保存する．</p>
-
-<p>このままだと，ただの方眼紙なので，オブジェクトを追加していきます．</p>
-
-<p>ObjectLibrary(Cmd+Shift+Alt+3)からViewControllerを追加．</p>
-
-<p><img src="https://lh4.googleusercontent.com/-NJi7vxGoKU0/T6vRejaSSwI/AAAAAAAAAXk/NANN6sYn43s/75A106D3-E836-4771-A3B2-23F0711E9F75.jpg" alt="viewcontroller" /></p>
-
-<p>CustomClassの所で，<code>MyViewController</code>とする．</p>
-
-<p><img src="https://lh6.googleusercontent.com/-9WOU446JvMM/T6vRZBfeFOI/AAAAAAAAAW8/8EttpBF8QbM/C3CE5E58-2F05-48FB-8EAF-0E8C400B86CE.jpg" alt="" /></p>
-
-<p>ObjectLibraryからViewを追加．</p>
-
-<p><img src="https://lh5.googleusercontent.com/-F13DxPSNxEw/T6vRczq6fNI/AAAAAAAAAXQ/ZhLWZFvZ8HI/62F0D7FB-D117-4FED-8CBC-65AEC3ECC194.jpg" alt="" /></p>
-
-<p>ObjectLibraryからButtonとLabelを追加．</p>
-
-<p><img src="https://lh3.googleusercontent.com/-lXNWDyg3b3s/T6vRYFzTWvI/AAAAAAAAAW0/7MpGkaUa3a4/386D9AF1-8520-41B6-975D-02D2D80A777A.jpg" alt="" /></p>
-
-<p>この部分が重要で、それぞれのTagに1とか2とかつけます</p>
-
-<p><img src="https://lh6.googleusercontent.com/-Ror1NoaBxkM/T6vRfzELJRI/AAAAAAAAAXs/iQi_iMXKNh8/40DC78B0-948E-4DCE-804F-EC366856DC31.jpg" alt="" /></p>
-
-<p>保存して終了．</p>
-
-<p>次に<code>app/my_view_controller.rb</code>を作成します．</p>
-
-<pre><code>class MyViewController &lt; UIViewController
-    def viewDidLoad
-        @button = view.viewWithTag 1
-        @label = view.viewWithTag 2
-        @button.addTarget(
-        self, 
-        action:'onClicked', 
-        forControlEvents:UIControlEventTouchUpInside)
-end
-
-def onClicked
-    @label.text = "Clicked"
-end
-end
-</code></pre>
-
-<p>1のTagを付けたのをbuttonとして，クリックのイベントをonClickedメソッドに登録．
-2のTagを付けたのをlabelとして，クリックされた時に変更したりするようにしました．</p>
-
-<pre><code>$ rake
-</code></pre>
-
-<p>でビルドしてシミュレータが立ち上がります．</p>
-
-<p><img src="https://lh6.googleusercontent.com/-O4MoAszjcnA/T6vRaVj5WmI/AAAAAAAAAXE/rptfrEs0b9A/624D2637-6D50-4DF1-9001-C0505A3B0B25.jpg" alt="" /></p>
-
-<p>押します．</p>
-
-<p>変わります！</p>
-
-<p><img src="https://lh5.googleusercontent.com/-3DmRBCOWUjs/T6vRdl7j0xI/AAAAAAAAAXY/5cnHlb61Lbw/658F46A6-8C07-485C-A589-6E32327BD13F.jpg" alt="" /></p>
-
-<p>出来ました！</p>
 ]]></content>
   </entry>
   

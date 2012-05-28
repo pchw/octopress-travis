@@ -9,7 +9,8 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="RubyMotionはrakeでBuildしてSimulatorが立ち上がります． その後，Terminalはインタラクティブシェルになっていて，そこで行った操作がそのままSimulatorの方に反映されます． ところが，そのインタラクティブシェルは1行しか打てなくて， &hellip;">
+  <meta name="description" content="Routableというgemがあるみたいという話を聞いて，使ってみました． Routable - GitHub インストール gem install routable Rakefileの編集 $:.unshift("/Library/RubyMotion/lib")
+require 'motion &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +66,153 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/28/routable/">[RubyMotion]Routableを使ってみた</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-28T12:32:00+09:00" pubdate data-updated="true">May 28<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Routableというgemがあるみたいという話を聞いて，使ってみました．</p>
+
+<p><a href="https://github.com/clayallsopp/Routable">Routable - GitHub</a></p>
+
+<h2>インストール</h2>
+
+<pre><code>gem install routable
+</code></pre>
+
+<h2>Rakefileの編集</h2>
+
+<pre><code>$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+require 'routable'
+</code></pre>
+
+<p>のように<code>require 'routable'</code>を追加します．</p>
+
+<h2>使い方</h2>
+
+<pre><code>class AppDelegate
+  def application(application, didFinishLaunchingWithOptions:launchOptions)
+    @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.applicationFrame
+    @window.makeKeyAndVisible
+
+    @rootView = NSBundle.mainBundle.loadNibNamed(
+        'RootViewController',
+        owner: self,
+        options: nil).first
+
+    @router = Routable::Router.router
+    @router.navigation_controller = UINavigationController.alloc.init
+    @router.navigation_controller.pushViewController(@rootView, animated: false)
+    @rootView.title = "TOP"
+
+    @router.map("one", OneViewController)
+    @router.map("two/:param", TwoViewController)
+
+    @window.rootViewController = @router.navigation_controller
+
+    @one = @rootView.view.viewWithTag 1
+    @one.addTarget(
+        self, 
+        action: 'onClickOne:', 
+        forControlEvents: UIControlEventTouchUpInside)
+
+    @two = @rootView.view.viewWithTag 2
+    @two.addTarget(
+        self, 
+        action: 'onClickTwo:', 
+        forControlEvents: UIControlEventTouchUpInside)
+
+    true
+  end
+
+  def onClickOne(sender)
+    @router.open('one', true)
+  end
+
+  def onClickTwo(sender)
+    @router.open('two/100', true)
+  end
+end
+</code></pre>
+
+<p>こんな感じで使います．</p>
+
+<p><code>Routable::Router.router</code>を取得して，<code>navigation_controller</code>に<code>UINavigationController</code>を設定しておきます．</p>
+
+<p><code>map(&lt;URL&gt;, &lt;viewController&gt;)</code>のようにすると，そのURL文字列をキーにviewControllerの遷移を書けるようになります．</p>
+
+<p><URL>には<code>hoge/:id</code>のようにパラメータを記述することができて，この場合だと<code>hoge/1</code>とかいう遷移をさせれば，宛先のviewControllerに<code>1</code>というパラメータが渡されます．</p>
+
+<p>遷移する時は<code>open(&lt;URL&gt;, &lt;animation?&gt;)</code>とすれば設定したviewControllerへ遷移出来ます．</p>
+
+<h2>遷移先ViewController</h2>
+
+<pre><code>class TwoViewController &lt; UIViewController
+    attr_accessor :param
+
+    def initWithParams(params = {})
+        init()
+        self.param = params[:param]
+        self
+    end
+
+    def viewDidLoad
+        @label = UILabel.alloc.init
+        @label.bounds = [[50, 150],[300, 50]]
+        @label.text = "TwoViewController" + self.param.to_s
+    end
+end
+</code></pre>
+
+<p>のようにして，<code>initWithParams</code>で引数を受け取れます．</p>
+
+<h2>問題点</h2>
+
+<p>ViewControllerをコードで場所設定とかすごくめんどくさいので，僕はIBを使います．</p>
+
+<p>しかし，IBを使って<code>resouces/HogeViewController.xib</code>を作って，Controlを配置して，，，というフローを辿ってやると，<code>router.open</code>の時にエラーが出ます．</p>
+
+<p>routerの内部では，<code>HogeViewController.alloc.initWithParams()</code>を呼んでインスタンス化しているわけですが，
+xibを使うと，<code>NSBundle.mainBundle.loadNibNamed</code>をしないとダメっぽいんですね．</p>
+
+<p>なので，routerをいじって，mapするときにそれ用の情報を入れてあげるかしないといけません．</p>
+
+<h2>まとめ</h2>
+
+<p>僕はStoryboardを使うと思います．</p>
+
+<p>XCodeが嫌でRubyMotionをやっている人は多いと思うので，コードでControlを配置するのが苦じゃない人にとってはrouterはいいソリューションなんじゃないでしょうか．</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1006,58 +1154,9 @@ data = NSURLConnection.sendSynchronousRequest(
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/21/first/">Octopress始めてみた</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-21T22:43:00+09:00" pubdate data-updated="true">May 21<span>st</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>あいさつ</h2>
-
-<p>Posterous→Bloggerと来て次はOctopressでやってみようと思います．</p>
-
-<h2>なんでOctopressでやってみようと思ったか？</h2>
-
-<p>最近RubyMotionをやってて，それ関連の記事を書くことが何回ありました．
-基本的に調べながらやってるんですけど，その時はDayOneとかを使ってやってるわけです．</p>
-
-<p>そこで，BloggerがMarkdownでそのまま投稿出来ないのが辛かった．</p>
-
-<p>DayOneで書いて，MouにコピペしてHTMLとして吐かせてコピペしてました．苦行．
-それに更に最近ではKobitoにもコピペしてQiitaにも投稿してました．</p>
-
-<p>これはもうMarkdownで統一するしかないだろうということで，
-Octopressをやってみようということになったのですよ．</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/2/">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -1068,6 +1167,10 @@ Octopressをやってみようということになったのですよ．</p>
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/05/28/routable/">[RubyMotion]Routableを使ってみた</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2012/05/27/live/">[RubyMotion]motion-liveを使ってみよう</a>
@@ -1083,10 +1186,6 @@ Octopressをやってみようということになったのですよ．</p>
     
       <li class="post">
         <a href="/blog/2012/05/23/update/">RubyMotionが1.4->1.5->1.6とアップデートしたよ！</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2012/05/22/gcd/">RubyMotionでGCDを使う</a>
       </li>
     
   </ul>
