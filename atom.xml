@@ -4,7 +4,7 @@
   <title><![CDATA[ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-05-29T01:23:59+09:00</updated>
+  <updated>2012-05-29T08:27:27+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,50 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotion1.7出てます]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/29/17/"/>
+    <updated>2012-05-29T08:14:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/29/17</id>
+    <content type="html"><![CDATA[<p>RubyMotion 1.7が出てました．</p>
+
+<pre><code>$ sudo motion update
+</code></pre>
+
+<p>しましょう！</p>
+
+<p>ところで，RubyMotion がアップデートされたかどうかを素早く知る方法ってないんですかね．</p>
+
+<pre><code>= RubyMotion 1.7 =
+
+  * Fixed a bug in the compiler where the proper signature would not be used
+    when defining informal protocol methods with CF types as arguments.
+  * Fixed iOS constants to be looked up at demand (when being used) and not
+    when the app starts, because certain constants are not set until a certain
+    API is called (ex: the kAB... constants of the AddressBook framework).
+    This change should also speed up a little bit the app starting time.
+  * Fixed a bug in the compiler where very long selectors would be truncated
+    and causing exceptions later at runtime.
+  * Fixed a bug in the compiler where memory-related selectors (alloc, dealloc,
+    retain, release, etc.) could not be defined in Ruby.
+  * Fixed a bug in the compiler where NSObject instance methods could not be
+    called on classes (ex. MyClass.performSelector(...)).
+  * Fixed a bug in the build system where vendored 3rd-party APIs dealing with
+    types defined in iOS headers could not be used (ex: enums or structs).
+</code></pre>
+
+<ul>
+<li>非公式プロトコルでCFタイプを引数にとった時に正しいシグネチャを吐かないことの修正</li>
+<li>アプリ開始時のiOS定数発見の部分を修正．この影響でアプリ開始時間がちょっと早くなる．</li>
+<li>超長いセレクタが途中で切れて実行時エラーになる問題の修正</li>
+<li>メモリ関係（allocとかreleaseとか）がRubyで定義出来なかったのを修正．</li>
+<li>NSObjectのインスタンスメソッドをクラスから呼べなかった問題を修正</li>
+<li>外部ベンダのライブラリを読み込むやつでiOSヘッダに定義されたenumとかstructsが使われなかった問題を修正</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[RubyMotion]Routableを使ってみた]]></title>

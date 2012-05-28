@@ -9,8 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="Routableというgemがあるみたいという話を聞いて，使ってみました． Routable - GitHub インストール gem install routable Rakefileの編集 $:.unshift("/Library/RubyMotion/lib")
-require 'motion &hellip;">
+  <meta name="description" content="RubyMotion 1.7が出てました． $ sudo motion update しましょう！ ところで，RubyMotion がアップデートされたかどうかを素早く知る方法ってないんですかね． = RubyMotion 1.7 = * Fixed a bug in the compiler &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -78,6 +77,77 @@ require 'motion &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/29/17/">RubyMotion1.7出てます</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-29T08:14:00+09:00" pubdate data-updated="true">May 29<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>RubyMotion 1.7が出てました．</p>
+
+<pre><code>$ sudo motion update
+</code></pre>
+
+<p>しましょう！</p>
+
+<p>ところで，RubyMotion がアップデートされたかどうかを素早く知る方法ってないんですかね．</p>
+
+<pre><code>= RubyMotion 1.7 =
+
+  * Fixed a bug in the compiler where the proper signature would not be used
+    when defining informal protocol methods with CF types as arguments.
+  * Fixed iOS constants to be looked up at demand (when being used) and not
+    when the app starts, because certain constants are not set until a certain
+    API is called (ex: the kAB... constants of the AddressBook framework).
+    This change should also speed up a little bit the app starting time.
+  * Fixed a bug in the compiler where very long selectors would be truncated
+    and causing exceptions later at runtime.
+  * Fixed a bug in the compiler where memory-related selectors (alloc, dealloc,
+    retain, release, etc.) could not be defined in Ruby.
+  * Fixed a bug in the compiler where NSObject instance methods could not be
+    called on classes (ex. MyClass.performSelector(...)).
+  * Fixed a bug in the build system where vendored 3rd-party APIs dealing with
+    types defined in iOS headers could not be used (ex: enums or structs).
+</code></pre>
+
+<ul>
+<li>非公式プロトコルでCFタイプを引数にとった時に正しいシグネチャを吐かないことの修正</li>
+<li>アプリ開始時のiOS定数発見の部分を修正．この影響でアプリ開始時間がちょっと早くなる．</li>
+<li>超長いセレクタが途中で切れて実行時エラーになる問題の修正</li>
+<li>メモリ関係（allocとかreleaseとか）がRubyで定義出来なかったのを修正．</li>
+<li>NSObjectのインスタンスメソッドをクラスから呼べなかった問題を修正</li>
+<li>外部ベンダのライブラリを読み込むやつでiOSヘッダに定義されたenumとかstructsが使われなかった問題を修正</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1105,67 +1175,6 @@ end
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/21/pointer/">[RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-21T23:53:00+09:00" pubdate data-updated="true">May 21<span>st</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>iOS SDK 使ってると，こんな感じのコードがよくあります．</p>
-
-<pre><code>NSHTTPURLResponse *res;
-NSError *error;
-NSURL *url = [NSURL URLWithString:@"http://google.com"];
-NSURLRequest *req = [NSURLRequest requestWithURL:url];
-NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:&amp;res error:&amp;error];
-</code></pre>
-
-<p>最後の<code>[NSURLConnection sendSynchronousRequest: returningResponse: error:]</code>の部分で，<code>(NSHTTPURLResponse**)</code>とか<code>(NSError**)</code>とかを引数に取ります．</p>
-
-<p>この場合は，RubyMotionで書くとこうなります．</p>
-
-<pre><code>err_ptr = Pointer.new(:object)
-res_ptr = Pointer.new(:object)
-url = NSURL.URLWithString("http://google.com")
-req = NSURLRequest.requestWithURL(url)
-data = NSURLConnection.sendSynchronousRequest(
-    req, 
-    returningResponse:res_ptr,
-    error:err_ptr)
-
-@label.text = res_ptr[0].statusCode.to_s
-</code></pre>
-
-<p>簡単に言うと，<code>(NSError**)</code>とかを渡す所になっているメソッドは，Pointerのインスタンスを渡してあげて，<code>error = err_ptr[0]</code>とかしてデリファレンスして使ってやるといいです．</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1204,6 +1213,10 @@ data = NSURLConnection.sendSynchronousRequest(
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/05/29/17/">RubyMotion1.7出てます</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/05/28/routable/">[RubyMotion]Routableを使ってみた</a>
       </li>
     
@@ -1219,15 +1232,11 @@ data = NSURLConnection.sendSynchronousRequest(
         <a href="/blog/2012/05/26/appreviews/">AppReviewViewerが良い！</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/05/23/update/">RubyMotionが1.4->1.5->1.6とアップデートしたよ！</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (9)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (10)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 

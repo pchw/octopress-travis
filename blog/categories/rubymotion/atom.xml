@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-05-29T01:23:59+09:00</updated>
+  <updated>2012-05-29T08:27:27+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,50 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotion1.7出てます]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/29/17/"/>
+    <updated>2012-05-29T08:14:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/29/17</id>
+    <content type="html"><![CDATA[<p>RubyMotion 1.7が出てました．</p>
+
+<pre><code>$ sudo motion update
+</code></pre>
+
+<p>しましょう！</p>
+
+<p>ところで，RubyMotion がアップデートされたかどうかを素早く知る方法ってないんですかね．</p>
+
+<pre><code>= RubyMotion 1.7 =
+
+  * Fixed a bug in the compiler where the proper signature would not be used
+    when defining informal protocol methods with CF types as arguments.
+  * Fixed iOS constants to be looked up at demand (when being used) and not
+    when the app starts, because certain constants are not set until a certain
+    API is called (ex: the kAB... constants of the AddressBook framework).
+    This change should also speed up a little bit the app starting time.
+  * Fixed a bug in the compiler where very long selectors would be truncated
+    and causing exceptions later at runtime.
+  * Fixed a bug in the compiler where memory-related selectors (alloc, dealloc,
+    retain, release, etc.) could not be defined in Ruby.
+  * Fixed a bug in the compiler where NSObject instance methods could not be
+    called on classes (ex. MyClass.performSelector(...)).
+  * Fixed a bug in the build system where vendored 3rd-party APIs dealing with
+    types defined in iOS headers could not be used (ex: enums or structs).
+</code></pre>
+
+<ul>
+<li>非公式プロトコルでCFタイプを引数にとった時に正しいシグネチャを吐かないことの修正</li>
+<li>アプリ開始時のiOS定数発見の部分を修正．この影響でアプリ開始時間がちょっと早くなる．</li>
+<li>超長いセレクタが途中で切れて実行時エラーになる問題の修正</li>
+<li>メモリ関係（allocとかreleaseとか）がRubyで定義出来なかったのを修正．</li>
+<li>NSObjectのインスタンスメソッドをクラスから呼べなかった問題を修正</li>
+<li>外部ベンダのライブラリを読み込むやつでiOSヘッダに定義されたenumとかstructsが使われなかった問題を修正</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[RubyMotion]Routableを使ってみた]]></title>
@@ -321,137 +365,6 @@ RubyMotionSublimeCompletions
 <li>REPLに空を渡した時にクラッシュする不具合の修正</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[RubyMotionでGCDを使う]]></title>
-    <link href="http://pchw.github.com/blog/2012/05/22/gcd/"/>
-    <updated>2012-05-22T22:35:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/05/22/gcd</id>
-    <content type="html"><![CDATA[<p><img src="https://lh6.googleusercontent.com/-nEOFLDxo0SE/T7cKmnkUM3I/AAAAAAAAAac/F_9TagXzXTE/s300/gcd.png" alt="GCD" /></p>
-
-<p>今日はRubyMotionでGCD(Grand Central Dispatch)を使う話です．</p>
-
-<h2>GCD とは</h2>
-
-<p>GCDというのは，</p>
-
-<blockquote><p>非常に効率的なシステム機能と使い勝手のよいプログラミングモデルを併用して，マルチプロセッサを最大限に活用するために必要なコードを徹底的に簡素化</p></blockquote>
-
-<p>するものらしいです
-（AppleのGrand Central Dispatchの説明より）</p>
-
-<p>UITableViewとかそういうのはMainThreadでちょっと重い処理をすると，すぐにパフォーマンスが悪くなってなんだこのアプリ糞だな！とか言われるので，そういう時には別Threadを立ててMainThreadの処理を邪魔しないように処理を行う必要があります．
-それを楽にしてくれるのがGCD．</p>
-
-<h2>Objective-C</h2>
-
-<p>Obj-Cのコードだと，</p>
-
-<pre><code>dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-dispatch_async(queue, ^{
-    // 処理
-});
-</code></pre>
-
-<p>こんな感じになります．</p>
-
-<h2>RubyMotion</h2>
-
-<p>RubyMotionでは，GCD関連は<code>Dispatch</code>クラスを使います．</p>
-
-<p><a href="http://www.rubymotion.com/developer-center/guides/runtime/#_grand_central_dispatch">RubyMotion Runtime Guid</a> にも書いてます．</p>
-
-<p>上で書いたObj-CのコードをRubyMotionで書きなおすと，</p>
-
-<pre><code>Dispatch::Queue.concurrent.async{
-    # 処理
-}
-</code></pre>
-
-<p>こうなります．超簡単．</p>
-
-<h2>UIの更新に関して</h2>
-
-<p>さて，実際にはConcurrent Dispatch Queueで時間のかかる処理を行い，
-処理を行った結果をUIに反映させることがよくあります．
-その場合に直接UIへ値を代入とかすると落ちます．
-UIはMainThreadから更新しなければなりません．
-その場合は，</p>
-
-<pre><code>Dispatch::Queue.concurrent.async{
-    # 処理
-    Dispatch::Queue.main.async{
-        #UI更新
-    }
-}
-</code></pre>
-
-<p>このように<code>Dispatch::Queue.main</code>でMain Dispatch Queueに更新処理を入れることで実現できます．</p>
-
-<h2>実戦</h2>
-
-<p>実際に少し書いてみます．</p>
-
-<pre><code>$ motion create gcd
-$ cd gcd
-</code></pre>
-
-<h3>app/app_delegate.rb</h3>
-
-<pre><code>class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.bounds
-    @window.rootViewController = NSBundle.mainBundle.loadNibNamed(
-        'RootViewController', 
-        owner: self,
-        options: nil).first
-    @window.rootViewController.wantsFullScreenLayout = true
-    @window.makeKeyAndVisible
-    true
-  end
-end
-</code></pre>
-
-<h3>InterfaceBuilder</h3>
-
-<p><code>resouces/RootViewController.xib</code> という形でUIButton(Tag 2)，UILabel(Tag 1)を追加しておいて下さい．
-（参考：<a href="http://pochixpochi.blogspot.jp/2012/05/rubymotion-interfacebuilder.html">[RUBYMOTION] INTERFACEBUILDERと合わせて使って楽をしよう</a>）</p>
-
-<h3>app/root_view_controller.rb</h3>
-
-<pre><code>class RootViewController &lt; UIViewController
-    def viewDidLoad
-        @label = view.viewWithTag 1
-        @button = view.viewWithTag 2
-        @button.addTarget(
-            self,
-            action: 'onClicked:',
-            forControlEvents:UIControlEventTouchUpInside)
-    end
-
-    def onClicked(sender)
-        p "onClicked"
-
-        Dispatch::Queue.concurrent.async {
-            NSThread.sleepForTimeInterval 5
-            Dispatch::Queue.main.async {
-                @label.text = ["hoge", "fuga", "moge"].sample
-            }
-        }
-    end
-end
-</code></pre>
-
-<h3>実行</h3>
-
-<pre><code>$ rake
-</code></pre>
-
-<p>シミュレータが立ち上がり，Buttonを押すとLabelの文字列がちょっと待ったあとに変わります．
-連打すると次々変わると思います．
-その間Buttonが押せないとかそういうことが起こらないのが分かると思います．</p>
 ]]></content>
   </entry>
   
