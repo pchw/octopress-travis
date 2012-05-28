@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-05-28T22:51:24+09:00</updated>
+  <updated>2012-05-29T01:23:59+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -223,6 +223,43 @@ repl(delegate)
   </entry>
   
   <entry>
+    <title type="html"><![CDATA[Sublime Text 2でRubyMotionの補完が出来るようになったぞおおおお]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/27/st2/"/>
+    <updated>2012-05-27T10:04:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/27/st2</id>
+    <content type="html"><![CDATA[<p><img src="/images/st2.png" alt="catch" /></p>
+
+<p>ついに来ました！</p>
+
+<p>いままで，RubyMotionを書いていて補完が効くのはVimとredcarとTextMateだけでした！
+ところが，RubyMotionのフォーラムに「[RubyMotion] Sublime Text 2 Support」という質問が投げかけられ，ついに今日そのパッケージが登場しました！</p>
+
+<p><a href="https://github.com/diemer/RubyMotionSublimeCompletions">RubyMotionSublimeCompletions</a></p>
+
+<p>インストール方法は簡単で，</p>
+
+<pre><code>$ cd ~/Library/Application Support/Sublime Text 2/Packages
+$ git clone git://github.com/diemer/RubyMotionSublimeCompletions.git
+</code></pre>
+
+<p>してSublime Text2を再起動すればOKです．</p>
+
+<p>PackageControlを導入している人なら，</p>
+
+<pre><code>Cmd+Shift+p
+Package Control: Add Repository
+https://github.com/diemer/RubyMotionSublimeCompletions
+Package Control: Install Package
+RubyMotionSublimeCompletions
+</code></pre>
+
+<p>でインストール出来るはずです．</p>
+
+<p>後は，普通にエディタを起動して<code>UIApp</code>とか打てば，補完に<code>UIApplication</code>とか<code>UIAppearance</code>とか出るようになります！</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[RubyMotionが1.4->1.5->1.6とアップデートしたよ！]]></title>
     <link href="http://pchw.github.com/blog/2012/05/23/update/"/>
     <updated>2012-05-23T01:03:00+09:00</updated>
@@ -415,96 +452,6 @@ end
 <p>シミュレータが立ち上がり，Buttonを押すとLabelの文字列がちょっと待ったあとに変わります．
 連打すると次々変わると思います．
 その間Buttonが押せないとかそういうことが起こらないのが分かると思います．</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Storyboardを使ってRubyMotionで開発する方法]]></title>
-    <link href="http://pchw.github.com/blog/2012/05/22/storyboard/"/>
-    <updated>2012-05-22T21:53:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/05/22/storyboard</id>
-    <content type="html"><![CDATA[<p><img src="https://lh6.googleusercontent.com/-ptxn4wJhqOc/T69nu2xHtLI/AAAAAAAAAYY/JKxXu3OAsYE/B6AD8776-C7D5-4F4A-A9AA-A8143868D413.jpg" alt="" /></p>
-
-<p>RubyMotionでもStoryBoardが使えるらしいので，試してみた．</p>
-
-<h1>ひな形作成</h1>
-
-<pre><code>$ motion create SB
-$ cd SB
-</code></pre>
-
-<h1>XcodeでStoryboardを作成</h1>
-
-<p>おもむろにXCodeを開きます．</p>
-
-<p><code>File&gt;New&gt;File</code>で<code>iOS&gt;User Interface&gt;Storyboard</code>を選びます．
-<img src="https://lh4.googleusercontent.com/-mLcH1PENo2w/T69nyXr7yTI/AAAAAAAAAY4/RT_Q6EIAjIY/6335FCDB-E334-486F-9A97-C62A4212F9CE.jpg" alt="" /></p>
-
-<h2>初めに表示されるViewControllerを作成</h2>
-
-<p>UIViewController設置．
-<img src="https://lh4.googleusercontent.com/-A3bJEOrvzrE/T69n2eaXo3I/AAAAAAAAAZM/gMeA45JyTv4/C59A9802-25A6-4A66-B8B7-F247989BD60B.jpg" alt="" /></p>
-
-<p>Identifierを<code>First</code>とか付けます．
-<img src="https://lh6.googleusercontent.com/-m0viQeqlxi8/T69nv3v32qI/AAAAAAAAAYg/RR6q5pe4rRg/655CD9E6-3C77-4930-95CD-D71E1CCEAFD1.jpg" alt="" /></p>
-
-<p>UILabelとUIButtonを追加します．</p>
-
-<h2>Segueで遷移する先のViewControllerを作成</h2>
-
-<p>もう一つUIViewController設置．
-<img src="https://lh5.googleusercontent.com/-pzw1VqoabCw/T69n3leryQI/AAAAAAAAAZY/wpds7icQfMk/3D867F91-1A11-442A-9E71-EE5F0475A81C.jpg" alt="" /></p>
-
-<p>Identifierを<code>Second</code>とか付けときます．</p>
-
-<h2>Segueの設定</h2>
-
-<p><code>First</code>に配置したButtonを，Ctrlを押しながら引っ張って<code>Second</code>のViewControllerへ繋ぎます．
-Storyboard Seguesの設定が出るので，<code>Modal</code>とかを選ぶ．
-<img src="https://lh3.googleusercontent.com/-XX9-8SPsWAg/T69n1E6_nlI/AAAAAAAAAZI/R9xnsie7vnE/26CE3AAA-C5FE-4209-9C35-AF20533C15B3.jpg" alt="" /></p>
-
-<p><img src="https://lh5.googleusercontent.com/-7zTj7o1d3dQ/T69nwxc2G2I/AAAAAAAAAYk/eEjmStwoOlA/78C994F8-EFE6-4643-93FD-1D8F1EBB5050.jpg" alt="" /></p>
-
-<h2>Storyboardの保存</h2>
-
-<p><code>Cmd+s</code>でStoryboardを<code>resources/Storyboard.storyboard</code>とか名前を付けて保存します．</p>
-
-<h1>storyboardのコンパイル</h1>
-
-<pre><code>$ ibtool --compile resources/Storyboard.storyboardc resources/Storyboard.storyboard
-</code></pre>
-
-<h1>コーディング</h1>
-
-<p><code>app/app_delegate.rb</code>を書く．
-Storyboardからロードします．</p>
-
-<pre><code>class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    @sb = UIStoryboard.storyboardWithName('Storyboard', bundle: nil)
-    rvc = @sb.instantiateViewControllerWithIdentifier("First")
-    @window.rootViewController = rvc
-    @window.rootViewController.wantsFullScreenLayout = true
-    @window.makeKeyAndVisible
-    true
-  end
-end
-</code></pre>
-
-<p>ちなみに，Buttonの動作を変えたい場合などは，<code>First</code>と付けたUIViewControllerをCustom Classに変更してUIViewControllerを継承したクラスを作成して，<code>prepareForSegue:sender:</code>で遷移前に処理を行うとか，UIButtonの<code>addTarget:sender</code>とかにselectorを登録して処理を行うとかします．</p>
-
-<h1>コンパイルして実行</h1>
-
-<pre><code>  $rake
-</code></pre>
-
-<p>とすれば，Simulatorが立ち上がります．
-設置したButtonを押せばSecondのViewへ切り替わります．</p>
-
-<p><img src="https://lh4.googleusercontent.com/-XyNt1C6cfKo/T69nxjkqNrI/AAAAAAAAAYs/V4i7HQ9rDV8/8619164C-B90D-4D8F-913F-ED11086D700A.jpg" alt="" /></p>
-
-<p><img src="https://lh5.googleusercontent.com/-4ugWozivZrg/T69nziIvs3I/AAAAAAAAAZA/HYZfkyB-WEQ/22854A71-7125-43CF-802C-7630629537F5.jpg" alt="" /></p>
 ]]></content>
   </entry>
   

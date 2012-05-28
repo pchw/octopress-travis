@@ -252,6 +252,29 @@ end
 <aside class="sidebar">
   
     <section>
+  <h1>About Me</h1>
+  <p><img src="/images/pMac.png"/></p>
+  <p>ぽち</p>
+  <p>iPhoneアプリとかWebサービスとか作ってます．</p>
+</section>
+
+<section>
+  <h1>Twitter</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("pchw", 0, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/pchw" class="twitter-follow-button" data-show-count="false">Follow @pchw</a>
+  
+</section>
+
+<section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
     
@@ -277,22 +300,9 @@ end
     
   </ul>
 </section>
-
-
 <section>
-  <h1>Latest Tweets</h1>
-  <ul id="tweets">
-    <li class="loading">Status updating...</li>
-  </ul>
-  <script type="text/javascript">
-    $.domReady(function(){
-      getTwitterFeed("pchw", 0, false);
-    });
-  </script>
-  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
-  
-    <a href="http://twitter.com/pchw" class="twitter-follow-button" data-show-count="false">Follow @pchw</a>
-  
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (9)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 
