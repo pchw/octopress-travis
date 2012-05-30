@@ -4,7 +4,7 @@
   <title><![CDATA[ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-05-30T20:51:43+09:00</updated>
+  <updated>2012-05-30T21:05:15+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,37 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotion 1.8 リリースされてますね]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/30/18/"/>
+    <updated>2012-05-30T20:52:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/30/18</id>
+    <content type="html"><![CDATA[<p>リリース周期はやい！もう1.8が出てます．</p>
+
+<pre><code>$ sudo motion update 
+</code></pre>
+
+<p>しましょう！今回は修正が少なめです．</p>
+
+<pre><code>= RubyMotion 1.8 =
+
+  * Fixed a bug in the generation of BridgeSupport files for multiple headers
+    directories.
+  * When building vendored projects, unset environment variables that could
+    potentially make the build to fail.
+    https://github.com/HipByte/motion-cocoapods/issues/12
+</code></pre>
+
+<ul>
+<li>複数のヘッダディレクトリを指定したときのBridgeSupportファイル生成のとこのバグ修正</li>
+<li>ベンダープロジェクトをビルドするときに環境変数CCが設定されてない時にビルド失敗する問題の修正．</li>
+</ul>
+
+
+<p>いつも誰かがRubyMotionの新しいバージョン出たって言ってるの見てアップデートしてるのが分かるんだけど，言ってる人はどうやって新しいバージョンが出たって知るんだろう？毎日<code>motion update</code>とかしてるのかな．</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[レビュー] DotTouchというiPhone/iPadアプリを使ってみたよ！]]></title>

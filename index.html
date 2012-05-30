@@ -9,7 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="今日はDotTouchというドット絵を描くiPhoneアプリの紹介です． DotTouchSTUDIO SHINジャンル： ユーティリティ - エンターテインメントリリース日： 2009-10-15価格： 350円 posted with sticky on 2012.5.29 ">
+  <meta name="description" content="リリース周期はやい！もう1.8が出てます． $ sudo motion update しましょう！今回は修正が少なめです． = RubyMotion 1.8 = * Fixed a bug in the generation of BridgeSupport files for multiple &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,64 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/30/18/">RubyMotion 1.8 リリースされてますね</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-30T20:52:00+09:00" pubdate data-updated="true">May 30<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>リリース周期はやい！もう1.8が出てます．</p>
+
+<pre><code>$ sudo motion update 
+</code></pre>
+
+<p>しましょう！今回は修正が少なめです．</p>
+
+<pre><code>= RubyMotion 1.8 =
+
+  * Fixed a bug in the generation of BridgeSupport files for multiple headers
+    directories.
+  * When building vendored projects, unset environment variables that could
+    potentially make the build to fail.
+    https://github.com/HipByte/motion-cocoapods/issues/12
+</code></pre>
+
+<ul>
+<li>複数のヘッダディレクトリを指定したときのBridgeSupportファイル生成のとこのバグ修正</li>
+<li>ベンダープロジェクトをビルドするときに環境変数CCが設定されてない時にビルド失敗する問題の修正．</li>
+</ul>
+
+
+<p>いつも誰かがRubyMotionの新しいバージョン出たって言ってるの見てアップデートしてるのが分かるんだけど，言ってる人はどうやって新しいバージョンが出たって知るんだろう？毎日<code>motion update</code>とかしてるのかな．</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -987,138 +1045,6 @@ end
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/22/ib/">[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-22T21:53:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><img src="https://lh4.googleusercontent.com/-_NT2-Tz_5I4/T6vRbwXZyHI/AAAAAAAAAXM/nYYnYrq0AWQ/8B0A2DB1-E3D7-4847-A0EF-006C171E8B43.jpg" alt="catch" /></p>
-
-<p>RubyMotionはいいんだけど，UIをコードで作るのはめんどくさい．
-そのため，InterfaceBuilderで作りたい．</p>
-
-<p>RubyMotionの進化が早くて，もう1.3のアップデートが来てます．
-このエントリーは1.3にアップデートしてからやってね．</p>
-
-<pre><code>$ sudo motion update
-</code></pre>
-
-<p>やってみます．まずはひな形作成．</p>
-
-<pre><code>$ motion create IB
-$ cd IB
-</code></pre>
-
-<p><code>app/app_delegate.rb</code> を編集します．</p>
-
-<pre><code>class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    @window.rootViewController = NSBundle.mainBundle.loadNibNamed(
-        'MyView', 
-        owner: self,
-        options: nil).first
-    @window.rootViewController.wantsFullScreenLayout = true
-    @window.makeKeyAndVisible
-    true
-  end
-end
-</code></pre>
-
-<p>こんな感じで，MyViewっていうNibを読み込んでやることにします．</p>
-
-<p>おもむろにXCodeをたちあげて，（すでに開いている人は開いてるProjectを閉じろ！）File>New>File(Cmd + N)を選んで新規ファイル作成する．
-iOSのUser InterfaceのEmptyを選んで，<code>resources/MyView.xib</code>として保存する．</p>
-
-<p>このままだと，ただの方眼紙なので，オブジェクトを追加していきます．</p>
-
-<p>ObjectLibrary(Cmd+Shift+Alt+3)からViewControllerを追加．</p>
-
-<p><img src="https://lh4.googleusercontent.com/-NJi7vxGoKU0/T6vRejaSSwI/AAAAAAAAAXk/NANN6sYn43s/75A106D3-E836-4771-A3B2-23F0711E9F75.jpg" alt="viewcontroller" /></p>
-
-<p>CustomClassの所で，<code>MyViewController</code>とする．</p>
-
-<p><img src="https://lh6.googleusercontent.com/-9WOU446JvMM/T6vRZBfeFOI/AAAAAAAAAW8/8EttpBF8QbM/C3CE5E58-2F05-48FB-8EAF-0E8C400B86CE.jpg" alt="" /></p>
-
-<p>ObjectLibraryからViewを追加．</p>
-
-<p><img src="https://lh5.googleusercontent.com/-F13DxPSNxEw/T6vRczq6fNI/AAAAAAAAAXQ/ZhLWZFvZ8HI/62F0D7FB-D117-4FED-8CBC-65AEC3ECC194.jpg" alt="" /></p>
-
-<p>ObjectLibraryからButtonとLabelを追加．</p>
-
-<p><img src="https://lh3.googleusercontent.com/-lXNWDyg3b3s/T6vRYFzTWvI/AAAAAAAAAW0/7MpGkaUa3a4/386D9AF1-8520-41B6-975D-02D2D80A777A.jpg" alt="" /></p>
-
-<p>この部分が重要で、それぞれのTagに1とか2とかつけます</p>
-
-<p><img src="https://lh6.googleusercontent.com/-Ror1NoaBxkM/T6vRfzELJRI/AAAAAAAAAXs/iQi_iMXKNh8/40DC78B0-948E-4DCE-804F-EC366856DC31.jpg" alt="" /></p>
-
-<p>保存して終了．</p>
-
-<p>次に<code>app/my_view_controller.rb</code>を作成します．</p>
-
-<pre><code>class MyViewController &lt; UIViewController
-    def viewDidLoad
-        @button = view.viewWithTag 1
-        @label = view.viewWithTag 2
-        @button.addTarget(
-        self, 
-        action:'onClicked', 
-        forControlEvents:UIControlEventTouchUpInside)
-end
-
-def onClicked
-    @label.text = "Clicked"
-end
-end
-</code></pre>
-
-<p>1のTagを付けたのをbuttonとして，クリックのイベントをonClickedメソッドに登録．
-2のTagを付けたのをlabelとして，クリックされた時に変更したりするようにしました．</p>
-
-<pre><code>$ rake
-</code></pre>
-
-<p>でビルドしてシミュレータが立ち上がります．</p>
-
-<p><img src="https://lh6.googleusercontent.com/-O4MoAszjcnA/T6vRaVj5WmI/AAAAAAAAAXE/rptfrEs0b9A/624D2637-6D50-4DF1-9001-C0505A3B0B25.jpg" alt="" /></p>
-
-<p>押します．</p>
-
-<p>変わります！</p>
-
-<p><img src="https://lh5.googleusercontent.com/-3DmRBCOWUjs/T6vRdl7j0xI/AAAAAAAAAXY/5cnHlb61Lbw/658F46A6-8C07-485C-A589-6E32327BD13F.jpg" alt="" /></p>
-
-<p>出来ました！</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1157,6 +1083,10 @@ end
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/05/30/18/">RubyMotion 1.8 リリースされてますね</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/05/29/dottouch/">[レビュー] DotTouchというiPhone/iPadアプリを使ってみたよ！</a>
       </li>
     
@@ -1172,15 +1102,11 @@ end
         <a href="/blog/2012/05/27/live/">[RubyMotion]motion-liveを使ってみよう</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/05/27/st2/">Sublime Text 2でRubyMotionの補完が出来るようになったぞおおおお</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (10)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (11)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 
