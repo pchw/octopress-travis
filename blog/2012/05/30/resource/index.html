@@ -5,14 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>[rubymotion] rake specをカラフルにしよう！ - ぽっちぽちにしてやんよ</title>
+  <title>RubyMotionでリソース読み込み - ぽっちぽちにしてやんよ</title>
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="RubyMotionはBaconというテストフレームワークを使っています．
-RSpecとの違いがよく分からない． $ rake spec とやると，spec以下のテストが実行されるっぽいです． ところが，普通に $ motion crate redgreen
-$ cd redgreen
-$ &hellip;">
+  <meta name="description" content="すごく初歩的なところだけども，RubyMotionで画像やテキストのリソースを.appの中にプリセット保持して使う方法です． 色々と試すときに画像やテキストを使いたい事が多くて，備忘録的に書いておきます． まず，.app内にリソースを保持するには，/resourcesに入れておけばOKです． &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +18,7 @@ $ &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/22/spec">
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/30/resource">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -83,7 +80,7 @@ $ &hellip;">
   
   <header>
     
-      <h1 class="entry-title">[Rubymotion] Rake Specをカラフルにしよう！</h1>
+      <h1 class="entry-title">RubyMotionでリソース読み込み</h1>
     
     
       <p class="meta">
@@ -99,80 +96,39 @@ $ &hellip;">
   
 
 
-<time datetime="2012-05-22T21:52:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
+<time datetime="2012-05-30T23:37:00+09:00" pubdate data-updated="true">May 30<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p><img src="https://lh3.googleusercontent.com/-i-36UEH1H1s/T6_Myv_1m1I/AAAAAAAAAZk/-jGU9jUlXSU/F45FE6D0-B302-438F-ABBE-3E67018268CD.jpg" alt="" /></p>
+<div class="entry-content"><p>すごく初歩的なところだけども，RubyMotionで画像やテキストのリソースを<code>.app</code>の中にプリセット保持して使う方法です．</p>
 
-<p>RubyMotionはBaconというテストフレームワークを使っています．
-RSpecとの違いがよく分からない．</p>
+<p>色々と試すときに画像やテキストを使いたい事が多くて，備忘録的に書いておきます．</p>
 
-<pre><code>$ rake spec
+<p>まず，<code>.app</code>内にリソースを保持するには，<code>/resources</code>に入れておけばOKです．</p>
+
+<p>あとは読み出しですが，画像の場合はすごく簡単で，</p>
+
+<pre><code>UIImage.imageNamed "hoge.png"
 </code></pre>
 
-<p>とやると，<code>spec</code>以下のテストが実行されるっぽいです．</p>
+<p>とかすれば，<code>/resources/hoge.png</code> が読み出されます．</p>
 
-<p>ところが，普通に</p>
+<p>テキストとかHTMLファイルとかは，</p>
 
-<pre><code>$ motion crate redgreen
-$ cd redgreen
-$ rake spec
+<pre><code>path = NSBundle.mainBundle.resourcePath.stringByAppendingPathComponent "test.txt"
+str = NSString.stringWithContentsOfFile path
 </code></pre>
 
-<p>とやると，ビルドされてシミュレータが立ち上がりテストが実行されますが，白黒です．</p>
+<p>とかすれば<code>NSString</code>で取得できます．</p>
 
-<p><img src="https://lh4.googleusercontent.com/-MaF986VQLXQ/T6_MzjUWnKI/AAAAAAAAAZs/0kTlIiLoETE/25518394-DF4D-4FC5-A0AD-FC1AAB8C3DCE.jpg" alt="" /></p>
+<p><code>NSBundle.mainBundle.resourcePath</code>で<code>/resources</code>に当たる場所のPathが取得できるので，あとは好きにすればOKということですね．</p>
 
-<p>そこで，<code>spec</code>フォルダで一番初めに読み込まれる .rbの中でカラー表示にさせるスクリプトを実行させれば，カラー表示になるようです．
-（そのため， <code>00***.rb</code>のような名前にすれば良いようです．）</p>
+<p>簡単なサンプルを書いといたので，置いときます．</p>
 
-<p>RedGreenというrake specをカラフルにするライブラリがあるらしいのですが，それをRubyMotion用にアレンジしたものがgithubで公開されています．</p>
-
-<p><a href="https://github.com/mdks/rm-redgreen">rm-redgreen</a></p>
-
-<p>spec/00-redgreen.rb
-app/app.rb
-app/kernel.rb
-app/rm-ansiterm.rb
-app/string.rb
-を自分のとこに持ってくれば使えます．</p>
-
-<p>先程の<code>motion create</code>しただけのやつにコピーして再度テストをすると，このようになります．</p>
-
-<p>カラフルになりましたね．</p>
-
-<p><img src="https://lh5.googleusercontent.com/-2YNpuBaKr6E/T6_M3QeAYUI/AAAAAAAAAaM/h5NFJ1YEO2g/8C43CDC6-042C-4899-9532-BDD6890057ED.jpg" alt="" /></p>
-
-<p>デフォルトのテストはWindowがあるのを調べるテストなので，実装を書いてGreenにしましょう．</p>
-
-<p><code>./app/app_delegate.rb</code></p>
-
-<pre><code>class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    true
-  end
-end
-</code></pre>
-
-<p>テストを再実行します．</p>
-
-<pre><code>$ rake spec
-</code></pre>
-
-<p>Greenになりました．</p>
-
-<p><img src="https://lh6.googleusercontent.com/-qQcnS4YpH98/T6_M2qdo6qI/AAAAAAAAAaE/NvQU_ZKe9qc/D3BC7FB7-D043-4EA1-AB2F-DB837A7632FA.jpg" alt="" /></p>
-
-<p><code>./spec/00-redgreen.rb</code>の<code>style = :focused</code>となっている部分を<code>style = :full</code>とすると長めのログが出ます．</p>
-
-<p><img src="https://lh4.googleusercontent.com/-iXVNZArvvxU/T6_M0ixSIsI/AAAAAAAAAZ0/f3_Irg2MqM8/CCDD4D42-D3EB-405B-BA59-9BED5C685ECD.jpg" alt="" /></p>
-
-<p><img src="https://lh6.googleusercontent.com/-ImTqn7jZiR8/T6_M11kTpsI/AAAAAAAAAZ8/-fVYGOMWifM/8A8B0EBF-3173-486C-AD54-EE1BAAB49511.jpg" alt="" /></p>
+<p><a href="https://github.com/pchw/rm-resource-sample">画像とテキストを読みだしてUILabelとUIImageViewに貼り付けるサンプル</a></p>
 </div>
 
 
@@ -195,7 +151,7 @@ end
   
 
 
-<time datetime="2012-05-22T21:52:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
+<time datetime="2012-05-30T23:37:00+09:00" pubdate data-updated="true">May 30<span>th</span>, 2012</time>
       
 
 <span class="categories">
@@ -208,9 +164,9 @@ end
     </p>
     
       <div class="sharing">
-  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/22/spec/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/30/resource/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/22/spec/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/22/spec/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/30/resource/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/30/resource/" >Tweet</a>
   
   
   
@@ -219,10 +175,8 @@ end
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/05/21/pointer/" title="Previous Post: [RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか">&laquo; [RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか</a>
+        <a class="basic-alignment left" href="/blog/2012/05/30/18/" title="Previous Post: RubyMotion 1.8 リリースされてますね">&laquo; RubyMotion 1.8 リリースされてますね</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/05/22/ib/" title="Next Post: [RubyMotion] InterfaceBuilderと合わせて使って楽をしよう">[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう &raquo;</a>
       
     </p>
   </footer>
@@ -315,8 +269,8 @@ end
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/22/spec/';
-        var disqus_url = 'http://pchw.github.com/blog/2012/05/22/spec/';
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/30/resource/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/05/30/resource/';
         var disqus_script = 'embed.js';
       
     (function () {

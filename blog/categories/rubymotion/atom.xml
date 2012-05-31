@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-05-30T21:05:15+09:00</updated>
+  <updated>2012-05-30T23:47:12+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,40 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotionでリソース読み込み]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/30/resource/"/>
+    <updated>2012-05-30T23:37:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/30/resource</id>
+    <content type="html"><![CDATA[<p>すごく初歩的なところだけども，RubyMotionで画像やテキストのリソースを<code>.app</code>の中にプリセット保持して使う方法です．</p>
+
+<p>色々と試すときに画像やテキストを使いたい事が多くて，備忘録的に書いておきます．</p>
+
+<p>まず，<code>.app</code>内にリソースを保持するには，<code>/resources</code>に入れておけばOKです．</p>
+
+<p>あとは読み出しですが，画像の場合はすごく簡単で，</p>
+
+<pre><code>UIImage.imageNamed "hoge.png"
+</code></pre>
+
+<p>とかすれば，<code>/resources/hoge.png</code> が読み出されます．</p>
+
+<p>テキストとかHTMLファイルとかは，</p>
+
+<pre><code>path = NSBundle.mainBundle.resourcePath.stringByAppendingPathComponent "test.txt"
+str = NSString.stringWithContentsOfFile path
+</code></pre>
+
+<p>とかすれば<code>NSString</code>で取得できます．</p>
+
+<p><code>NSBundle.mainBundle.resourcePath</code>で<code>/resources</code>に当たる場所のPathが取得できるので，あとは好きにすればOKということですね．</p>
+
+<p>簡単なサンプルを書いといたので，置いときます．</p>
+
+<p><a href="https://github.com/pchw/rm-resource-sample">画像とテキストを読みだしてUILabelとUIImageViewに貼り付けるサンプル</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[RubyMotion 1.8 リリースされてますね]]></title>
@@ -294,43 +328,6 @@ repl(delegate)
 <p>みたいなのを書く時でも，すごい楽なわけです．</p>
 
 <p>セットアップも有効にするのもRakefileに1行追加ですし，簡単で積極的に使って行きたいですね！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Sublime Text 2でRubyMotionの補完が出来るようになったぞおおおお]]></title>
-    <link href="http://pchw.github.com/blog/2012/05/27/st2/"/>
-    <updated>2012-05-27T10:04:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/05/27/st2</id>
-    <content type="html"><![CDATA[<p><img src="/images/st2.png" alt="catch" /></p>
-
-<p>ついに来ました！</p>
-
-<p>いままで，RubyMotionを書いていて補完が効くのはVimとredcarとTextMateだけでした！
-ところが，RubyMotionのフォーラムに「[RubyMotion] Sublime Text 2 Support」という質問が投げかけられ，ついに今日そのパッケージが登場しました！</p>
-
-<p><a href="https://github.com/diemer/RubyMotionSublimeCompletions">RubyMotionSublimeCompletions</a></p>
-
-<p>インストール方法は簡単で，</p>
-
-<pre><code>$ cd ~/Library/Application Support/Sublime Text 2/Packages
-$ git clone git://github.com/diemer/RubyMotionSublimeCompletions.git
-</code></pre>
-
-<p>してSublime Text2を再起動すればOKです．</p>
-
-<p>PackageControlを導入している人なら，</p>
-
-<pre><code>Cmd+Shift+p
-Package Control: Add Repository
-https://github.com/diemer/RubyMotionSublimeCompletions
-Package Control: Install Package
-RubyMotionSublimeCompletions
-</code></pre>
-
-<p>でインストール出来るはずです．</p>
-
-<p>後は，普通にエディタを起動して<code>UIApp</code>とか打てば，補完に<code>UIApplication</code>とか<code>UIAppearance</code>とか出るようになります！</p>
 ]]></content>
   </entry>
   
