@@ -9,8 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="RubyMotionでもStoryBoardが使えるらしいので，試してみた． ひな形作成 $ motion create SB
-$ cd SB XcodeでStoryboardを作成 おもむろにXCodeを開きます． File&gt;New&gt;FileでiOS&gt;User &hellip;">
+  <meta name="description" content="今日はRubyMotionでGCD(Grand Central Dispatch)を使う話です． GCD とは GCDというのは， 非常に効率的なシステム機能と使い勝手のよいプログラミングモデルを併用して，マルチプロセッサを最大限に活用するために必要なコードを徹底的に簡素化 するものらしいです &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -78,6 +77,164 @@ $ cd SB XcodeでStoryboardを作成 おもむろにXCodeを開きます． File&
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/22/gcd/">RubyMotionでGCDを使う</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-22T22:35:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><img src="https://lh6.googleusercontent.com/-nEOFLDxo0SE/T7cKmnkUM3I/AAAAAAAAAac/F_9TagXzXTE/s300/gcd.png" alt="GCD" /></p>
+
+<p>今日はRubyMotionでGCD(Grand Central Dispatch)を使う話です．</p>
+
+<h2>GCD とは</h2>
+
+<p>GCDというのは，</p>
+
+<blockquote><p>非常に効率的なシステム機能と使い勝手のよいプログラミングモデルを併用して，マルチプロセッサを最大限に活用するために必要なコードを徹底的に簡素化</p></blockquote>
+
+<p>するものらしいです
+（AppleのGrand Central Dispatchの説明より）</p>
+
+<p>UITableViewとかそういうのはMainThreadでちょっと重い処理をすると，すぐにパフォーマンスが悪くなってなんだこのアプリ糞だな！とか言われるので，そういう時には別Threadを立ててMainThreadの処理を邪魔しないように処理を行う必要があります．
+それを楽にしてくれるのがGCD．</p>
+
+<h2>Objective-C</h2>
+
+<p>Obj-Cのコードだと，</p>
+
+<pre><code>dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+dispatch_async(queue, ^{
+    // 処理
+});
+</code></pre>
+
+<p>こんな感じになります．</p>
+
+<h2>RubyMotion</h2>
+
+<p>RubyMotionでは，GCD関連は<code>Dispatch</code>クラスを使います．</p>
+
+<p><a href="http://www.rubymotion.com/developer-center/guides/runtime/#_grand_central_dispatch">RubyMotion Runtime Guid</a> にも書いてます．</p>
+
+<p>上で書いたObj-CのコードをRubyMotionで書きなおすと，</p>
+
+<pre><code>Dispatch::Queue.concurrent.async{
+    # 処理
+}
+</code></pre>
+
+<p>こうなります．超簡単．</p>
+
+<h2>UIの更新に関して</h2>
+
+<p>さて，実際にはConcurrent Dispatch Queueで時間のかかる処理を行い，
+処理を行った結果をUIに反映させることがよくあります．
+その場合に直接UIへ値を代入とかすると落ちます．
+UIはMainThreadから更新しなければなりません．
+その場合は，</p>
+
+<pre><code>Dispatch::Queue.concurrent.async{
+    # 処理
+    Dispatch::Queue.main.async{
+        #UI更新
+    }
+}
+</code></pre>
+
+<p>このように<code>Dispatch::Queue.main</code>でMain Dispatch Queueに更新処理を入れることで実現できます．</p>
+
+<h2>実戦</h2>
+
+<p>実際に少し書いてみます．</p>
+
+<pre><code>$ motion create gcd
+$ cd gcd
+</code></pre>
+
+<h3>app/app_delegate.rb</h3>
+
+<pre><code>class AppDelegate
+  def application(application, didFinishLaunchingWithOptions:launchOptions)
+    @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.bounds
+    @window.rootViewController = NSBundle.mainBundle.loadNibNamed(
+        'RootViewController', 
+        owner: self,
+        options: nil).first
+    @window.rootViewController.wantsFullScreenLayout = true
+    @window.makeKeyAndVisible
+    true
+  end
+end
+</code></pre>
+
+<h3>InterfaceBuilder</h3>
+
+<p><code>resouces/RootViewController.xib</code> という形でUIButton(Tag 2)，UILabel(Tag 1)を追加しておいて下さい．
+（参考：<a href="http://pochixpochi.blogspot.jp/2012/05/rubymotion-interfacebuilder.html">[RUBYMOTION] INTERFACEBUILDERと合わせて使って楽をしよう</a>）</p>
+
+<h3>app/root_view_controller.rb</h3>
+
+<pre><code>class RootViewController &lt; UIViewController
+    def viewDidLoad
+        @label = view.viewWithTag 1
+        @button = view.viewWithTag 2
+        @button.addTarget(
+            self,
+            action: 'onClicked:',
+            forControlEvents:UIControlEventTouchUpInside)
+    end
+
+    def onClicked(sender)
+        p "onClicked"
+
+        Dispatch::Queue.concurrent.async {
+            NSThread.sleepForTimeInterval 5
+            Dispatch::Queue.main.async {
+                @label.text = ["hoge", "fuga", "moge"].sample
+            }
+        }
+    end
+end
+</code></pre>
+
+<h3>実行</h3>
+
+<pre><code>$ rake
+</code></pre>
+
+<p>シミュレータが立ち上がり，Buttonを押すとLabelの文字列がちょっと待ったあとに変わります．
+連打すると次々変わると思います．
+その間Buttonが押せないとかそういうことが起こらないのが分かると思います．</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -580,6 +737,10 @@ Octopressをやってみようということになったのですよ．</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/05/31/bubblewrap/">[RubyMotion]Bubble-Wrapを使ってみた</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/05/30/resource/">RubyMotionでリソース読み込み</a>
       </li>
     
@@ -595,15 +756,11 @@ Octopressをやってみようということになったのですよ．</p>
         <a href="/blog/2012/05/29/17/">RubyMotion 1.7出てます</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/05/28/routable/">[RubyMotion]Routableを使ってみた</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (12)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (13)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 

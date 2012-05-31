@@ -4,7 +4,7 @@
   <title><![CDATA[ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-05-30T23:47:12+09:00</updated>
+  <updated>2012-06-01T00:24:07+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,67 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[RubyMotion]Bubble-Wrapを使ってみた]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/31/bubblewrap/"/>
+    <updated>2012-05-31T22:44:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/31/bubblewrap</id>
+    <content type="html"><![CDATA[<p>今日はBubble-Wrapというライブラリを使ってみました．</p>
+
+<p><a href="http://matt.aimonetti.net/BubbleWrap/">Bubble-Wrap</a></p>
+
+<p>Bubble-Wrap はめんどくさいことを簡単にしてくれるヘルパーとかRubyっぽく書けない部分をよりRubyっぽくしてくれるライブラリです．</p>
+
+<p>例えば，<a href="http://pchw.github.com/blog/2012/05/30/resource/">昨日書いた</a>リソースの読み込みの所で，</p>
+
+<pre><code>path = NSBundle.mainBundle.resourcePath.stringByAppendingPathComponent "test.txt"
+</code></pre>
+
+<p>とか書きましたけど，<code>NSBundle.mainBundle.resoucePath</code>とかめんどくさいですよね．</p>
+
+<p>それを，</p>
+
+<pre><code>path = resources_path.stringByAppendingPathComponent "text.txt"
+</code></pre>
+
+<p>にしてくれたりします．
+（他にも色々と<code>documents_path</code>とか<code>notification_center</code>とか）</p>
+
+<pre><code>alert "Hoge"
+</code></pre>
+
+<p>とするだけで，</p>
+
+<pre><code>alert = UIAlertView.alloc.initWithTitle "Hoge",
+    message: nil,
+    delegate: nil,
+    cancelButtonTitle: 'OK',
+    otherButtonTitles: nil
+alert.show
+</code></pre>
+
+<p>とやってくれたりするのもあります．</p>
+
+<p>色々ありますが，Wikiを見ても一部しか載っていないので，何が出来るか全部把握するには，<a href="https://github.com/mattetti/BubbleWrap/tree/master/lib/bubble-wrap">Githubでコード</a>を見るしか無いっぽいです．</p>
+
+<p>他にも便利なものがあって，HTTPアクセスやJSONのラッパーも提供されています．
+例えば，Twitter APIにアクセスして，取得したJSONのデータのアクセスは</p>
+
+<pre><code>BubbleWrap::HTTP.get("https://api.twitter.com/1/users/show.json?screen_name=TwitterAPI&amp;include_entities=true") do |response|
+    json = BubbleWrap::JSON.parse response.body.to_str
+    p json['name']
+end
+</code></pre>
+
+<p>のように書けます．
+元が NSURLConnectionを作って，delegateで受けてみたいなことを書かないのと比べるととても簡単です．</p>
+
+<p><code>response</code> も<code>body</code>だけでなく，<code>headers</code>や<code>status_code</code>とか<code>ok?</code>（200 OKかどうかを調べる）などもあります．</p>
+
+<p>他にも，device情報を取ったり，gestureを簡単に扱ったりするものもあるので，有効に活用して素早くRubyMotionでアプリ作って行きましょう！</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[RubyMotionでリソース読み込み]]></title>

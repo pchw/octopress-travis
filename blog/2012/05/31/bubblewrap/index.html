@@ -5,13 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう - ぽっちぽちにしてやんよ</title>
+  <title>[RubyMotion]Bubble-Wrapを使ってみた - ぽっちぽちにしてやんよ</title>
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="RubyMotionはいいんだけど，UIをコードで作るのはめんどくさい．
-そのため，InterfaceBuilderで作りたい． RubyMotionの進化が早くて，もう1.3のアップデートが来てます．
-このエントリーは1.3にアップデートしてからやってね． $ sudo motion &hellip;">
+  <meta name="description" content="今日はBubble-Wrapというライブラリを使ってみました． Bubble-Wrap Bubble-Wrap はめんどくさいことを簡単にしてくれるヘルパーとかRubyっぽく書けない部分をよりRubyっぽくしてくれるライブラリです． 例えば，昨日書いたリソースの読み込みの所で， path = &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/22/ib">
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/31/bubblewrap">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -82,7 +80,7 @@
   
   <header>
     
-      <h1 class="entry-title">[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう</h1>
+      <h1 class="entry-title">[RubyMotion]Bubble-Wrapを使ってみた</h1>
     
     
       <p class="meta">
@@ -98,110 +96,66 @@
   
 
 
-<time datetime="2012-05-22T21:53:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
+<time datetime="2012-05-31T22:44:00+09:00" pubdate data-updated="true">May 31<span>st</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p><img src="https://lh4.googleusercontent.com/-_NT2-Tz_5I4/T6vRbwXZyHI/AAAAAAAAAXM/nYYnYrq0AWQ/8B0A2DB1-E3D7-4847-A0EF-006C171E8B43.jpg" alt="catch" /></p>
+<div class="entry-content"><p>今日はBubble-Wrapというライブラリを使ってみました．</p>
 
-<p>RubyMotionはいいんだけど，UIをコードで作るのはめんどくさい．
-そのため，InterfaceBuilderで作りたい．</p>
+<p><a href="http://matt.aimonetti.net/BubbleWrap/">Bubble-Wrap</a></p>
 
-<p>RubyMotionの進化が早くて，もう1.3のアップデートが来てます．
-このエントリーは1.3にアップデートしてからやってね．</p>
+<p>Bubble-Wrap はめんどくさいことを簡単にしてくれるヘルパーとかRubyっぽく書けない部分をよりRubyっぽくしてくれるライブラリです．</p>
 
-<pre><code>$ sudo motion update
+<p>例えば，<a href="http://pchw.github.com/blog/2012/05/30/resource/">昨日書いた</a>リソースの読み込みの所で，</p>
+
+<pre><code>path = NSBundle.mainBundle.resourcePath.stringByAppendingPathComponent "test.txt"
 </code></pre>
 
-<p>やってみます．まずはひな形作成．</p>
+<p>とか書きましたけど，<code>NSBundle.mainBundle.resoucePath</code>とかめんどくさいですよね．</p>
 
-<pre><code>$ motion create IB
-$ cd IB
+<p>それを，</p>
+
+<pre><code>path = resources_path.stringByAppendingPathComponent "text.txt"
 </code></pre>
 
-<p><code>app/app_delegate.rb</code> を編集します．</p>
+<p>にしてくれたりします．
+（他にも色々と<code>documents_path</code>とか<code>notification_center</code>とか）</p>
 
-<pre><code>class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    @window.rootViewController = NSBundle.mainBundle.loadNibNamed(
-        'MyView', 
-        owner: self,
-        options: nil).first
-    @window.rootViewController.wantsFullScreenLayout = true
-    @window.makeKeyAndVisible
-    true
-  end
+<pre><code>alert "Hoge"
+</code></pre>
+
+<p>とするだけで，</p>
+
+<pre><code>alert = UIAlertView.alloc.initWithTitle "Hoge",
+    message: nil,
+    delegate: nil,
+    cancelButtonTitle: 'OK',
+    otherButtonTitles: nil
+alert.show
+</code></pre>
+
+<p>とやってくれたりするのもあります．</p>
+
+<p>色々ありますが，Wikiを見ても一部しか載っていないので，何が出来るか全部把握するには，<a href="https://github.com/mattetti/BubbleWrap/tree/master/lib/bubble-wrap">Githubでコード</a>を見るしか無いっぽいです．</p>
+
+<p>他にも便利なものがあって，HTTPアクセスやJSONのラッパーも提供されています．
+例えば，Twitter APIにアクセスして，取得したJSONのデータのアクセスは</p>
+
+<pre><code>BubbleWrap::HTTP.get("https://api.twitter.com/1/users/show.json?screen_name=TwitterAPI&amp;include_entities=true") do |response|
+    json = BubbleWrap::JSON.parse response.body.to_str
+    p json['name']
 end
 </code></pre>
 
-<p>こんな感じで，MyViewっていうNibを読み込んでやることにします．</p>
+<p>のように書けます．
+元が NSURLConnectionを作って，delegateで受けてみたいなことを書かないのと比べるととても簡単です．</p>
 
-<p>おもむろにXCodeをたちあげて，（すでに開いている人は開いてるProjectを閉じろ！）File>New>File(Cmd + N)を選んで新規ファイル作成する．
-iOSのUser InterfaceのEmptyを選んで，<code>resources/MyView.xib</code>として保存する．</p>
+<p><code>response</code> も<code>body</code>だけでなく，<code>headers</code>や<code>status_code</code>とか<code>ok?</code>（200 OKかどうかを調べる）などもあります．</p>
 
-<p>このままだと，ただの方眼紙なので，オブジェクトを追加していきます．</p>
-
-<p>ObjectLibrary(Cmd+Shift+Alt+3)からViewControllerを追加．</p>
-
-<p><img src="https://lh4.googleusercontent.com/-NJi7vxGoKU0/T6vRejaSSwI/AAAAAAAAAXk/NANN6sYn43s/75A106D3-E836-4771-A3B2-23F0711E9F75.jpg" alt="viewcontroller" /></p>
-
-<p>CustomClassの所で，<code>MyViewController</code>とする．</p>
-
-<p><img src="https://lh6.googleusercontent.com/-9WOU446JvMM/T6vRZBfeFOI/AAAAAAAAAW8/8EttpBF8QbM/C3CE5E58-2F05-48FB-8EAF-0E8C400B86CE.jpg" alt="" /></p>
-
-<p>ObjectLibraryからViewを追加．</p>
-
-<p><img src="https://lh5.googleusercontent.com/-F13DxPSNxEw/T6vRczq6fNI/AAAAAAAAAXQ/ZhLWZFvZ8HI/62F0D7FB-D117-4FED-8CBC-65AEC3ECC194.jpg" alt="" /></p>
-
-<p>ObjectLibraryからButtonとLabelを追加．</p>
-
-<p><img src="https://lh3.googleusercontent.com/-lXNWDyg3b3s/T6vRYFzTWvI/AAAAAAAAAW0/7MpGkaUa3a4/386D9AF1-8520-41B6-975D-02D2D80A777A.jpg" alt="" /></p>
-
-<p>この部分が重要で、それぞれのTagに1とか2とかつけます</p>
-
-<p><img src="https://lh6.googleusercontent.com/-Ror1NoaBxkM/T6vRfzELJRI/AAAAAAAAAXs/iQi_iMXKNh8/40DC78B0-948E-4DCE-804F-EC366856DC31.jpg" alt="" /></p>
-
-<p>保存して終了．</p>
-
-<p>次に<code>app/my_view_controller.rb</code>を作成します．</p>
-
-<pre><code>class MyViewController &lt; UIViewController
-    def viewDidLoad
-        @button = view.viewWithTag 1
-        @label = view.viewWithTag 2
-        @button.addTarget(
-        self, 
-        action:'onClicked', 
-        forControlEvents:UIControlEventTouchUpInside)
-end
-
-def onClicked
-    @label.text = "Clicked"
-end
-end
-</code></pre>
-
-<p>1のTagを付けたのをbuttonとして，クリックのイベントをonClickedメソッドに登録．
-2のTagを付けたのをlabelとして，クリックされた時に変更したりするようにしました．</p>
-
-<pre><code>$ rake
-</code></pre>
-
-<p>でビルドしてシミュレータが立ち上がります．</p>
-
-<p><img src="https://lh6.googleusercontent.com/-O4MoAszjcnA/T6vRaVj5WmI/AAAAAAAAAXE/rptfrEs0b9A/624D2637-6D50-4DF1-9001-C0505A3B0B25.jpg" alt="" /></p>
-
-<p>押します．</p>
-
-<p>変わります！</p>
-
-<p><img src="https://lh5.googleusercontent.com/-3DmRBCOWUjs/T6vRdl7j0xI/AAAAAAAAAXY/5cnHlb61Lbw/658F46A6-8C07-485C-A589-6E32327BD13F.jpg" alt="" /></p>
-
-<p>出来ました！</p>
+<p>他にも，device情報を取ったり，gestureを簡単に扱ったりするものもあるので，有効に活用して素早くRubyMotionでアプリ作って行きましょう！</p>
 </div>
 
 
@@ -224,7 +178,7 @@ end
   
 
 
-<time datetime="2012-05-22T21:53:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
+<time datetime="2012-05-31T22:44:00+09:00" pubdate data-updated="true">May 31<span>st</span>, 2012</time>
       
 
 <span class="categories">
@@ -237,9 +191,9 @@ end
     </p>
     
       <div class="sharing">
-  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/22/ib/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/31/bubblewrap/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/22/ib/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/22/ib/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/31/bubblewrap/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/31/bubblewrap/" >Tweet</a>
   
   
   
@@ -248,10 +202,8 @@ end
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/05/22/spec/" title="Previous Post: [rubymotion] rake specをカラフルにしよう！">&laquo; [rubymotion] rake specをカラフルにしよう！</a>
+        <a class="basic-alignment left" href="/blog/2012/05/30/resource/" title="Previous Post: RubyMotionでリソース読み込み">&laquo; RubyMotionでリソース読み込み</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/05/22/storyboard/" title="Next Post: Storyboardを使ってRubyMotionで開発する方法">Storyboardを使ってRubyMotionで開発する方法 &raquo;</a>
       
     </p>
   </footer>
@@ -344,8 +296,8 @@ end
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/22/ib/';
-        var disqus_url = 'http://pchw.github.com/blog/2012/05/22/ib/';
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/31/bubblewrap/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/05/31/bubblewrap/';
         var disqus_script = 'embed.js';
       
     (function () {
