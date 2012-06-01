@@ -4,7 +4,7 @@
   <title><![CDATA[ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-01T00:24:07+09:00</updated>
+  <updated>2012-06-01T12:44:01+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,51 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotion 1.9が出てた！早い！]]></title>
+    <link href="http://pchw.github.com/blog/2012/06/01/19/"/>
+    <updated>2012-06-01T12:29:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/06/01/19</id>
+    <content type="html"><![CDATA[<p>一昨日ぐらいに1.8が出たと思ったら，もう1.9が出てきました．</p>
+
+<p>しかも変更点が多い．</p>
+
+<p>次は2.0なのか1.10なのか気になりますね！</p>
+
+<pre><code>= RubyMotion 1.9 =
+
+  * Fixed a bug in the build system where the paths of vendored libraries
+    would not be properly quoted and cause a build failure in case they
+    contain space characters.
+  * Fixed a bug in the build system where using a lower deployment_target
+    version would cause a link error at runtime because the application was
+    linking against a framework that does not exist (ex. CoreImage on 4.3).
+  * Fixed the `rake spec' task to not move the simulator window to the
+    foreground.
+  * Fixed a bug in the compiler where APIs accepting pointers to
+    CoreFoundation types could not be given Pointer objects of the :object
+    type (ex. CFErrorRef*).
+  * Added support for CoreAudio (experimental). At the very least, constants
+    pointing to four-bytes characters should be properly covered.
+  * Fixed a typo in "expected array of %d elements, got %d" exception message
+    where the numbers were inverted. Thanks Enrico Thierbach.
+  * Fixed a bug in the compiler where compiling strings containing only null
+    characters (ex. "\x00") would cause a crash.
+</code></pre>
+
+<ul>
+<li>vendorライブラリのpathがQuoteで囲まれてなくてスペースが含まれてたときにビルドが失敗するのを修正</li>
+<li>CoreImageを4.3で使おうとするみたいなdevelopment_targetを昔のに設定してるのに存在しないフレームワークを指定したときにリンクエラーになるビルドの問題を修正</li>
+<li><code>rake spec</code>した時にシミュレータが前に出てこないのを修正</li>
+<li>CFなんちゃらへのポインタをAPIに渡せない問題の修正</li>
+<li>CoreAudioのサポートを追加．</li>
+<li>例外メッセージのtypo修正</li>
+<li>nullキャラクターだけが含まれたstringをコンパイルする時にクラッシュしてた問題を修正</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[RubyMotion]Bubble-Wrapを使ってみた]]></title>

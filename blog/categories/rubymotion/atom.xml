@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-01T00:24:07+09:00</updated>
+  <updated>2012-06-01T12:44:01+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,51 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotion 1.9が出てた！早い！]]></title>
+    <link href="http://pchw.github.com/blog/2012/06/01/19/"/>
+    <updated>2012-06-01T12:29:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/06/01/19</id>
+    <content type="html"><![CDATA[<p>一昨日ぐらいに1.8が出たと思ったら，もう1.9が出てきました．</p>
+
+<p>しかも変更点が多い．</p>
+
+<p>次は2.0なのか1.10なのか気になりますね！</p>
+
+<pre><code>= RubyMotion 1.9 =
+
+  * Fixed a bug in the build system where the paths of vendored libraries
+    would not be properly quoted and cause a build failure in case they
+    contain space characters.
+  * Fixed a bug in the build system where using a lower deployment_target
+    version would cause a link error at runtime because the application was
+    linking against a framework that does not exist (ex. CoreImage on 4.3).
+  * Fixed the `rake spec' task to not move the simulator window to the
+    foreground.
+  * Fixed a bug in the compiler where APIs accepting pointers to
+    CoreFoundation types could not be given Pointer objects of the :object
+    type (ex. CFErrorRef*).
+  * Added support for CoreAudio (experimental). At the very least, constants
+    pointing to four-bytes characters should be properly covered.
+  * Fixed a typo in "expected array of %d elements, got %d" exception message
+    where the numbers were inverted. Thanks Enrico Thierbach.
+  * Fixed a bug in the compiler where compiling strings containing only null
+    characters (ex. "\x00") would cause a crash.
+</code></pre>
+
+<ul>
+<li>vendorライブラリのpathがQuoteで囲まれてなくてスペースが含まれてたときにビルドが失敗するのを修正</li>
+<li>CoreImageを4.3で使おうとするみたいなdevelopment_targetを昔のに設定してるのに存在しないフレームワークを指定したときにリンクエラーになるビルドの問題を修正</li>
+<li><code>rake spec</code>した時にシミュレータが前に出てこないのを修正</li>
+<li>CFなんちゃらへのポインタをAPIに渡せない問題の修正</li>
+<li>CoreAudioのサポートを追加．</li>
+<li>例外メッセージのtypo修正</li>
+<li>nullキャラクターだけが含まれたstringをコンパイルする時にクラッシュしてた問題を修正</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[RubyMotion]Bubble-Wrapを使ってみた]]></title>
@@ -180,126 +225,6 @@ str = NSString.stringWithContentsOfFile path
 <li>外部ベンダのライブラリを読み込むやつでiOSヘッダに定義されたenumとかstructsが使われなかった問題を修正</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[[RubyMotion]Routableを使ってみた]]></title>
-    <link href="http://pchw.github.com/blog/2012/05/28/routable/"/>
-    <updated>2012-05-28T12:32:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/05/28/routable</id>
-    <content type="html"><![CDATA[<p>Routableというgemがあるみたいという話を聞いて，使ってみました．</p>
-
-<p><a href="https://github.com/clayallsopp/Routable">Routable - GitHub</a></p>
-
-<h2>インストール</h2>
-
-<pre><code>gem install routable
-</code></pre>
-
-<h2>Rakefileの編集</h2>
-
-<pre><code>$:.unshift("/Library/RubyMotion/lib")
-require 'motion/project'
-require 'routable'
-</code></pre>
-
-<p>のように<code>require 'routable'</code>を追加します．</p>
-
-<h2>使い方</h2>
-
-<pre><code>class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.applicationFrame
-    @window.makeKeyAndVisible
-
-    @rootView = NSBundle.mainBundle.loadNibNamed(
-        'RootViewController',
-        owner: self,
-        options: nil).first
-
-    @router = Routable::Router.router
-    @router.navigation_controller = UINavigationController.alloc.init
-    @router.navigation_controller.pushViewController(@rootView, animated: false)
-    @rootView.title = "TOP"
-
-    @router.map("one", OneViewController)
-    @router.map("two/:param", TwoViewController)
-
-    @window.rootViewController = @router.navigation_controller
-
-    @one = @rootView.view.viewWithTag 1
-    @one.addTarget(
-        self, 
-        action: 'onClickOne:', 
-        forControlEvents: UIControlEventTouchUpInside)
-
-    @two = @rootView.view.viewWithTag 2
-    @two.addTarget(
-        self, 
-        action: 'onClickTwo:', 
-        forControlEvents: UIControlEventTouchUpInside)
-
-    true
-  end
-
-  def onClickOne(sender)
-    @router.open('one', true)
-  end
-
-  def onClickTwo(sender)
-    @router.open('two/100', true)
-  end
-end
-</code></pre>
-
-<p>こんな感じで使います．</p>
-
-<p><code>Routable::Router.router</code>を取得して，<code>navigation_controller</code>に<code>UINavigationController</code>を設定しておきます．</p>
-
-<p><code>map(&lt;URL&gt;, &lt;viewController&gt;)</code>のようにすると，そのURL文字列をキーにviewControllerの遷移を書けるようになります．</p>
-
-<p><URL>には<code>hoge/:id</code>のようにパラメータを記述することができて，この場合だと<code>hoge/1</code>とかいう遷移をさせれば，宛先のviewControllerに<code>1</code>というパラメータが渡されます．</p>
-
-<p>遷移する時は<code>open(&lt;URL&gt;, &lt;animation?&gt;)</code>とすれば設定したviewControllerへ遷移出来ます．</p>
-
-<h2>遷移先ViewController</h2>
-
-<pre><code>class TwoViewController &lt; UIViewController
-    attr_accessor :param
-
-    def initWithParams(params = {})
-        init()
-        self.param = params[:param]
-        self
-    end
-
-    def viewDidLoad
-        @label = UILabel.alloc.init
-        @label.bounds = [[50, 150],[300, 50]]
-        @label.text = "TwoViewController" + self.param.to_s
-    end
-end
-</code></pre>
-
-<p>のようにして，<code>initWithParams</code>で引数を受け取れます．</p>
-
-<h2>問題点</h2>
-
-<p>ViewControllerをコードで場所設定とかすごくめんどくさいので，僕はIBを使います．</p>
-
-<p>しかし，IBを使って<code>resouces/HogeViewController.xib</code>を作って，Controlを配置して，，，というフローを辿ってやると，<code>router.open</code>の時にエラーが出ます．</p>
-
-<p>routerの内部では，<code>HogeViewController.alloc.initWithParams()</code>を呼んでインスタンス化しているわけですが，
-xibを使うと，<code>NSBundle.mainBundle.loadNibNamed</code>をしないとダメっぽいんですね．</p>
-
-<p>なので，routerをいじって，mapするときにそれ用の情報を入れてあげるかしないといけません．</p>
-
-<h2>まとめ</h2>
-
-<p>僕はStoryboardを使うと思います．</p>
-
-<p>XCodeが嫌でRubyMotionをやっている人は多いと思うので，コードでControlを配置するのが苦じゃない人にとってはrouterはいいソリューションなんじゃないでしょうか．</p>
 ]]></content>
   </entry>
   

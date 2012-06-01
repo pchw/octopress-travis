@@ -9,7 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="今日はBubble-Wrapというライブラリを使ってみました． Bubble-Wrap Bubble-Wrap はめんどくさいことを簡単にしてくれるヘルパーとかRubyっぽく書けない部分をよりRubyっぽくしてくれるライブラリです． 例えば，昨日書いたリソースの読み込みの所で， path = &hellip;">
+  <meta name="description" content="一昨日ぐらいに1.8が出たと思ったら，もう1.9が出てきました． しかも変更点が多い． 次は2.0なのか1.10なのか気になりますね！ = RubyMotion 1.9 = * Fixed a bug in the build system where the paths of vendored &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,78 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/01/19/">RubyMotion 1.9が出てた！早い！</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-01T12:29:00+09:00" pubdate data-updated="true">Jun 1<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一昨日ぐらいに1.8が出たと思ったら，もう1.9が出てきました．</p>
+
+<p>しかも変更点が多い．</p>
+
+<p>次は2.0なのか1.10なのか気になりますね！</p>
+
+<pre><code>= RubyMotion 1.9 =
+
+  * Fixed a bug in the build system where the paths of vendored libraries
+    would not be properly quoted and cause a build failure in case they
+    contain space characters.
+  * Fixed a bug in the build system where using a lower deployment_target
+    version would cause a link error at runtime because the application was
+    linking against a framework that does not exist (ex. CoreImage on 4.3).
+  * Fixed the `rake spec' task to not move the simulator window to the
+    foreground.
+  * Fixed a bug in the compiler where APIs accepting pointers to
+    CoreFoundation types could not be given Pointer objects of the :object
+    type (ex. CFErrorRef*).
+  * Added support for CoreAudio (experimental). At the very least, constants
+    pointing to four-bytes characters should be properly covered.
+  * Fixed a typo in "expected array of %d elements, got %d" exception message
+    where the numbers were inverted. Thanks Enrico Thierbach.
+  * Fixed a bug in the compiler where compiling strings containing only null
+    characters (ex. "\x00") would cause a crash.
+</code></pre>
+
+<ul>
+<li>vendorライブラリのpathがQuoteで囲まれてなくてスペースが含まれてたときにビルドが失敗するのを修正</li>
+<li>CoreImageを4.3で使おうとするみたいなdevelopment_targetを昔のに設定してるのに存在しないフレームワークを指定したときにリンクエラーになるビルドの問題を修正</li>
+<li><code>rake spec</code>した時にシミュレータが前に出てこないのを修正</li>
+<li>CFなんちゃらへのポインタをAPIに渡せない問題の修正</li>
+<li>CoreAudioのサポートを追加．</li>
+<li>例外メッセージのtypo修正</li>
+<li>nullキャラクターだけが含まれたstringをコンパイルする時にクラッシュしてた問題を修正</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -827,98 +899,6 @@ $ ruby app.rb
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/23/update/">RubyMotionが1.4->1.5->1.6とアップデートしたよ！</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-23T01:03:00+09:00" pubdate data-updated="true">May 23<span>rd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>気づいたら，RubyMotionの更新が1.5・1.6と続いてありました．</p>
-
-<pre><code>$ sudo motion update
-</code></pre>
-
-<p>しましょう．</p>
-
-<h2>RubyMotion 1.5 更新内容</h2>
-
-<pre><code>= RubyMotion 1.5 =
-
-  * Improved the REPL to support multi-line expressions.
-  * Fixed a bug when compiling Core Data model files where the `momc' utility
-    was not given absolute paths.
-  * Removed legacy MacRuby code that was using the private `isaForAutonotifying'
-    selector and causing a warning during an App Store submission.
-  * Fixed a bug in Enumerable#sort_by that would lead to a crash.
-  * Fixed a bug in the REPL where it would not detect the iOS Simulator window
-    if certain windows were in front or created later.
-  * Fixed a bug in the build system where framework dependencies would not be
-    properly handled.
-  * Added support for .lproj directories (i18n). Thanks Aaron Hurley.
-  * Fixed a bug where objects from pure Ruby classes sent to KVO would not be
-    properly handled later (because KVO inserts a new singleton class).
-  * Fixed attr_writer to emit KVO notifications (will/didChangeValueForKey).
-</code></pre>
-
-<ul>
-<li>REPLが複数行をサポート</li>
-<li>CoreDataモデルファイルをコンパイル時のバグを修正</li>
-<li>レガシーなMacRubyコードを撤去した．</li>
-<li>Enumerable#sort_byがクラッシュを引き起こす問題を修正</li>
-<li>ウィンドウがシミュレータウィンドウの前に複数あるなどの原因でREPLがシミュレータを見つけれないバグを修正</li>
-<li>ビルド時にフレームワークの依存関係を正しく扱えなかったバグを修正</li>
-<li>.lprojディレクトリをサポート</li>
-<li>pure RubyのクラスのオブジェクトをKVOに送った時に正しくハンドリング出来なかったバグを修正</li>
-<li>attr_writerがKVO notificationを上げるように修正</li>
-</ul>
-
-
-<h2>RubyMotion 1.6 更新内容</h2>
-
-<pre><code>= RubyMotion 1.6 =
-
-  * Fixed a regression in the build system introduced by the previous update
-    (when compiling .xib files).
-  * Fixed the vendoring system to include all source code files. Merged patch
-    from https://groups.google.com/d/msg/rubymotion/tPCxSMCA2f4/w2DIHFo2AVAJ
-  * Fixed the REPL to not crash if you give it an empty expression.
-</code></pre>
-
-<ul>
-<li>ビルド時の再発バグの修正</li>
-<li>外部ライブラリ読み込み不具合修正</li>
-<li>REPLに空を渡した時にクラッシュする不具合の修正</li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -957,6 +937,10 @@ $ ruby app.rb
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/06/01/19/">RubyMotion 1.9が出てた！早い！</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/05/31/bubblewrap/">[RubyMotion]Bubble-Wrapを使ってみた</a>
       </li>
     
@@ -972,15 +956,11 @@ $ ruby app.rb
         <a href="/blog/2012/05/29/dottouch/">[レビュー] DotTouchというiPhone/iPadアプリを使ってみたよ！</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/05/29/17/">RubyMotion 1.7出てます</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (13)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (14)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 

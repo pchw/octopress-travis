@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>[RubyMotion]Bubble-Wrapを使ってみた - ぽっちぽちにしてやんよ</title>
+  <title>RubyMotion 1.9が出てた！早い！ - ぽっちぽちにしてやんよ</title>
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="今日はBubble-Wrapというライブラリを使ってみました． Bubble-Wrap Bubble-Wrap はめんどくさいことを簡単にしてくれるヘルパーとかRubyっぽく書けない部分をよりRubyっぽくしてくれるライブラリです． 例えば，昨日書いたリソースの読み込みの所で， path = &hellip;">
+  <meta name="description" content="一昨日ぐらいに1.8が出たと思ったら，もう1.9が出てきました． しかも変更点が多い． 次は2.0なのか1.10なのか気になりますね！ = RubyMotion 1.9 = * Fixed a bug in the build system where the paths of vendored &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/31/bubblewrap">
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/06/01/19">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -80,7 +80,7 @@
   
   <header>
     
-      <h1 class="entry-title">[RubyMotion]Bubble-Wrapを使ってみた</h1>
+      <h1 class="entry-title">RubyMotion 1.9が出てた！早い！</h1>
     
     
       <p class="meta">
@@ -96,66 +96,50 @@
   
 
 
-<time datetime="2012-05-31T22:44:00+09:00" pubdate data-updated="true">May 31<span>st</span>, 2012</time>
+<time datetime="2012-06-01T12:29:00+09:00" pubdate data-updated="true">Jun 1<span>st</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>今日はBubble-Wrapというライブラリを使ってみました．</p>
+<div class="entry-content"><p>一昨日ぐらいに1.8が出たと思ったら，もう1.9が出てきました．</p>
 
-<p><a href="http://matt.aimonetti.net/BubbleWrap/">Bubble-Wrap</a></p>
+<p>しかも変更点が多い．</p>
 
-<p>Bubble-Wrap はめんどくさいことを簡単にしてくれるヘルパーとかRubyっぽく書けない部分をよりRubyっぽくしてくれるライブラリです．</p>
+<p>次は2.0なのか1.10なのか気になりますね！</p>
 
-<p>例えば，<a href="http://pchw.github.com/blog/2012/05/30/resource/">昨日書いた</a>リソースの読み込みの所で，</p>
+<pre><code>= RubyMotion 1.9 =
 
-<pre><code>path = NSBundle.mainBundle.resourcePath.stringByAppendingPathComponent "test.txt"
+  * Fixed a bug in the build system where the paths of vendored libraries
+    would not be properly quoted and cause a build failure in case they
+    contain space characters.
+  * Fixed a bug in the build system where using a lower deployment_target
+    version would cause a link error at runtime because the application was
+    linking against a framework that does not exist (ex. CoreImage on 4.3).
+  * Fixed the `rake spec' task to not move the simulator window to the
+    foreground.
+  * Fixed a bug in the compiler where APIs accepting pointers to
+    CoreFoundation types could not be given Pointer objects of the :object
+    type (ex. CFErrorRef*).
+  * Added support for CoreAudio (experimental). At the very least, constants
+    pointing to four-bytes characters should be properly covered.
+  * Fixed a typo in "expected array of %d elements, got %d" exception message
+    where the numbers were inverted. Thanks Enrico Thierbach.
+  * Fixed a bug in the compiler where compiling strings containing only null
+    characters (ex. "\x00") would cause a crash.
 </code></pre>
 
-<p>とか書きましたけど，<code>NSBundle.mainBundle.resoucePath</code>とかめんどくさいですよね．</p>
+<ul>
+<li>vendorライブラリのpathがQuoteで囲まれてなくてスペースが含まれてたときにビルドが失敗するのを修正</li>
+<li>CoreImageを4.3で使おうとするみたいなdevelopment_targetを昔のに設定してるのに存在しないフレームワークを指定したときにリンクエラーになるビルドの問題を修正</li>
+<li><code>rake spec</code>した時にシミュレータが前に出てこないのを修正</li>
+<li>CFなんちゃらへのポインタをAPIに渡せない問題の修正</li>
+<li>CoreAudioのサポートを追加．</li>
+<li>例外メッセージのtypo修正</li>
+<li>nullキャラクターだけが含まれたstringをコンパイルする時にクラッシュしてた問題を修正</li>
+</ul>
 
-<p>それを，</p>
-
-<pre><code>path = resources_path.stringByAppendingPathComponent "text.txt"
-</code></pre>
-
-<p>にしてくれたりします．
-（他にも色々と<code>documents_path</code>とか<code>notification_center</code>とか）</p>
-
-<pre><code>alert "Hoge"
-</code></pre>
-
-<p>とするだけで，</p>
-
-<pre><code>alert = UIAlertView.alloc.initWithTitle "Hoge",
-    message: nil,
-    delegate: nil,
-    cancelButtonTitle: 'OK',
-    otherButtonTitles: nil
-alert.show
-</code></pre>
-
-<p>とやってくれたりするのもあります．</p>
-
-<p>色々ありますが，Wikiを見ても一部しか載っていないので，何が出来るか全部把握するには，<a href="https://github.com/mattetti/BubbleWrap/tree/master/lib/bubble-wrap">Githubでコード</a>を見るしか無いっぽいです．</p>
-
-<p>他にも便利なものがあって，HTTPアクセスやJSONのラッパーも提供されています．
-例えば，Twitter APIにアクセスして，取得したJSONのデータのアクセスは</p>
-
-<pre><code>BubbleWrap::HTTP.get("https://api.twitter.com/1/users/show.json?screen_name=TwitterAPI&amp;include_entities=true") do |response|
-    json = BubbleWrap::JSON.parse response.body.to_str
-    p json['name']
-end
-</code></pre>
-
-<p>のように書けます．
-元が NSURLConnectionを作って，delegateで受けてみたいなことを書かないのと比べるととても簡単です．</p>
-
-<p><code>response</code> も<code>body</code>だけでなく，<code>headers</code>や<code>status_code</code>とか<code>ok?</code>（200 OKかどうかを調べる）などもあります．</p>
-
-<p>他にも，device情報を取ったり，gestureを簡単に扱ったりするものもあるので，有効に活用して素早くRubyMotionでアプリ作って行きましょう！</p>
 </div>
 
 
@@ -178,7 +162,7 @@ end
   
 
 
-<time datetime="2012-05-31T22:44:00+09:00" pubdate data-updated="true">May 31<span>st</span>, 2012</time>
+<time datetime="2012-06-01T12:29:00+09:00" pubdate data-updated="true">Jun 1<span>st</span>, 2012</time>
       
 
 <span class="categories">
@@ -191,9 +175,9 @@ end
     </p>
     
       <div class="sharing">
-  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/31/bubblewrap/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/06/01/19/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/31/bubblewrap/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/31/bubblewrap/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/06/01/19/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/06/01/19/" >Tweet</a>
   
   
   
@@ -202,10 +186,8 @@ end
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/05/30/resource/" title="Previous Post: RubyMotionでリソース読み込み">&laquo; RubyMotionでリソース読み込み</a>
+        <a class="basic-alignment left" href="/blog/2012/05/31/bubblewrap/" title="Previous Post: [RubyMotion]Bubble-Wrapを使ってみた">&laquo; [RubyMotion]Bubble-Wrapを使ってみた</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/06/01/19/" title="Next Post: RubyMotion 1.9が出てた！早い！">RubyMotion 1.9が出てた！早い！ &raquo;</a>
       
     </p>
   </footer>
@@ -298,8 +280,8 @@ end
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/31/bubblewrap/';
-        var disqus_url = 'http://pchw.github.com/blog/2012/05/31/bubblewrap/';
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/06/01/19/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/06/01/19/';
         var disqus_script = 'embed.js';
       
     (function () {
