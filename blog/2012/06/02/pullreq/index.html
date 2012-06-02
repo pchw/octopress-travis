@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Category: AppStore - ぽっちぽちにしてやんよ</title>
+  <title>RubyMotion のlib部分がソース公開してるのでPullRequestを送ってみたよ！ - ぽっちぽちにしてやんよ</title>
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="Category: AppStore">
+  <meta name="description" content="RubyMotionのlib部分のソースが公開されてます． lib部分にはbuildsystemやRakefileとかvendor周りのあれこれが含まれていて，
+最近のfixがその辺りの修正が多かったので，広くpull requestを受け付けようということですかね． 早速前の記事([ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://pchw.github.comblog/categories/appstore">
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/06/02/pullreq">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -76,36 +77,110 @@
   <div id="main">
     <div id="content">
       <div>
-<article role="article">
+<article class="hentry" role="article">
   
   <header>
-    <h1 class="entry-title">Category: AppStore</h1>
+    
+      <h1 class="entry-title">RubyMotion のlib部分がソース公開してるのでPullRequestを送ってみたよ！</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-02T12:41:00+09:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2012</time>
+        
+      </p>
     
   </header>
-  
-  <div id="blog-archives" class="category">
 
 
+<div class="entry-content"><p>RubyMotionのlib部分のソースが公開されてます．</p>
 
-  
-  <h2>2012</h2>
+<p>lib部分にはbuildsystemやRakefileとかvendor周りのあれこれが含まれていて，
+最近のfixがその辺りの修正が多かったので，広くpull requestを受け付けようということですかね．</p>
 
-<article>
-  
-<h1><a href="/blog/2012/05/26/appreviews/">AppReviewViewerが良い！</a></h1>
-<time datetime="2012-05-26T22:52:00+09:00" pubdate><span class='month'>May</span> <span class='day'>26</span> <span class='year'>2012</span></time>
+<p>早速前の記事(<a href="http://pchw.github.com/blog/2012/06/02/certificate/">[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策</a>)の解決策なんかは，<code>motion create</code>で生成されるRakefileの修正でいけるのでパパッとPull Requestを送って本家に組み込んでもらうのがいいです．</p>
 
-<footer>
-  <span class="categories">posted in <a class='category' href='/blog/categories/appstore/'>AppStore</a></span>
-</footer>
+<p>というわけで，Pull Requestを<a href="https://github.com/HipByte/RubyMotion/pull/1">送っておきました</a>．
+なんと<code>pull/1</code>で1番目のpullらしい．</p>
 
+<p>本家に組み込まれるまで，ローカル環境を同じように修正するには，
+<code>/Library/RubyMotion/lib/motion/project/app.rb</code>を修正します．</p>
 
-</article>
+<p>修正内容は<a href="https://github.com/HipByte/RubyMotion/pull/1/files">Pull Requestの詳細</a>をみて分かると思いますけど，102行目に</p>
 
+<pre><code># -*- coding: utf-8 -*-
+</code></pre>
+
+<p>を追加するだけです．</p>
 </div>
 
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">pchw</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-02T12:41:00+09:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rubymotion/'>RubyMotion</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/06/02/pullreq/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/06/02/pullreq/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/06/02/pullreq/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/06/02/certificate/" title="Previous Post: [RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策">&laquo; [RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策</a>
+      
+      
+    </p>
+  </footer>
 </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
 
 </div>
 
@@ -187,7 +262,10 @@
       var disqus_shortname = 'pchw';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/06/02/pullreq/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/06/02/pullreq/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;

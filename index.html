@@ -9,7 +9,8 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="RubyMotionを色々いじって記事書いてたのですが，全然実機で試してませんでした． BT周りの実装をしてて，ついにシミュレータで確認ができなくなったので，実機に転送しようとしてrake deviceしたら "iPhone Developper: &lt;your escaped name&gt &hellip;">
+  <meta name="description" content="RubyMotionのlib部分のソースが公開されてます． lib部分にはbuildsystemやRakefileとかvendor周りのあれこれが含まれていて，
+最近のfixがその辺りの修正が多かったので，広くpull requestを受け付けようということですかね． 早速前の記事([ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +78,60 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/02/pullreq/">RubyMotion のlib部分がソース公開してるのでPullRequestを送ってみたよ！</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-02T12:41:00+09:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>RubyMotionのlib部分のソースが公開されてます．</p>
+
+<p>lib部分にはbuildsystemやRakefileとかvendor周りのあれこれが含まれていて，
+最近のfixがその辺りの修正が多かったので，広くpull requestを受け付けようということですかね．</p>
+
+<p>早速前の記事(<a href="http://pchw.github.com/blog/2012/06/02/certificate/">[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策</a>)の解決策なんかは，<code>motion create</code>で生成されるRakefileの修正でいけるのでパパッとPull Requestを送って本家に組み込んでもらうのがいいです．</p>
+
+<p>というわけで，Pull Requestを<a href="https://github.com/HipByte/RubyMotion/pull/1">送っておきました</a>．
+なんと<code>pull/1</code>で1番目のpullらしい．</p>
+
+<p>本家に組み込まれるまで，ローカル環境を同じように修正するには，
+<code>/Library/RubyMotion/lib/motion/project/app.rb</code>を修正します．</p>
+
+<p>修正内容は<a href="https://github.com/HipByte/RubyMotion/pull/1/files">Pull Requestの詳細</a>をみて分かると思いますけど，102行目に</p>
+
+<pre><code># -*- coding: utf-8 -*-
+</code></pre>
+
+<p>を追加するだけです．</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -838,70 +893,6 @@ repl(delegate)
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/27/st2/">Sublime Text 2でRubyMotionの補完が出来るようになったぞおおおお</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-27T10:04:00+09:00" pubdate data-updated="true">May 27<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><img src="/images/st2.png" alt="catch" /></p>
-
-<p>ついに来ました！</p>
-
-<p>いままで，RubyMotionを書いていて補完が効くのはVimとredcarとTextMateだけでした！
-ところが，RubyMotionのフォーラムに「[RubyMotion] Sublime Text 2 Support」という質問が投げかけられ，ついに今日そのパッケージが登場しました！</p>
-
-<p><a href="https://github.com/diemer/RubyMotionSublimeCompletions">RubyMotionSublimeCompletions</a></p>
-
-<p>インストール方法は簡単で，</p>
-
-<pre><code>$ cd ~/Library/Application Support/Sublime Text 2/Packages
-$ git clone git://github.com/diemer/RubyMotionSublimeCompletions.git
-</code></pre>
-
-<p>してSublime Text2を再起動すればOKです．</p>
-
-<p>PackageControlを導入している人なら，</p>
-
-<pre><code>Cmd+Shift+p
-Package Control: Add Repository
-https://github.com/diemer/RubyMotionSublimeCompletions
-Package Control: Install Package
-RubyMotionSublimeCompletions
-</code></pre>
-
-<p>でインストール出来るはずです．</p>
-
-<p>後は，普通にエディタを起動して<code>UIApp</code>とか打てば，補完に<code>UIApplication</code>とか<code>UIAppearance</code>とか出るようになります！</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -940,6 +931,10 @@ RubyMotionSublimeCompletions
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/06/02/pullreq/">RubyMotion のlib部分がソース公開してるのでPullRequestを送ってみたよ！</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/06/02/certificate/">[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策</a>
       </li>
     
@@ -955,15 +950,11 @@ RubyMotionSublimeCompletions
         <a href="/blog/2012/05/30/resource/">RubyMotionでリソース読み込み</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/05/30/18/">RubyMotion 1.8 リリースされてますね</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (15)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (16)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 
