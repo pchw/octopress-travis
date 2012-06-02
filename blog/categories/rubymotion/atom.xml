@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-01T12:44:01+09:00</updated>
+  <updated>2012-06-02T12:24:48+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,80 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策]]></title>
+    <link href="http://pchw.github.com/blog/2012/06/02/certificate/"/>
+    <updated>2012-06-02T12:10:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/06/02/certificate</id>
+    <content type="html"><![CDATA[<p>RubyMotionを色々いじって記事書いてたのですが，全然実機で試してませんでした．</p>
+
+<p>BT周りの実装をしてて，ついにシミュレータで確認ができなくなったので，実機に転送しようとして<code>rake device</code>したら</p>
+
+<pre><code>"iPhone Developper: &lt;your escaped name&gt; : no identity found
+rake aborted!
+Command failed with status (1): [CODESIGN_ALLOCATE="/Developer/Platforms/iP...]
+</code></pre>
+
+<p>とか出やがりました．</p>
+
+<p>マルチバイト文字を何かエスケープして<code>\123\456</code>みたいな形式にしてくれて，codesignに渡してしまうので，codesign側がそんなidentifyがねえよと言ってるわけですね．</p>
+
+<p><a href="http://www.rubymotion.com/developer-center/guides/project-management/#_configuration">RubyMotion Project Management Guide#2.Configuration</a>
+によれば，</p>
+
+<pre><code>codesign_certificate
+The name of the certificate to use for codesigning, as a String. The default value is the first iPhone Developer certificate found in keychain. Example: "iPhone Developer: Darth Vader (A3LKZY369Q)".
+</code></pre>
+
+<p>とあるので，Rakefileに指定すればいいかなーとか思って</p>
+
+<pre><code>$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'hoge'
+  app.codesign_certificate = "iPhone Developer: &lt;your name&gt;" # added
+end
+</code></pre>
+
+<p>こんな感じで，<code>app.codesign_certificate</code>を追加したらですね，</p>
+
+<pre><code>rake aborted!
+Rakefile:9: invalid multibyte char (US-ASCII)
+Rakefile:9: invalid multibyte char (US-ASCII)
+Rakefile:9: syntax error, unexpected $end, expecting keyword_end
+</code></pre>
+
+<p>こういうエラーが出て，もしかしてRakefileにマルチバイト文字は指定出来ないのか，，，ピンチ！</p>
+
+<pre><code>$ file Rakefile
+Rakefile: UTF-8 Unicode text
+</code></pre>
+
+<p>ちゃんとUTF8だよな，，，</p>
+
+<h2>解決策</h2>
+
+<p>と，まぁ色々悩んだんですが，結局解決策は</p>
+
+<pre><code># -*- coding: utf-8 -*-
+$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'hoge'
+  app.codesign_certificate = "iPhone Developer: &lt;your name&gt;"
+end
+</code></pre>
+
+<p>これが正解です．</p>
+
+<p><code># -*- coding: utf-8 -*-</code> を追加すればいいだけでした．</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[RubyMotion 1.9が出てた！早い！]]></title>
@@ -181,50 +255,6 @@ str = NSString.stringWithContentsOfFile path
 
 
 <p>いつも誰かがRubyMotionの新しいバージョン出たって言ってるの見てアップデートしてるのが分かるんだけど，言ってる人はどうやって新しいバージョンが出たって知るんだろう？毎日<code>motion update</code>とかしてるのかな．</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[RubyMotion 1.7出てます]]></title>
-    <link href="http://pchw.github.com/blog/2012/05/29/17/"/>
-    <updated>2012-05-29T08:14:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/05/29/17</id>
-    <content type="html"><![CDATA[<p>RubyMotion 1.7が出てました．</p>
-
-<pre><code>$ sudo motion update
-</code></pre>
-
-<p>しましょう！</p>
-
-<p>ところで，RubyMotion がアップデートされたかどうかを素早く知る方法ってないんですかね．</p>
-
-<pre><code>= RubyMotion 1.7 =
-
-  * Fixed a bug in the compiler where the proper signature would not be used
-    when defining informal protocol methods with CF types as arguments.
-  * Fixed iOS constants to be looked up at demand (when being used) and not
-    when the app starts, because certain constants are not set until a certain
-    API is called (ex: the kAB... constants of the AddressBook framework).
-    This change should also speed up a little bit the app starting time.
-  * Fixed a bug in the compiler where very long selectors would be truncated
-    and causing exceptions later at runtime.
-  * Fixed a bug in the compiler where memory-related selectors (alloc, dealloc,
-    retain, release, etc.) could not be defined in Ruby.
-  * Fixed a bug in the compiler where NSObject instance methods could not be
-    called on classes (ex. MyClass.performSelector(...)).
-  * Fixed a bug in the build system where vendored 3rd-party APIs dealing with
-    types defined in iOS headers could not be used (ex: enums or structs).
-</code></pre>
-
-<ul>
-<li>非公式プロトコルでCFタイプを引数にとった時に正しいシグネチャを吐かないことの修正</li>
-<li>アプリ開始時のiOS定数発見の部分を修正．この影響でアプリ開始時間がちょっと早くなる．</li>
-<li>超長いセレクタが途中で切れて実行時エラーになる問題の修正</li>
-<li>メモリ関係（allocとかreleaseとか）がRubyで定義出来なかったのを修正．</li>
-<li>NSObjectのインスタンスメソッドをクラスから呼べなかった問題を修正</li>
-<li>外部ベンダのライブラリを読み込むやつでiOSヘッダに定義されたenumとかstructsが使われなかった問題を修正</li>
-</ul>
-
 ]]></content>
   </entry>
   

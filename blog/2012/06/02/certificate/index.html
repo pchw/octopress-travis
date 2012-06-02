@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>RubyMotion 1.9が出てた！早い！ - ぽっちぽちにしてやんよ</title>
+  <title>[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策 - ぽっちぽちにしてやんよ</title>
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="一昨日ぐらいに1.8が出たと思ったら，もう1.9が出てきました． しかも変更点が多い． 次は2.0なのか1.10なのか気になりますね！ = RubyMotion 1.9 = * Fixed a bug in the build system where the paths of vendored &hellip;">
+  <meta name="description" content="RubyMotionを色々いじって記事書いてたのですが，全然実機で試してませんでした． BT周りの実装をしてて，ついにシミュレータで確認ができなくなったので，実機に転送しようとしてrake deviceしたら "iPhone Developper: &lt;your escaped name&gt &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://pchw.github.com/blog/2012/06/01/19">
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/06/02/certificate">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -80,7 +80,7 @@
   
   <header>
     
-      <h1 class="entry-title">RubyMotion 1.9が出てた！早い！</h1>
+      <h1 class="entry-title">[RubyMotion] 証明書の名前に日本語が入っていた時にrake Device出来ない問題の解決策</h1>
     
     
       <p class="meta">
@@ -96,50 +96,79 @@
   
 
 
-<time datetime="2012-06-01T12:29:00+09:00" pubdate data-updated="true">Jun 1<span>st</span>, 2012</time>
+<time datetime="2012-06-02T12:10:00+09:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>一昨日ぐらいに1.8が出たと思ったら，もう1.9が出てきました．</p>
+<div class="entry-content"><p>RubyMotionを色々いじって記事書いてたのですが，全然実機で試してませんでした．</p>
 
-<p>しかも変更点が多い．</p>
+<p>BT周りの実装をしてて，ついにシミュレータで確認ができなくなったので，実機に転送しようとして<code>rake device</code>したら</p>
 
-<p>次は2.0なのか1.10なのか気になりますね！</p>
-
-<pre><code>= RubyMotion 1.9 =
-
-  * Fixed a bug in the build system where the paths of vendored libraries
-    would not be properly quoted and cause a build failure in case they
-    contain space characters.
-  * Fixed a bug in the build system where using a lower deployment_target
-    version would cause a link error at runtime because the application was
-    linking against a framework that does not exist (ex. CoreImage on 4.3).
-  * Fixed the `rake spec' task to not move the simulator window to the
-    foreground.
-  * Fixed a bug in the compiler where APIs accepting pointers to
-    CoreFoundation types could not be given Pointer objects of the :object
-    type (ex. CFErrorRef*).
-  * Added support for CoreAudio (experimental). At the very least, constants
-    pointing to four-bytes characters should be properly covered.
-  * Fixed a typo in "expected array of %d elements, got %d" exception message
-    where the numbers were inverted. Thanks Enrico Thierbach.
-  * Fixed a bug in the compiler where compiling strings containing only null
-    characters (ex. "\x00") would cause a crash.
+<pre><code>"iPhone Developper: &lt;your escaped name&gt; : no identity found
+rake aborted!
+Command failed with status (1): [CODESIGN_ALLOCATE="/Developer/Platforms/iP...]
 </code></pre>
 
-<ul>
-<li>vendorライブラリのpathがQuoteで囲まれてなくてスペースが含まれてたときにビルドが失敗するのを修正</li>
-<li>CoreImageを4.3で使おうとするみたいなdevelopment_targetを昔のに設定してるのに存在しないフレームワークを指定したときにリンクエラーになるビルドの問題を修正</li>
-<li><code>rake spec</code>した時にシミュレータが前に出てこないのを修正</li>
-<li>CFなんちゃらへのポインタをAPIに渡せない問題の修正</li>
-<li>CoreAudioのサポートを追加．</li>
-<li>例外メッセージのtypo修正</li>
-<li>nullキャラクターだけが含まれたstringをコンパイルする時にクラッシュしてた問題を修正</li>
-</ul>
+<p>とか出やがりました．</p>
 
+<p>マルチバイト文字を何かエスケープして<code>\123\456</code>みたいな形式にしてくれて，codesignに渡してしまうので，codesign側がそんなidentifyがねえよと言ってるわけですね．</p>
+
+<p><a href="http://www.rubymotion.com/developer-center/guides/project-management/#_configuration">RubyMotion Project Management Guide#2.Configuration</a>
+によれば，</p>
+
+<pre><code>codesign_certificate
+The name of the certificate to use for codesigning, as a String. The default value is the first iPhone Developer certificate found in keychain. Example: "iPhone Developer: Darth Vader (A3LKZY369Q)".
+</code></pre>
+
+<p>とあるので，Rakefileに指定すればいいかなーとか思って</p>
+
+<pre><code>$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'hoge'
+  app.codesign_certificate = "iPhone Developer: &lt;your name&gt;" # added
+end
+</code></pre>
+
+<p>こんな感じで，<code>app.codesign_certificate</code>を追加したらですね，</p>
+
+<pre><code>rake aborted!
+Rakefile:9: invalid multibyte char (US-ASCII)
+Rakefile:9: invalid multibyte char (US-ASCII)
+Rakefile:9: syntax error, unexpected $end, expecting keyword_end
+</code></pre>
+
+<p>こういうエラーが出て，もしかしてRakefileにマルチバイト文字は指定出来ないのか，，，ピンチ！</p>
+
+<pre><code>$ file Rakefile
+Rakefile: UTF-8 Unicode text
+</code></pre>
+
+<p>ちゃんとUTF8だよな，，，</p>
+
+<h2>解決策</h2>
+
+<p>と，まぁ色々悩んだんですが，結局解決策は</p>
+
+<pre><code># -*- coding: utf-8 -*-
+$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'hoge'
+  app.codesign_certificate = "iPhone Developer: &lt;your name&gt;"
+end
+</code></pre>
+
+<p>これが正解です．</p>
+
+<p><code># -*- coding: utf-8 -*-</code> を追加すればいいだけでした．</p>
 </div>
 
 
@@ -162,7 +191,7 @@
   
 
 
-<time datetime="2012-06-01T12:29:00+09:00" pubdate data-updated="true">Jun 1<span>st</span>, 2012</time>
+<time datetime="2012-06-02T12:10:00+09:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2012</time>
       
 
 <span class="categories">
@@ -175,9 +204,9 @@
     </p>
     
       <div class="sharing">
-  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/06/01/19/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/06/02/certificate/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/06/01/19/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/06/01/19/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/06/02/certificate/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/06/02/certificate/" >Tweet</a>
   
   
   
@@ -186,10 +215,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/05/31/bubblewrap/" title="Previous Post: [RubyMotion]Bubble-Wrapを使ってみた">&laquo; [RubyMotion]Bubble-Wrapを使ってみた</a>
+        <a class="basic-alignment left" href="/blog/2012/06/01/19/" title="Previous Post: RubyMotion 1.9が出てた！早い！">&laquo; RubyMotion 1.9が出てた！早い！</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/06/02/certificate/" title="Next Post: [RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策">[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策 &raquo;</a>
       
     </p>
   </footer>
@@ -282,8 +309,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://pchw.github.com/blog/2012/06/01/19/';
-        var disqus_url = 'http://pchw.github.com/blog/2012/06/01/19/';
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/06/02/certificate/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/06/02/certificate/';
         var disqus_script = 'embed.js';
       
     (function () {

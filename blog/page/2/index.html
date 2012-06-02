@@ -9,7 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="気づいたら，RubyMotionの更新が1.5・1.6と続いてありました． $ sudo motion update しましょう． RubyMotion 1.5 更新内容 = RubyMotion 1.5 = * Improved the REPL to support multi-line &hellip;">
+  <meta name="description" content="今日は「第２回 iphone_dev_jp 東京iPhone/Mac勉強会」に参加してきました． そこで面白いものが紹介されていて，超便利だったので紹介します． mixiのiOSアプリ開発という発表をなさっていた@ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,104 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/26/appreviews/">AppReviewViewerが良い！</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-26T22:52:00+09:00" pubdate data-updated="true">May 26<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>今日は「第２回 iphone_dev_jp 東京iPhone/Mac勉強会」に参加してきました．</p>
+
+<p>そこで面白いものが紹介されていて，超便利だったので紹介します．</p>
+
+<p><img src="/images/appreviews.png" alt="appreviews" /></p>
+
+<p>mixiのiOSアプリ開発という発表をなさっていた@k_kinukawaさんがAppReviewViewerというツールを紹介されていました．</p>
+
+<p><a href="https://github.com/punchdrunker/AppReviewViewer">AppReviewViewer</a></p>
+
+<p>これは，アプリのIDを登録すると，レビューページをスクレイピングしてどのバージョンでどんな評価が付いたかを一覧したり見やすく表示してくれるものです．</p>
+
+<p>また，mecabが入っているとレビュー文を形態素解析してくれて頻出名詞をタグクラウドみたいに見せてくれたりします．</p>
+
+<p><strong>Gemfileが追加されたので，Gemfileを自分で追加する必要はなくなりました！</strong></p>
+
+<p>上記の<a href="https://github.com/punchdrunker/AppReviewViewer">github</a>ページに行ってもらうと分かりますが，依存ライブラリが書いてあるんですが，Gemfileが無くてめんどくさいので書きました．</p>
+
+<div><script src='https://gist.github.com/2793067.js?file=Gemfile'></script>
+<noscript><pre><code>source :rubygems
+
+gem 'json'
+gem 'nokogiri'
+gem 'sequel'
+gem 'sqlite3'
+gem 'sinatra'
+gem 'sinatra-reloader'
+gem 'sinatra-sequel'</code></pre></noscript></div>
+
+
+<p>AppReviewViewerをGithubからcloneした後に入れちゃってください．</p>
+
+<pre><code>$ git clone git://github.com/punchdrunker/AppReviewViewer.git
+$ cd AppReviewViewer
+$ cat &gt; Gemfile
+(上記gistを入れる)
+$ bundle install
+$ ruby app.rb
+</code></pre>
+
+<p>こんな感じでやれば，AppReviewViewerが<code>http://localhost:4567</code>に起動します．</p>
+
+<p>左端に<code>+Add app</code>があるので，選択してアプリのIDと名前を入れます．</p>
+
+<p><img src="/images/appreviewsadd.png" alt="appreviewsadd" /></p>
+
+<p>ちなみにアプリのIDはAppStoreのアプリのページを開くと，</p>
+
+<p><img src="/images/appreviewsid.png" alt="id" /></p>
+
+<p>ココらへんに書いていたりします．</p>
+
+<p>アプリのIDと名前が入れられたら，</p>
+
+<pre><code>$ ruby scripts/fetch.rb
+</code></pre>
+
+<p>とすれば，スクレイピングが始まるので，終わったら</p>
+
+<pre><code>$ ruby app.rb
+</code></pre>
+
+<p>としてまた<code>http://localhost:4567</code>を開いてみましょう．Reviewが見えるはずです！</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -829,6 +927,10 @@ Octopressをやってみようということになったのですよ．</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/06/02/certificate/">[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/06/01/19/">RubyMotion 1.9が出てた！早い！</a>
       </li>
     
@@ -844,15 +946,11 @@ Octopressをやってみようということになったのですよ．</p>
         <a href="/blog/2012/05/30/18/">RubyMotion 1.8 リリースされてますね</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/05/29/dottouch/">[レビュー] DotTouchというiPhone/iPadアプリを使ってみたよ！</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (14)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (15)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 

@@ -9,7 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="一昨日ぐらいに1.8が出たと思ったら，もう1.9が出てきました． しかも変更点が多い． 次は2.0なのか1.10なのか気になりますね！ = RubyMotion 1.9 = * Fixed a bug in the build system where the paths of vendored &hellip;">
+  <meta name="description" content="RubyMotionを色々いじって記事書いてたのですが，全然実機で試してませんでした． BT周りの実装をしてて，ついにシミュレータで確認ができなくなったので，実機に転送しようとしてrake deviceしたら "iPhone Developper: &lt;your escaped name&gt &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,107 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/02/certificate/">[RubyMotion] 証明書の名前に日本語が入っていた時にrake Device出来ない問題の解決策</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-02T12:10:00+09:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>RubyMotionを色々いじって記事書いてたのですが，全然実機で試してませんでした．</p>
+
+<p>BT周りの実装をしてて，ついにシミュレータで確認ができなくなったので，実機に転送しようとして<code>rake device</code>したら</p>
+
+<pre><code>"iPhone Developper: &lt;your escaped name&gt; : no identity found
+rake aborted!
+Command failed with status (1): [CODESIGN_ALLOCATE="/Developer/Platforms/iP...]
+</code></pre>
+
+<p>とか出やがりました．</p>
+
+<p>マルチバイト文字を何かエスケープして<code>\123\456</code>みたいな形式にしてくれて，codesignに渡してしまうので，codesign側がそんなidentifyがねえよと言ってるわけですね．</p>
+
+<p><a href="http://www.rubymotion.com/developer-center/guides/project-management/#_configuration">RubyMotion Project Management Guide#2.Configuration</a>
+によれば，</p>
+
+<pre><code>codesign_certificate
+The name of the certificate to use for codesigning, as a String. The default value is the first iPhone Developer certificate found in keychain. Example: "iPhone Developer: Darth Vader (A3LKZY369Q)".
+</code></pre>
+
+<p>とあるので，Rakefileに指定すればいいかなーとか思って</p>
+
+<pre><code>$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'hoge'
+  app.codesign_certificate = "iPhone Developer: &lt;your name&gt;" # added
+end
+</code></pre>
+
+<p>こんな感じで，<code>app.codesign_certificate</code>を追加したらですね，</p>
+
+<pre><code>rake aborted!
+Rakefile:9: invalid multibyte char (US-ASCII)
+Rakefile:9: invalid multibyte char (US-ASCII)
+Rakefile:9: syntax error, unexpected $end, expecting keyword_end
+</code></pre>
+
+<p>こういうエラーが出て，もしかしてRakefileにマルチバイト文字は指定出来ないのか，，，ピンチ！</p>
+
+<pre><code>$ file Rakefile
+Rakefile: UTF-8 Unicode text
+</code></pre>
+
+<p>ちゃんとUTF8だよな，，，</p>
+
+<h2>解決策</h2>
+
+<p>と，まぁ色々悩んだんですが，結局解決策は</p>
+
+<pre><code># -*- coding: utf-8 -*-
+$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'hoge'
+  app.codesign_certificate = "iPhone Developer: &lt;your name&gt;"
+end
+</code></pre>
+
+<p>これが正解です．</p>
+
+<p><code># -*- coding: utf-8 -*-</code> を追加すればいいだけでした．</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -801,104 +902,6 @@ RubyMotionSublimeCompletions
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/26/appreviews/">AppReviewViewerが良い！</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-26T22:52:00+09:00" pubdate data-updated="true">May 26<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今日は「第２回 iphone_dev_jp 東京iPhone/Mac勉強会」に参加してきました．</p>
-
-<p>そこで面白いものが紹介されていて，超便利だったので紹介します．</p>
-
-<p><img src="/images/appreviews.png" alt="appreviews" /></p>
-
-<p>mixiのiOSアプリ開発という発表をなさっていた@k_kinukawaさんがAppReviewViewerというツールを紹介されていました．</p>
-
-<p><a href="https://github.com/punchdrunker/AppReviewViewer">AppReviewViewer</a></p>
-
-<p>これは，アプリのIDを登録すると，レビューページをスクレイピングしてどのバージョンでどんな評価が付いたかを一覧したり見やすく表示してくれるものです．</p>
-
-<p>また，mecabが入っているとレビュー文を形態素解析してくれて頻出名詞をタグクラウドみたいに見せてくれたりします．</p>
-
-<p><strong>Gemfileが追加されたので，Gemfileを自分で追加する必要はなくなりました！</strong></p>
-
-<p>上記の<a href="https://github.com/punchdrunker/AppReviewViewer">github</a>ページに行ってもらうと分かりますが，依存ライブラリが書いてあるんですが，Gemfileが無くてめんどくさいので書きました．</p>
-
-<div><script src='https://gist.github.com/2793067.js?file=Gemfile'></script>
-<noscript><pre><code>source :rubygems
-
-gem 'json'
-gem 'nokogiri'
-gem 'sequel'
-gem 'sqlite3'
-gem 'sinatra'
-gem 'sinatra-reloader'
-gem 'sinatra-sequel'</code></pre></noscript></div>
-
-
-<p>AppReviewViewerをGithubからcloneした後に入れちゃってください．</p>
-
-<pre><code>$ git clone git://github.com/punchdrunker/AppReviewViewer.git
-$ cd AppReviewViewer
-$ cat &gt; Gemfile
-(上記gistを入れる)
-$ bundle install
-$ ruby app.rb
-</code></pre>
-
-<p>こんな感じでやれば，AppReviewViewerが<code>http://localhost:4567</code>に起動します．</p>
-
-<p>左端に<code>+Add app</code>があるので，選択してアプリのIDと名前を入れます．</p>
-
-<p><img src="/images/appreviewsadd.png" alt="appreviewsadd" /></p>
-
-<p>ちなみにアプリのIDはAppStoreのアプリのページを開くと，</p>
-
-<p><img src="/images/appreviewsid.png" alt="id" /></p>
-
-<p>ココらへんに書いていたりします．</p>
-
-<p>アプリのIDと名前が入れられたら，</p>
-
-<pre><code>$ ruby scripts/fetch.rb
-</code></pre>
-
-<p>とすれば，スクレイピングが始まるので，終わったら</p>
-
-<pre><code>$ ruby app.rb
-</code></pre>
-
-<p>としてまた<code>http://localhost:4567</code>を開いてみましょう．Reviewが見えるはずです！</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -937,6 +940,10 @@ $ ruby app.rb
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/06/02/certificate/">[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/06/01/19/">RubyMotion 1.9が出てた！早い！</a>
       </li>
     
@@ -952,15 +959,11 @@ $ ruby app.rb
         <a href="/blog/2012/05/30/18/">RubyMotion 1.8 リリースされてますね</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/05/29/dottouch/">[レビュー] DotTouchというiPhone/iPadアプリを使ってみたよ！</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (14)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (15)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 
