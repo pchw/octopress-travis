@@ -4,7 +4,7 @@
   <title><![CDATA[ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-06T12:49:47+09:00</updated>
+  <updated>2012-06-06T13:10:03+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[bundler]]></title>
+    <title type="html"><![CDATA[[RubyMotion] Bundlerを使って楽をしてみた！]]></title>
     <link href="http://pchw.github.com/blog/2012/06/06/bundler/"/>
     <updated>2012-06-06T08:53:00+09:00</updated>
     <id>http://pchw.github.com/blog/2012/06/06/bundler</id>
