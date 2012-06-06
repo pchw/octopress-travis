@@ -5,12 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>[RubyMotion]Routableを使ってみた - ぽっちぽちにしてやんよ</title>
+  <title>bundler - ぽっちぽちにしてやんよ</title>
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="Routableというgemがあるみたいという話を聞いて，使ってみました． Routable - GitHub インストール gem install routable Rakefileの編集 $:.unshift("/Library/RubyMotion/lib")
-require 'motion &hellip;">
+  <meta name="description" content="昨日Using Bundler With Rubymotionという記事が投稿されて，話題になっていたので早速ためしてみた． 記事の内容的には，色々requireしたりgem installしたりするのめんどくさいよね！それbundle使えばできるよ！てな感じでした． やってみよう！ 何はともあれ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@ require 'motion &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/28/routable">
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/06/06/bundler">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -81,7 +80,7 @@ require 'motion &hellip;">
   
   <header>
     
-      <h1 class="entry-title">[RubyMotion]Routableを使ってみた</h1>
+      <h1 class="entry-title">Bundler</h1>
     
     
       <p class="meta">
@@ -97,125 +96,97 @@ require 'motion &hellip;">
   
 
 
-<time datetime="2012-05-28T12:32:00+09:00" pubdate data-updated="true">May 28<span>th</span>, 2012</time>
+<time datetime="2012-06-06T08:53:00+09:00" pubdate data-updated="true">Jun 6<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Routableというgemがあるみたいという話を聞いて，使ってみました．</p>
+<div class="entry-content"><p>昨日<a href="http://thunderboltlabs.com/posts/using-bundler-with-rubymotion">Using Bundler With Rubymotion</a>という記事が投稿されて，話題になっていたので早速ためしてみた．</p>
 
-<p><a href="https://github.com/clayallsopp/Routable">Routable - GitHub</a></p>
+<p>記事の内容的には，色々<code>require</code>したり<code>gem install</code>したりするのめんどくさいよね！それ<code>bundle</code>使えばできるよ！てな感じでした．</p>
 
-<h2>インストール</h2>
+<h2>やってみよう！</h2>
 
-<pre><code>gem install routable
+<p>何はともあれ，bundlerを入れます．</p>
+
+<pre><code>$ gem install bundler
 </code></pre>
 
-<h2>Rakefileの編集</h2>
+<p><code>Rakefile</code>の<code>require 'motion/project'</code>の下辺りに</p>
 
-<pre><code>$:.unshift("/Library/RubyMotion/lib")
-require 'motion/project'
-require 'routable'
+<pre><code>require 'bundler'
+Bundler.require
 </code></pre>
 
-<p>のように<code>require 'routable'</code>を追加します．</p>
+<p>を追加しておきます．</p>
 
-<h2>使い方</h2>
+<p>あとは，Gemfileを作成して</p>
 
-<pre><code>class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.applicationFrame
-    @window.makeKeyAndVisible
+<pre><code>$ cat &gt; Gemfile
+source :rubygems
 
-    @rootView = NSBundle.mainBundle.loadNibNamed(
-        'RootViewController',
-        owner: self,
-        options: nil).first
-
-    @router = Routable::Router.router
-    @router.navigation_controller = UINavigationController.alloc.init
-    @router.navigation_controller.pushViewController(@rootView, animated: false)
-    @rootView.title = "TOP"
-
-    @router.map("one", OneViewController)
-    @router.map("two/:param", TwoViewController)
-
-    @window.rootViewController = @router.navigation_controller
-
-    @one = @rootView.view.viewWithTag 1
-    @one.addTarget(
-        self, 
-        action: 'onClickOne:', 
-        forControlEvents: UIControlEventTouchUpInside)
-
-    @two = @rootView.view.viewWithTag 2
-    @two.addTarget(
-        self, 
-        action: 'onClickTwo:', 
-        forControlEvents: UIControlEventTouchUpInside)
-
-    true
-  end
-
-  def onClickOne(sender)
-    @router.open('one', true)
-  end
-
-  def onClickTwo(sender)
-    @router.open('two/100', true)
-  end
-end
+gem "rake"
+gem "motion-testflight"
 </code></pre>
 
-<p>こんな感じで使います．</p>
+<p>とかして保存しておきます．あとは，</p>
 
-<p><code>Routable::Router.router</code>を取得して，<code>navigation_controller</code>に<code>UINavigationController</code>を設定しておきます．</p>
-
-<p><code>map(&lt;URL&gt;, &lt;viewController&gt;)</code>のようにすると，そのURL文字列をキーにviewControllerの遷移を書けるようになります．</p>
-
-<p><URL>には<code>hoge/:id</code>のようにパラメータを記述することができて，この場合だと<code>hoge/1</code>とかいう遷移をさせれば，宛先のviewControllerに<code>1</code>というパラメータが渡されます．</p>
-
-<p>遷移する時は<code>open(&lt;URL&gt;, &lt;animation?&gt;)</code>とすれば設定したviewControllerへ遷移出来ます．</p>
-
-<h2>遷移先ViewController</h2>
-
-<pre><code>class TwoViewController &lt; UIViewController
-    attr_accessor :param
-
-    def initWithParams(params = {})
-        init()
-        self.param = params[:param]
-        self
-    end
-
-    def viewDidLoad
-        @label = UILabel.alloc.init
-        @label.bounds = [[50, 150],[300, 50]]
-        @label.text = "TwoViewController" + self.param.to_s
-    end
-end
+<pre><code>$ bundle install
 </code></pre>
 
-<p>のようにして，<code>initWithParams</code>で引数を受け取れます．</p>
+<p>と実行すれば，自動的にgemを入れてくれます．</p>
 
-<h2>問題点</h2>
+<pre><code>$ rake testflight
+</code></pre>
 
-<p>ViewControllerをコードで場所設定とかすごくめんどくさいので，僕はIBを使います．</p>
+<p>とか打てば，<code>Rakefile</code>に<code>require 'motion-testflight'</code> とか書かなくてもOKです！</p>
 
-<p>しかし，IBを使って<code>resouces/HogeViewController.xib</code>を作って，Controlを配置して，，，というフローを辿ってやると，<code>router.open</code>の時にエラーが出ます．</p>
+<h2>罠</h2>
 
-<p>routerの内部では，<code>HogeViewController.alloc.initWithParams()</code>を呼んでインスタンス化しているわけですが，
-xibを使うと，<code>NSBundle.mainBundle.loadNibNamed</code>をしないとダメっぽいんですね．</p>
+<p>上記のは<code>motion-testflight</code>でやっているのは訳があって，
+<code>motion-testflight</code>は実は<code>gem install</code>だけでは完結していなくて，
+TestFlight SDKをダウンロードして<code>vendor/testflight</code>に入れないとダメなんですねー．残念です．</p>
 
-<p>なので，routerをいじって，mapするときにそれ用の情報を入れてあげるかしないといけません．</p>
+<p>ここらへんどうすればいいんだろう，，，？僕はRuby畑の人ではないので，どうすればいいのかよく分からないです．Gemfileにダウンロードするスクリプトとか書けばいいの？（書けるの？）</p>
 
-<h2>まとめ</h2>
+<h2>One more thing</h2>
 
-<p>僕はStoryboardを使うと思います．</p>
+<p>んで，そのbundleの記事に反応していた中で</p>
 
-<p>XCodeが嫌でRubyMotionをやっている人は多いと思うので，コードでControlを配置するのが苦じゃない人にとってはrouterはいいソリューションなんじゃないでしょうか．</p>
+<blockquote class="twitter-tweet tw-align-left" width="350" lang="ja"><p>せっかく使うんだったら bundle install &#8211;path vendor/bundle とかにして、システムにgemを入れないようにした方がいいかも？</p>&mdash; Satoshi Ebisawaさん (@satococoa) <a href="https://twitter.com/satococoa/status/209836315833925635" data-datetime="2012-06-05T02:37:30+00:00">6月 5, 2012</a></blockquote>
+
+
+<script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>という意見がありましたので，やってみました．</p>
+
+<pre><code>$ bundle install --path vendor/bundle
+</code></pre>
+
+<p>とやると，<code>vendor/bundle</code>以下に<code>ruby/&lt;version&gt;/gems</code>やらなんやら色んなファイルが出来てました．</p>
+
+<p>これでシステムグローバルに入れるのではなくて，そのProject内にgemsをインストールしているわけですね．</p>
+
+<p>その後は，いつもどおり<code>rake</code>でいいのかな？と思ったのですが，</p>
+
+<pre><code>$ rake
+Could not find rake-0.9.2.2 in any of the sources
+Run `bundle install` to install missing gems.
+</code></pre>
+
+<p>とかいう警告が出てました．
+しかし，rake自体は成功している模様．よく分からない．</p>
+
+<pre><code>$ bundle exec rake
+</code></pre>
+
+<p>とやる必要があるのかな？と思ったのですが，同じメッセージが出てました．
+ここらへんはbundler詳しくないのでよく分からない，，，</p>
+
+<p>何か分かったら教えて頂けるとありがたいです！</p>
 </div>
 
 
@@ -238,22 +209,16 @@ xibを使うと，<code>NSBundle.mainBundle.loadNibNamed</code>をしないと�
   
 
 
-<time datetime="2012-05-28T12:32:00+09:00" pubdate data-updated="true">May 28<span>th</span>, 2012</time>
+<time datetime="2012-06-06T08:53:00+09:00" pubdate data-updated="true">Jun 6<span>th</span>, 2012</time>
       
-
-<span class="categories">
-  
-    <a class='category' href='/blog/categories/rubymotion/'>RubyMotion</a>
-  
-</span>
 
 
     </p>
     
       <div class="sharing">
-  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/28/routable/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/06/06/bundler/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/28/routable/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/28/routable/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/06/06/bundler/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/06/06/bundler/" >Tweet</a>
   
   
   
@@ -262,10 +227,8 @@ xibを使うと，<code>NSBundle.mainBundle.loadNibNamed</code>をしないと�
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/05/27/live/" title="Previous Post: [RubyMotion]motion-liveを使ってみよう">&laquo; [RubyMotion]motion-liveを使ってみよう</a>
+        <a class="basic-alignment left" href="/blog/2012/06/05/casesensitive/" title="Previous Post: [RubyMotion] Simulatorでは動くのに実機で動かなくてハマった話">&laquo; [RubyMotion] Simulatorでは動くのに実機で動かなくてハマった話</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/05/29/17/" title="Next Post: RubyMotion 1.7出てます">RubyMotion 1.7出てます &raquo;</a>
       
     </p>
   </footer>
@@ -358,8 +321,8 @@ xibを使うと，<code>NSBundle.mainBundle.loadNibNamed</code>をしないと�
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/28/routable/';
-        var disqus_url = 'http://pchw.github.com/blog/2012/05/28/routable/';
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/06/06/bundler/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/06/06/bundler/';
         var disqus_script = 'embed.js';
       
     (function () {
