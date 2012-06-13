@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-06T13:10:03+09:00</updated>
+  <updated>2012-06-13T12:42:29+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,71 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotion 1.11が出て，iOS 6.0 beta1 でも使える様になった！]]></title>
+    <link href="http://pchw.github.com/blog/2012/06/13/1-dot-11/"/>
+    <updated>2012-06-13T12:25:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/06/13/1-dot-11</id>
+    <content type="html"><![CDATA[<p>RubyMotion が早くもiOS 6.0で使えるようになった模様．</p>
+
+<pre><code>$ sudo motion update
+</code></pre>
+
+<p>しましょう！</p>
+
+<p>更に，blockにnilを渡しても大丈夫になったので，何もしなくていいのにlambda{}的なことを書かないといけなかったのが楽になります！</p>
+
+<h2>リリースノート</h2>
+
+<pre><code>= RubyMotion 1.11 =
+
+  * Fixed a bug where the runtime would not allow `nil' to be passed as a
+    C-level block argument.
+  * Fixed a bug where methods defined by attr_* would abort the program when
+    called by Objective-C.
+  * Improved `rake spec' to honor the `output' environment variable, which can
+    be used to select a different output format. Available formats: spec_dox,
+    test_unit, tap and knock (ex. rake spec output=test_unit).
+  * Support for the iOS 6.0 Beta 1 SDK can be generated after having installed
+    Xcode 4.5 by typing the following command:
+    $ cd /Library/RubyMotion/data/6.0; rake update
+</code></pre>
+
+<h2>リリースノート訳</h2>
+
+<ul>
+<li>blockにnilが渡せなかったのを修正</li>
+<li>attr_なんとかで定義したメソッドをObjCから呼んだら（どうやるの？）落ちる問題を修正した</li>
+<li>rake specの出力フォーマットを選べる様になったよ</li>
+<li>iOS 6.0 Beta 1 サポート</li>
+</ul>
+
+
+<h2>iOS 6.0 beta 1 を使う方法</h2>
+
+<p>XCode4.5をダウンロードしてインストールします．</p>
+
+<p>RubyMotion を 1.11 にアップデートしておきます．</p>
+
+<p>その後，</p>
+
+<pre><code>$ cd /Library/RubyMotion/data/6.0
+$ gem install nokogiri
+$ rake update
+</code></pre>
+
+<p>を行なえば，RubyMotionで使えるようになります！</p>
+
+<p>Rakefileに</p>
+
+<pre><code>app.xcode_dir = '/Applications/新XCodeの場所...'
+</code></pre>
+
+<p>とかすればいいらしいです．
+（普通に入れてる人は別にRakefileに書かなくてもいいかな）</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[RubyMotion] Bundlerを使って楽をしてみた！]]></title>
@@ -262,51 +327,6 @@ end
 <p>これが正解です．</p>
 
 <p><code># -*- coding: utf-8 -*-</code> を追加すればいいだけでした．</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[RubyMotion 1.9が出てた！早い！]]></title>
-    <link href="http://pchw.github.com/blog/2012/06/01/19/"/>
-    <updated>2012-06-01T12:29:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/06/01/19</id>
-    <content type="html"><![CDATA[<p>一昨日ぐらいに1.8が出たと思ったら，もう1.9が出てきました．</p>
-
-<p>しかも変更点が多い．</p>
-
-<p>次は2.0なのか1.10なのか気になりますね！</p>
-
-<pre><code>= RubyMotion 1.9 =
-
-  * Fixed a bug in the build system where the paths of vendored libraries
-    would not be properly quoted and cause a build failure in case they
-    contain space characters.
-  * Fixed a bug in the build system where using a lower deployment_target
-    version would cause a link error at runtime because the application was
-    linking against a framework that does not exist (ex. CoreImage on 4.3).
-  * Fixed the `rake spec' task to not move the simulator window to the
-    foreground.
-  * Fixed a bug in the compiler where APIs accepting pointers to
-    CoreFoundation types could not be given Pointer objects of the :object
-    type (ex. CFErrorRef*).
-  * Added support for CoreAudio (experimental). At the very least, constants
-    pointing to four-bytes characters should be properly covered.
-  * Fixed a typo in "expected array of %d elements, got %d" exception message
-    where the numbers were inverted. Thanks Enrico Thierbach.
-  * Fixed a bug in the compiler where compiling strings containing only null
-    characters (ex. "\x00") would cause a crash.
-</code></pre>
-
-<ul>
-<li>vendorライブラリのpathがQuoteで囲まれてなくてスペースが含まれてたときにビルドが失敗するのを修正</li>
-<li>CoreImageを4.3で使おうとするみたいなdevelopment_targetを昔のに設定してるのに存在しないフレームワークを指定したときにリンクエラーになるビルドの問題を修正</li>
-<li><code>rake spec</code>した時にシミュレータが前に出てこないのを修正</li>
-<li>CFなんちゃらへのポインタをAPIに渡せない問題の修正</li>
-<li>CoreAudioのサポートを追加．</li>
-<li>例外メッセージのtypo修正</li>
-<li>nullキャラクターだけが含まれたstringをコンパイルする時にクラッシュしてた問題を修正</li>
-</ul>
-
 ]]></content>
   </entry>
   

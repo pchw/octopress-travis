@@ -9,7 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="昨日Using Bundler With Rubymotionという記事が投稿されて，話題になっていたので早速ためしてみた． 記事の内容的には，色々requireしたりgem installしたりするのめんどくさいよね！それbundle使えばできるよ！てな感じでした． やってみよう！ 何はともあれ &hellip;">
+  <meta name="description" content="RubyMotion が早くもiOS 6.0で使えるようになった模様． $ sudo motion update しましょう！ 更に，blockにnilを渡しても大丈夫になったので，何もしなくていいのにlambda{}的なことを書かないといけなかったのが楽になります！ リリースノート = &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,98 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/13/1-dot-11/">RubyMotion 1.11が出て，iOS 6.0 Beta1 でも使える様になった！</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-13T12:25:00+09:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>RubyMotion が早くもiOS 6.0で使えるようになった模様．</p>
+
+<pre><code>$ sudo motion update
+</code></pre>
+
+<p>しましょう！</p>
+
+<p>更に，blockにnilを渡しても大丈夫になったので，何もしなくていいのにlambda{}的なことを書かないといけなかったのが楽になります！</p>
+
+<h2>リリースノート</h2>
+
+<pre><code>= RubyMotion 1.11 =
+
+  * Fixed a bug where the runtime would not allow `nil' to be passed as a
+    C-level block argument.
+  * Fixed a bug where methods defined by attr_* would abort the program when
+    called by Objective-C.
+  * Improved `rake spec' to honor the `output' environment variable, which can
+    be used to select a different output format. Available formats: spec_dox,
+    test_unit, tap and knock (ex. rake spec output=test_unit).
+  * Support for the iOS 6.0 Beta 1 SDK can be generated after having installed
+    Xcode 4.5 by typing the following command:
+    $ cd /Library/RubyMotion/data/6.0; rake update
+</code></pre>
+
+<h2>リリースノート訳</h2>
+
+<ul>
+<li>blockにnilが渡せなかったのを修正</li>
+<li>attr_なんとかで定義したメソッドをObjCから呼んだら（どうやるの？）落ちる問題を修正した</li>
+<li>rake specの出力フォーマットを選べる様になったよ</li>
+<li>iOS 6.0 Beta 1 サポート</li>
+</ul>
+
+
+<h2>iOS 6.0 beta 1 を使う方法</h2>
+
+<p>XCode4.5をダウンロードしてインストールします．</p>
+
+<p>RubyMotion を 1.11 にアップデートしておきます．</p>
+
+<p>その後，</p>
+
+<pre><code>$ cd /Library/RubyMotion/data/6.0
+$ gem install nokogiri
+$ rake update
+</code></pre>
+
+<p>を行なえば，RubyMotionで使えるようになります！</p>
+
+<p>Rakefileに</p>
+
+<pre><code>app.xcode_dir = '/Applications/新XCodeの場所...'
+</code></pre>
+
+<p>とかすればいいらしいです．
+（普通に入れてる人は別にRakefileに書かなくてもいいかな）</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -763,77 +855,6 @@ str = NSString.stringWithContentsOfFile path
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/29/17/">RubyMotion 1.7出てます</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-29T08:14:00+09:00" pubdate data-updated="true">May 29<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>RubyMotion 1.7が出てました．</p>
-
-<pre><code>$ sudo motion update
-</code></pre>
-
-<p>しましょう！</p>
-
-<p>ところで，RubyMotion がアップデートされたかどうかを素早く知る方法ってないんですかね．</p>
-
-<pre><code>= RubyMotion 1.7 =
-
-  * Fixed a bug in the compiler where the proper signature would not be used
-    when defining informal protocol methods with CF types as arguments.
-  * Fixed iOS constants to be looked up at demand (when being used) and not
-    when the app starts, because certain constants are not set until a certain
-    API is called (ex: the kAB... constants of the AddressBook framework).
-    This change should also speed up a little bit the app starting time.
-  * Fixed a bug in the compiler where very long selectors would be truncated
-    and causing exceptions later at runtime.
-  * Fixed a bug in the compiler where memory-related selectors (alloc, dealloc,
-    retain, release, etc.) could not be defined in Ruby.
-  * Fixed a bug in the compiler where NSObject instance methods could not be
-    called on classes (ex. MyClass.performSelector(...)).
-  * Fixed a bug in the build system where vendored 3rd-party APIs dealing with
-    types defined in iOS headers could not be used (ex: enums or structs).
-</code></pre>
-
-<ul>
-<li>非公式プロトコルでCFタイプを引数にとった時に正しいシグネチャを吐かないことの修正</li>
-<li>アプリ開始時のiOS定数発見の部分を修正．この影響でアプリ開始時間がちょっと早くなる．</li>
-<li>超長いセレクタが途中で切れて実行時エラーになる問題の修正</li>
-<li>メモリ関係（allocとかreleaseとか）がRubyで定義出来なかったのを修正．</li>
-<li>NSObjectのインスタンスメソッドをクラスから呼べなかった問題を修正</li>
-<li>外部ベンダのライブラリを読み込むやつでiOSヘッダに定義されたenumとかstructsが使われなかった問題を修正</li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -872,6 +893,10 @@ str = NSString.stringWithContentsOfFile path
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/06/13/1-dot-11/">RubyMotion 1.11が出て，iOS 6.0 beta1 でも使える様になった！</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/06/06/bundler/">[RubyMotion] Bundlerを使って楽をしてみた！</a>
       </li>
     
@@ -887,15 +912,11 @@ str = NSString.stringWithContentsOfFile path
         <a href="/blog/2012/06/02/certificate/">[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/06/01/19/">RubyMotion 1.9が出てた！早い！</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (18)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (19)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 
