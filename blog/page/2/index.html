@@ -9,7 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="RubyMotion 1.7が出てました． $ sudo motion update しましょう！ ところで，RubyMotion がアップデートされたかどうかを素早く知る方法ってないんですかね． = RubyMotion 1.7 = * Fixed a bug in the compiler &hellip;">
+  <meta name="description" content="今日はDotTouchというドット絵を描くiPhoneアプリの紹介です． DotTouchSTUDIO SHINジャンル： ユーティリティ - エンターテインメントリリース日： 2009-10-15価格： 350円 posted with sticky on 2012.5.29 ">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,52 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/29/dottouch/">[レビュー] DotTouchというiPhone/iPadアプリを使ってみたよ！</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-29T21:44:00+09:00" pubdate data-updated="true">May 29<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>今日はDotTouchというドット絵を描くiPhoneアプリの紹介です．</p>
+
+<div class="sticky-itslink" style="margin-bottom:1em;"><a href="http://itunes.apple.com/jp/app/dottouch/id333614008?mt=8&uo=4" rel="nofollow" target="_blank"><img src="http://a3.mzstatic.com/us/r1000/110/Purple/v4/84/9b/d8/849bd8e5-ba16-f769-9efa-28b23bdc56a9/mza_2802615915717116417.100x100-75.png" style="border-style:none;float:left;margin-right:5px;" alt="DotTouch" title="DotTouch" /></a><div class="sticky-itslinktext" style="float:left;"><a href="http://itunes.apple.com/jp/app/dottouch/id333614008?mt=8&uo=4" rel="nofollow" target="_blank">DotTouch</a><br />STUDIO SHIN<br />ジャンル： ユーティリティ - エンターテインメント<br />リリース日： 2009-10-15<br />価格： 350円<br /> <a href="http://itunes.apple.com/jp/app/dottouch/id333614008?mt=8&uo=4" rel="nofollow" target="_blank"><img src="http://ax.phobos.apple.com.edgesuite.net/ja_jp/images/web/linkmaker/badge_appstore-sm.gif" alt ="iTunesで見る" style="border-style:none;" /></a><br /><span style="font-size:xx-small;">posted with <a href="http://sticky.linclip.com/rank/" target="_blank">sticky</a> on 2012.5.29</span></div><br style="clear:left;" /></div>
+
+
+<p></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/05/29/dottouch/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
   
   
     <article>
@@ -1073,108 +1119,6 @@ end
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/22/spec/">[Rubymotion] Rake Specをカラフルにしよう！</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-22T21:52:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><img src="https://lh3.googleusercontent.com/-i-36UEH1H1s/T6_Myv_1m1I/AAAAAAAAAZk/-jGU9jUlXSU/F45FE6D0-B302-438F-ABBE-3E67018268CD.jpg" alt="" /></p>
-
-<p>RubyMotionはBaconというテストフレームワークを使っています．
-RSpecとの違いがよく分からない．</p>
-
-<pre><code>$ rake spec
-</code></pre>
-
-<p>とやると，<code>spec</code>以下のテストが実行されるっぽいです．</p>
-
-<p>ところが，普通に</p>
-
-<pre><code>$ motion crate redgreen
-$ cd redgreen
-$ rake spec
-</code></pre>
-
-<p>とやると，ビルドされてシミュレータが立ち上がりテストが実行されますが，白黒です．</p>
-
-<p><img src="https://lh4.googleusercontent.com/-MaF986VQLXQ/T6_MzjUWnKI/AAAAAAAAAZs/0kTlIiLoETE/25518394-DF4D-4FC5-A0AD-FC1AAB8C3DCE.jpg" alt="" /></p>
-
-<p>そこで，<code>spec</code>フォルダで一番初めに読み込まれる .rbの中でカラー表示にさせるスクリプトを実行させれば，カラー表示になるようです．
-（そのため， <code>00***.rb</code>のような名前にすれば良いようです．）</p>
-
-<p>RedGreenというrake specをカラフルにするライブラリがあるらしいのですが，それをRubyMotion用にアレンジしたものがgithubで公開されています．</p>
-
-<p><a href="https://github.com/mdks/rm-redgreen">rm-redgreen</a></p>
-
-<p>spec/00-redgreen.rb
-app/app.rb
-app/kernel.rb
-app/rm-ansiterm.rb
-app/string.rb
-を自分のとこに持ってくれば使えます．</p>
-
-<p>先程の<code>motion create</code>しただけのやつにコピーして再度テストをすると，このようになります．</p>
-
-<p>カラフルになりましたね．</p>
-
-<p><img src="https://lh5.googleusercontent.com/-2YNpuBaKr6E/T6_M3QeAYUI/AAAAAAAAAaM/h5NFJ1YEO2g/8C43CDC6-042C-4899-9532-BDD6890057ED.jpg" alt="" /></p>
-
-<p>デフォルトのテストはWindowがあるのを調べるテストなので，実装を書いてGreenにしましょう．</p>
-
-<p><code>./app/app_delegate.rb</code></p>
-
-<pre><code>class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    true
-  end
-end
-</code></pre>
-
-<p>テストを再実行します．</p>
-
-<pre><code>$ rake spec
-</code></pre>
-
-<p>Greenになりました．</p>
-
-<p><img src="https://lh6.googleusercontent.com/-qQcnS4YpH98/T6_M2qdo6qI/AAAAAAAAAaE/NvQU_ZKe9qc/D3BC7FB7-D043-4EA1-AB2F-DB837A7632FA.jpg" alt="" /></p>
-
-<p><code>./spec/00-redgreen.rb</code>の<code>style = :focused</code>となっている部分を<code>style = :full</code>とすると長めのログが出ます．</p>
-
-<p><img src="https://lh4.googleusercontent.com/-iXVNZArvvxU/T6_M0ixSIsI/AAAAAAAAAZ0/f3_Irg2MqM8/CCDD4D42-D3EB-405B-BA59-9BED5C685ECD.jpg" alt="" /></p>
-
-<p><img src="https://lh6.googleusercontent.com/-ImTqn7jZiR8/T6_M11kTpsI/AAAAAAAAAZ8/-fVYGOMWifM/8A8B0EBF-3173-486C-AD54-EE1BAAB49511.jpg" alt="" /></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1215,6 +1159,10 @@ end
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/06/17/testflight/">RubyMotionを使ってる人はTestFlight使うの簡単だからやった方がいいよ</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/06/13/1-dot-11/">RubyMotion 1.11が出て，iOS 6.0 beta1 でも使える様になった！</a>
       </li>
     
@@ -1230,15 +1178,11 @@ end
         <a href="/blog/2012/06/02/pullreq/">RubyMotion のlib部分がソース公開してるのでPullRequestを送ってみたよ！</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/06/02/certificate/">[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (19)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (20)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 

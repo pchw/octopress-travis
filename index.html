@@ -9,7 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="RubyMotion が早くもiOS 6.0で使えるようになった模様． $ sudo motion update しましょう！ 更に，blockにnilを渡しても大丈夫になったので，何もしなくていいのにlambda{}的なことを書かないといけなかったのが楽になります！ リリースノート = &hellip;">
+  <meta name="description" content="iOSアプリを開発していて，友達とかチームの人に配布する時のAdHoc配布はTestFlightが便利です． XCodeでやってたときは，AdHoc用の構成を作ってEntitlementがどうとかしてオーガナイザでIPAファイルにしてTestFlightのサイトにアクセスしてUpload &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,204 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/17/testflight/">RubyMotionを使ってる人はTestFlight使うの簡単だからやった方がいいよ</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-17T20:45:00+09:00" pubdate data-updated="true">Jun 17<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>iOSアプリを開発していて，友達とかチームの人に配布する時のAdHoc配布はTestFlightが便利です．</p>
+
+<p>XCodeでやってたときは，AdHoc用の構成を作ってEntitlementがどうとかしてオーガナイザでIPAファイルにしてTestFlightのサイトにアクセスしてUpload BuildでIPAをアップロードして配布するメンバーを選んで，，，というような事をしないといけませんでした．</p>
+
+<p>※ 最近はTestFlight Desktop Appとか出てて何かもうちょっと楽になってそうな感じだけど．</p>
+
+<p>RubyMotionでは<code>motion-testflight</code>というgemがありまして，そこらへんを楽チンに出来ます．</p>
+
+<p><img src="images/testflight_devcenter.png" alt="developer center" /></p>
+
+<p>公式の<a href="http://www.rubymotion.com/developer-center/articles/testflight/">Developer Center</a>にもガイドがあるので，みんなやってるかな？</p>
+
+<p>まぁとりあえず導入とどう設定してるか解説してみるよ．</p>
+
+<p><code>motion-testflight</code>を使うには4つ準備が必要です．</p>
+
+<ol>
+<li>motion-testflightのインストール</li>
+<li>API TokenをRakefileに設定する</li>
+<li>Team TokenをRakefileに設定する</li>
+<li>TestFlight SDKをvendorに入れる</li>
+</ol>
+
+
+<h2>motion-testflightのインストール</h2>
+
+<pre><code>$ sudo gem install motion-testflight
+</code></pre>
+
+<h2>API TokenをRakefileに設定する</h2>
+
+<p>次に，TestFlightのWebページに行ってAPI Tokenを取得する必要があります．</p>
+
+<p><img src="images/testflight_apitoken.png" alt="api token" /></p>
+
+<p>TestFlightのWebページに行ってログインします．
+その後，右上のをクリックしてアカウント設定を開きます．
+その中の下の方にAPI Tokenが書いてあるのでコピーします．</p>
+
+<p><code>Rakefile</code>の<code>app.testflight.api_token</code>に設定します．</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+    # Use `rake config' to see complete project settings.
+    app.name = 'stickey'
+    app.testflight.api_token = '&lt;API Token&gt;'
+end
+</code></pre>
+
+<p>こんな感じになります．</p>
+
+<h2>Team TokenをRakefileに設定する</h2>
+
+<p>TestFlightにはチームとか言う配布する範囲的なものが決めれます．</p>
+
+<p>※ チーム内でもdistribution_listという更に細かく配布先を設定することも出来ます．</p>
+
+<p>そして，そのチームごとにTeam TokenというAPI Tokenとは別のものがあります．これも設定する必要があります．</p>
+
+<p><img src="images/testflight_teamtoken.png" alt="TeamToken" /></p>
+
+<p>TeamInfoからTeamTokenをコピペして<code>Rakefile</code>の<code>app.testflight.team_token</code>に設定します．</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+    # Use `rake config' to see complete project settings.
+    app.name = 'stickey'
+    app.testflight.api_token = '&lt;API Token&gt;'
+    app.testflight.team_token = '&lt;Team Token&gt;'
+end
+</code></pre>
+
+<p>こんな感じになります．</p>
+
+<h2>TestFlight SDKをダウンロードする</h2>
+
+<p><code>motion-testflight</code>はTestFlight SDKが無いと動きません．</p>
+
+<p>そのため，さっきのTeamTokenをコピーした近くにTestFlight SDKへのリンクがあるのでそこから落としておきます．</p>
+
+<p><a href="http://testflightapp.com/sdk/download">TestFlight SDK ダウンロード</a></p>
+
+<p>TestFlight SDKはzipなので，解凍して<code>vendor/TestFlight</code>とかに置いておきます．</p>
+
+<p>Rakefile にも置き場所を設定する必要があります．</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+    # Use `rake config' to see complete project settings.
+    app.name = 'stickey'
+    app.testflight.api_token = '&lt;API Token&gt;'
+    app.testflight.team_token = '&lt;Team Token&gt;'
+    app.testflight.sdk = 'vendor/TestFlight'
+end
+</code></pre>
+
+<h2>TestFlightで配布する</h2>
+
+<pre><code>$ rake testflight notes="リリースノートを入れる"
+</code></pre>
+
+<p>とすれば，buildしてTestFlightへアップロードされていきます．</p>
+
+<h2>distribution_listを作った方がいい</h2>
+
+<p>ここまでだと，AdHoc BuildされたパッケージがTestFlightに上がるのは楽になりましたが，
+まだTestFlightのWebサイトにアクセスしてどのTeammateを配布先にするかを選択しないといけません．</p>
+
+<p>これは非常にめんどくさいので，distribution_listを作ります．</p>
+
+<p><img src="images/testflight_people.png" alt="people" /></p>
+
+<p>メニューのPeopleの所を選びます．</p>
+
+<p><img src="images/testflight_distribution.png" alt="distribution" /></p>
+
+<p>distribution_listに入れたい人を選択して，右のActionsから<code>+New Distribution List</code>を選択します．
+あとは，そのdistribution_listに名前を付けてSaveすれば完了です．</p>
+
+<p>※ distribution_listは何個も作れるっぽいので，「アプリ毎」とか「このアプリのテスターはこの人達」とか「どうせ全員に配るから全員」など色んな単位で作っておくと色々指定出来て楽ちんです．</p>
+
+<p>distribution_listを作ったら，<code>Rakefile</code>にdistribution_listを設定します．</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+    # Use `rake config' to see complete project settings.
+    app.name = 'stickey'
+    app.testflight.api_token = '&lt;API Token&gt;'
+    app.testflight.team_token = '&lt;Team Token&gt;'
+    app.testflight.sdk = 'vendor/TestFlight'
+    app.testflight.distribution_lists = ['&lt;distribution_list&gt;']
+end
+</code></pre>
+
+<p>こんな感じで設定します．Arrayで設定できるので，この集団とあの集団に配布したいという時も2つ設定すればいいだけです．</p>
+
+<h2>証明書とProvisioningProfile</h2>
+
+<p>証明書(codesign_certificate)とProvisioningProfileは何も設定しないと，
+keychainの初めに見つかった証明書と<code>~/Library/MobileDevice/Provisioning</code>内にある初めの<code>.mobileprovision</code>を使ったりします．</p>
+
+<p>割りとTestFlight配布だと上手くいかなくなることが多いので，<code>Rakefile</code> で指定するといいです．</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+    # Use `rake config' to see complete project settings.
+    app.name = 'stickey'
+    app.testflight.api_token = '&lt;API Token&gt;'
+    app.testflight.team_token = '&lt;Team Token&gt;'
+    app.testflight.sdk = 'vendor/TestFlight'
+    app.testflight.distribution_lists = ['&lt;distribution_list&gt;']
+
+    app.codesign_certificate = "iPhone Distribution: なまえがはいったり"
+    app.provisioning_profile = "/Users/&lt;Username&gt;/Library/MobileDevice/Provisioning Profiles/XXXXXXXXXXXXXXXX.mobileprovision"
+end
+</code></pre>
+
+<p>こんな感じに指定すると良いです．</p>
+
+<p><code>app.provisioning_profile</code>は<code>~/...</code>とか入れるとエラーになるので，普通にフルパス入れるとよいです．</p>
+
+<h2>まとめ</h2>
+
+<p>motion-testflight を入れるとAdHoc配布がすごく楽になります．
+今まではXCodeのオーガナイザとブラウザとエディタを行ったり来たりでしたが，
+simulatorの起動等と同じようにターミナルで完結するのですごく楽．</p>
+
+<p>他人へのAdHoc配布だけでなく，自分で複数のdeviceに入れるときもUSBを繋ぎ変えて<code>rake device</code>を連発するより楽だと思うので，積極的に使っていくと良いと思います．</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -809,52 +1007,6 @@ str = NSString.stringWithContentsOfFile path
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/29/dottouch/">[レビュー] DotTouchというiPhone/iPadアプリを使ってみたよ！</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-29T21:44:00+09:00" pubdate data-updated="true">May 29<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今日はDotTouchというドット絵を描くiPhoneアプリの紹介です．</p>
-
-<div class="sticky-itslink" style="margin-bottom:1em;"><a href="http://itunes.apple.com/jp/app/dottouch/id333614008?mt=8&uo=4" rel="nofollow" target="_blank"><img src="http://a3.mzstatic.com/us/r1000/110/Purple/v4/84/9b/d8/849bd8e5-ba16-f769-9efa-28b23bdc56a9/mza_2802615915717116417.100x100-75.png" style="border-style:none;float:left;margin-right:5px;" alt="DotTouch" title="DotTouch" /></a><div class="sticky-itslinktext" style="float:left;"><a href="http://itunes.apple.com/jp/app/dottouch/id333614008?mt=8&uo=4" rel="nofollow" target="_blank">DotTouch</a><br />STUDIO SHIN<br />ジャンル： ユーティリティ - エンターテインメント<br />リリース日： 2009-10-15<br />価格： 350円<br /> <a href="http://itunes.apple.com/jp/app/dottouch/id333614008?mt=8&uo=4" rel="nofollow" target="_blank"><img src="http://ax.phobos.apple.com.edgesuite.net/ja_jp/images/web/linkmaker/badge_appstore-sm.gif" alt ="iTunesで見る" style="border-style:none;" /></a><br /><span style="font-size:xx-small;">posted with <a href="http://sticky.linclip.com/rank/" target="_blank">sticky</a> on 2012.5.29</span></div><br style="clear:left;" /></div>
-
-
-<p></p>
-
-</div>
-  
-  
-    <footer>
-      <a rel="full-article" href="/blog/2012/05/29/dottouch/">Read on &rarr;</a>
-    </footer>
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -893,6 +1045,10 @@ str = NSString.stringWithContentsOfFile path
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/06/17/testflight/">RubyMotionを使ってる人はTestFlight使うの簡単だからやった方がいいよ</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/06/13/1-dot-11/">RubyMotion 1.11が出て，iOS 6.0 beta1 でも使える様になった！</a>
       </li>
     
@@ -908,15 +1064,11 @@ str = NSString.stringWithContentsOfFile path
         <a href="/blog/2012/06/02/pullreq/">RubyMotion のlib部分がソース公開してるのでPullRequestを送ってみたよ！</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/06/02/certificate/">[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (19)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (20)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 
