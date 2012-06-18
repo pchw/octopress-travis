@@ -4,7 +4,7 @@
   <title><![CDATA[ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-18T07:58:12+09:00</updated>
+  <updated>2012-06-18T20:40:39+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -26,7 +26,7 @@
 
 <p>RubyMotionでは<code>motion-testflight</code>というgemがありまして，そこらへんを楽チンに出来ます．</p>
 
-<p><img src="images/testflight_devcenter.png" alt="developer center" /></p>
+<p><img src="http://pchw.github.com/images/testflight_devcenter.png" alt="developer center" /></p>
 
 <p>公式の<a href="http://www.rubymotion.com/developer-center/articles/testflight/">Developer Center</a>にもガイドがあるので，みんなやってるかな？</p>
 
@@ -51,7 +51,7 @@
 
 <p>次に，TestFlightのWebページに行ってAPI Tokenを取得する必要があります．</p>
 
-<p><img src="images/testflight_apitoken.png" alt="api token" /></p>
+<p><img src="http://pchw.github.com/images/testflight_apitoken.png" alt="api token" /></p>
 
 <p>TestFlightのWebページに行ってログインします．
 その後，右上のをクリックしてアカウント設定を開きます．
@@ -76,7 +76,7 @@ end
 
 <p>そして，そのチームごとにTeam TokenというAPI Tokenとは別のものがあります．これも設定する必要があります．</p>
 
-<p><img src="images/testflight_teamtoken.png" alt="TeamToken" /></p>
+<p><img src="http://pchw.github.com/images/testflight_teamtoken.png" alt="TeamToken" /></p>
 
 <p>TeamInfoからTeamTokenをコピペして<code>Rakefile</code>の<code>app.testflight.team_token</code>に設定します．</p>
 
@@ -125,11 +125,11 @@ end
 
 <p>これは非常にめんどくさいので，distribution_listを作ります．</p>
 
-<p><img src="images/testflight_people.png" alt="people" /></p>
+<p><img src="http://pchw.github.com/images/testflight_people.png" alt="people" /></p>
 
 <p>メニューのPeopleの所を選びます．</p>
 
-<p><img src="images/testflight_distribution.png" alt="distribution" /></p>
+<p><img src="http://pchw.github.com/images/testflight_distribution.png" alt="distribution" /></p>
 
 <p>distribution_listに入れたい人を選択して，右のActionsから<code>+New Distribution List</code>を選択します．
 あとは，そのdistribution_listに名前を付けてSaveすれば完了です．</p>
