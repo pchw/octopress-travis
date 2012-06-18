@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-18T20:40:39+09:00</updated>
+  <updated>2012-06-19T05:38:58+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,77 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotion 1.12 出てますよ]]></title>
+    <link href="http://pchw.github.com/blog/2012/06/19/rm1-dot-12/"/>
+    <updated>2012-06-19T05:08:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/06/19/rm1-dot-12</id>
+    <content type="html"><![CDATA[<p>昨日ぐらいにRubyMotion 1.12が出てます．
+主にBugfixの模様．</p>
+
+<h2>更新内容（原文）</h2>
+
+<pre><code>= RubyMotion 1.12 =
+
+  * Fixed a bug where sending an `init' message alone (without using `alloc'
+    before) would lead to a memory crash. This was possible when overloading
+    an initWith* method and doing `self.init' inside.
+  * Fixed a bug where performing Objective-C methods that accept CFType objects
+    would crash the program (ex. [ABPersonViewController setDisplayedPerson:]).
+  * Switched to clang++ to link the executable bits. This fixes linker crashes
+    on iOS 6.0.
+  * Added `fast' output for `rake spec'. Fixed a bug in the other outputs.
+    Patch by Marin Usalj.
+  * Improved the build system to let the user specify CPU archs that should be
+    used for a certain platform. The `app.archs' method returns a Hash that one
+    can tweak. This is so far only useful when you target 4.3 (which is armv6
+    and armv7) and want to link with a 3rd-party library that only supports
+    armv7 (ex. app.archs['iPhoneOS'] = ['armv7']).
+  * Improved `rake simulator' to honor the `deployment_target' environment
+    variable (ex. rake deployment_target=4.3). Patch by Satoshi Ebisawa.
+  * Fixed a bug in the build system where the compiler would not use the right
+    BridgeSupport files when using a lower deployment_target.
+    Patch by Satoshi Ebisawa.
+  * Fixed the build system to re-link the .app executable in case one of the
+    vendored libraries changed.
+  * Fixed bugs in both ARM/simulator compilers where structures smaller than
+    64-bit would not be following the ABI and causing unexpected behavior in
+    certain cases (ex. cocos2d). Thanks to Aaron Hurley for the detective work.
+  * Removed Kernel#select as it clashes with a private `select' method defined
+    by iOS and triggered when hittin the select button in a paste action.
+    Thanks to Francis Chong for the detective work.
+</code></pre>
+
+<h2>更新内容(訳)</h2>
+
+<ul>
+<li>alloc無しでinitを呼んだ時にメモリ破壊を引き起こすバグを修正．initWithなんとかをオーバーロードして，そのメソッド内でself.initを呼んでいた場合起こっていた模様．</li>
+<li>CFTypeを受け取るObjCのメソッドを呼んだ時にクラッシュするバグを修正．ABPersonViewControllerのsetDisplayedPerson:とか．</li>
+<li>clang++のexecutable bitを立てるようにした．これにより，iOS6.0でリンカがクラッシュを引き起こすのが修正される．</li>
+<li>rake specの出力モードにfastが追加された．他の出力モードのバグも修正．</li>
+<li>build systemが改善してapp.archsのハッシュをいじることでCPUアーキテクチャを指定できる様になった．（app.archs['iPhoneOS']=['armv7']とか）</li>
+<li>rake simulatorするときにdeployment_target環境変数を評価するようになった．(rake deployment_target4.3 とかする)</li>
+<li>deployment_targetを昔のにしてる時，BridgeSupportファイルが正しく使われなかった問題を修正</li>
+<li>vendoreライブラリが１個でも変更されてたら再リンクするようにしたよ</li>
+<li>ARM/simulator両方のコンパイラで64bitより小さい構造体がABIに反映されない問題を修正．これによってcocos2dなど期待しない動作をしていたのが修正された．</li>
+<li>Kernel#selectを削除．pasteアクションの選択ボタンを押した時とかにクラッシュする問題が修正される．</li>
+</ul>
+
+
+<h2>その他</h2>
+
+<p>deployment_target周りで問題が見つかっているらしい．</p>
+
+<p>deployment_targetに5.0を指定して5.0SDKが無い時（SDKが5.1など）にrakeに失敗するらしい．</p>
+
+<p>修正は次のリリースに入る模様．</p>
+
+<p>待てない人は，
+<a href="https://github.com/HipByte/RubyMotion/commit/01315ce30ce5e5e2f74618862a1172aca95b9cdf">https://github.com/HipByte/RubyMotion/commit/01315ce30ce5e5e2f74618862a1172aca95b9cdf</a>
+をrevertすればいいらしい．</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[RubyMotionを使ってる人はTestFlight使うの簡単だからやった方がいいよ]]></title>
@@ -397,33 +468,6 @@ Simulatorでは何故か動くのですが，実機ではStoryboardが見つか�
 
 <p>TwitterをRubyMotion検索で張ってるのですが，Twitter上でもTypoで動かなくて困ったぜみたいな話とか見ましたし，実行時評価も色々と大変ですね．
 MethodとかPropertyなら静的解析とかでなんとかなりそうですが，今回みたいに文字列部分に関するところだとどうしても発見出来ない気がする，，，</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[RubyMotion のlib部分がソース公開してるのでPullRequestを送ってみたよ！]]></title>
-    <link href="http://pchw.github.com/blog/2012/06/02/pullreq/"/>
-    <updated>2012-06-02T12:41:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/06/02/pullreq</id>
-    <content type="html"><![CDATA[<p>RubyMotionのlib部分のソースが公開されてます．</p>
-
-<p>lib部分にはbuildsystemやRakefileとかvendor周りのあれこれが含まれていて，
-最近のfixがその辺りの修正が多かったので，広くpull requestを受け付けようということですかね．</p>
-
-<p>早速前の記事(<a href="http://pchw.github.com/blog/2012/06/02/certificate/">[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策</a>)の解決策なんかは，<code>motion create</code>で生成されるRakefileの修正でいけるのでパパッとPull Requestを送って本家に組み込んでもらうのがいいです．</p>
-
-<p>というわけで，Pull Requestを<a href="https://github.com/HipByte/RubyMotion/pull/1">送っておきました</a>．
-なんと<code>pull/1</code>で1番目のpullらしい．</p>
-
-<p>本家に組み込まれるまで，ローカル環境を同じように修正するには，
-<code>/Library/RubyMotion/lib/motion/project/app.rb</code>を修正します．</p>
-
-<p>修正内容は<a href="https://github.com/HipByte/RubyMotion/pull/1/files">Pull Requestの詳細</a>をみて分かると思いますけど，102行目に</p>
-
-<pre><code># -*- coding: utf-8 -*-
-</code></pre>
-
-<p>を追加するだけです．</p>
 ]]></content>
   </entry>
   

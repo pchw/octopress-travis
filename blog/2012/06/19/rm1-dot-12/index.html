@@ -5,11 +5,12 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策 - ぽっちぽちにしてやんよ</title>
+  <title>RubyMotion 1.12 出てますよ - ぽっちぽちにしてやんよ</title>
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="RubyMotionを色々いじって記事書いてたのですが，全然実機で試してませんでした． BT周りの実装をしてて，ついにシミュレータで確認ができなくなったので，実機に転送しようとしてrake deviceしたら "iPhone Developper: &lt;your escaped name&gt &hellip;">
+  <meta name="description" content="昨日ぐらいにRubyMotion 1.12が出てます．
+主にBugfixの模様． 更新内容（原文） = RubyMotion 1.12 = * Fixed a bug where sending an `init' message alone (without using `alloc' &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://pchw.github.com/blog/2012/06/02/certificate">
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/06/19/rm1-dot-12">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -80,7 +81,7 @@
   
   <header>
     
-      <h1 class="entry-title">[RubyMotion] 証明書の名前に日本語が入っていた時にrake Device出来ない問題の解決策</h1>
+      <h1 class="entry-title">RubyMotion 1.12 出てますよ</h1>
     
     
       <p class="meta">
@@ -96,79 +97,76 @@
   
 
 
-<time datetime="2012-06-02T12:10:00+09:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2012</time>
+<time datetime="2012-06-19T05:08:00+09:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>RubyMotionを色々いじって記事書いてたのですが，全然実機で試してませんでした．</p>
+<div class="entry-content"><p>昨日ぐらいにRubyMotion 1.12が出てます．
+主にBugfixの模様．</p>
 
-<p>BT周りの実装をしてて，ついにシミュレータで確認ができなくなったので，実機に転送しようとして<code>rake device</code>したら</p>
+<h2>更新内容（原文）</h2>
 
-<pre><code>"iPhone Developper: &lt;your escaped name&gt; : no identity found
-rake aborted!
-Command failed with status (1): [CODESIGN_ALLOCATE="/Developer/Platforms/iP...]
+<pre><code>= RubyMotion 1.12 =
+
+  * Fixed a bug where sending an `init' message alone (without using `alloc'
+    before) would lead to a memory crash. This was possible when overloading
+    an initWith* method and doing `self.init' inside.
+  * Fixed a bug where performing Objective-C methods that accept CFType objects
+    would crash the program (ex. [ABPersonViewController setDisplayedPerson:]).
+  * Switched to clang++ to link the executable bits. This fixes linker crashes
+    on iOS 6.0.
+  * Added `fast' output for `rake spec'. Fixed a bug in the other outputs.
+    Patch by Marin Usalj.
+  * Improved the build system to let the user specify CPU archs that should be
+    used for a certain platform. The `app.archs' method returns a Hash that one
+    can tweak. This is so far only useful when you target 4.3 (which is armv6
+    and armv7) and want to link with a 3rd-party library that only supports
+    armv7 (ex. app.archs['iPhoneOS'] = ['armv7']).
+  * Improved `rake simulator' to honor the `deployment_target' environment
+    variable (ex. rake deployment_target=4.3). Patch by Satoshi Ebisawa.
+  * Fixed a bug in the build system where the compiler would not use the right
+    BridgeSupport files when using a lower deployment_target.
+    Patch by Satoshi Ebisawa.
+  * Fixed the build system to re-link the .app executable in case one of the
+    vendored libraries changed.
+  * Fixed bugs in both ARM/simulator compilers where structures smaller than
+    64-bit would not be following the ABI and causing unexpected behavior in
+    certain cases (ex. cocos2d). Thanks to Aaron Hurley for the detective work.
+  * Removed Kernel#select as it clashes with a private `select' method defined
+    by iOS and triggered when hittin the select button in a paste action.
+    Thanks to Francis Chong for the detective work.
 </code></pre>
 
-<p>とか出やがりました．</p>
+<h2>更新内容(訳)</h2>
 
-<p>マルチバイト文字を何かエスケープして<code>\123\456</code>みたいな形式にしてくれて，codesignに渡してしまうので，codesign側がそんなidentifyがねえよと言ってるわけですね．</p>
+<ul>
+<li>alloc無しでinitを呼んだ時にメモリ破壊を引き起こすバグを修正．initWithなんとかをオーバーロードして，そのメソッド内でself.initを呼んでいた場合起こっていた模様．</li>
+<li>CFTypeを受け取るObjCのメソッドを呼んだ時にクラッシュするバグを修正．ABPersonViewControllerのsetDisplayedPerson:とか．</li>
+<li>clang++のexecutable bitを立てるようにした．これにより，iOS6.0でリンカがクラッシュを引き起こすのが修正される．</li>
+<li>rake specの出力モードにfastが追加された．他の出力モードのバグも修正．</li>
+<li>build systemが改善してapp.archsのハッシュをいじることでCPUアーキテクチャを指定できる様になった．（app.archs[&#8216;iPhoneOS&#8217;]=[&#8216;armv7&#8217;]とか）</li>
+<li>rake simulatorするときにdeployment_target環境変数を評価するようになった．(rake deployment_target4.3 とかする)</li>
+<li>deployment_targetを昔のにしてる時，BridgeSupportファイルが正しく使われなかった問題を修正</li>
+<li>vendoreライブラリが１個でも変更されてたら再リンクするようにしたよ</li>
+<li>ARM/simulator両方のコンパイラで64bitより小さい構造体がABIに反映されない問題を修正．これによってcocos2dなど期待しない動作をしていたのが修正された．</li>
+<li>Kernel#selectを削除．pasteアクションの選択ボタンを押した時とかにクラッシュする問題が修正される．</li>
+</ul>
 
-<p><a href="http://www.rubymotion.com/developer-center/guides/project-management/#_configuration">RubyMotion Project Management Guide#2.Configuration</a>
-によれば，</p>
 
-<pre><code>codesign_certificate
-The name of the certificate to use for codesigning, as a String. The default value is the first iPhone Developer certificate found in keychain. Example: "iPhone Developer: Darth Vader (A3LKZY369Q)".
-</code></pre>
+<h2>その他</h2>
 
-<p>とあるので，Rakefileに指定すればいいかなーとか思って</p>
+<p>deployment_target周りで問題が見つかっているらしい．</p>
 
-<pre><code>$:.unshift("/Library/RubyMotion/lib")
-require 'motion/project'
+<p>deployment_targetに5.0を指定して5.0SDKが無い時（SDKが5.1など）にrakeに失敗するらしい．</p>
 
-Motion::Project::App.setup do |app|
-  # Use `rake config' to see complete project settings.
-  app.name = 'hoge'
-  app.codesign_certificate = "iPhone Developer: &lt;your name&gt;" # added
-end
-</code></pre>
+<p>修正は次のリリースに入る模様．</p>
 
-<p>こんな感じで，<code>app.codesign_certificate</code>を追加したらですね，</p>
-
-<pre><code>rake aborted!
-Rakefile:9: invalid multibyte char (US-ASCII)
-Rakefile:9: invalid multibyte char (US-ASCII)
-Rakefile:9: syntax error, unexpected $end, expecting keyword_end
-</code></pre>
-
-<p>こういうエラーが出て，もしかしてRakefileにマルチバイト文字は指定出来ないのか，，，ピンチ！</p>
-
-<pre><code>$ file Rakefile
-Rakefile: UTF-8 Unicode text
-</code></pre>
-
-<p>ちゃんとUTF8だよな，，，</p>
-
-<h2>解決策</h2>
-
-<p>と，まぁ色々悩んだんですが，結局解決策は</p>
-
-<pre><code># -*- coding: utf-8 -*-
-$:.unshift("/Library/RubyMotion/lib")
-require 'motion/project'
-
-Motion::Project::App.setup do |app|
-  # Use `rake config' to see complete project settings.
-  app.name = 'hoge'
-  app.codesign_certificate = "iPhone Developer: &lt;your name&gt;"
-end
-</code></pre>
-
-<p>これが正解です．</p>
-
-<p><code># -*- coding: utf-8 -*-</code> を追加すればいいだけでした．</p>
+<p>待てない人は，
+<a href="https://github.com/HipByte/RubyMotion/commit/01315ce30ce5e5e2f74618862a1172aca95b9cdf">https://github.com/HipByte/RubyMotion/commit/01315ce30ce5e5e2f74618862a1172aca95b9cdf</a>
+をrevertすればいいらしい．</p>
 </div>
 
 
@@ -191,7 +189,7 @@ end
   
 
 
-<time datetime="2012-06-02T12:10:00+09:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2012</time>
+<time datetime="2012-06-19T05:08:00+09:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
       
 
 <span class="categories">
@@ -204,9 +202,9 @@ end
     </p>
     
       <div class="sharing">
-  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/06/02/certificate/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/06/19/rm1-dot-12/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/06/02/certificate/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/06/02/certificate/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/06/19/rm1-dot-12/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/06/19/rm1-dot-12/" >Tweet</a>
   
   
   
@@ -215,10 +213,8 @@ end
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/06/01/19/" title="Previous Post: RubyMotion 1.9が出てた！早い！">&laquo; RubyMotion 1.9が出てた！早い！</a>
+        <a class="basic-alignment left" href="/blog/2012/06/17/testflight/" title="Previous Post: RubyMotionを使ってる人はTestFlight使うの簡単だからやった方がいいよ">&laquo; RubyMotionを使ってる人はTestFlight使うの簡単だからやった方がいいよ</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/06/02/pullreq/" title="Next Post: RubyMotion のlib部分がソース公開してるのでPullRequestを送ってみたよ！">RubyMotion のlib部分がソース公開してるのでPullRequestを送ってみたよ！ &raquo;</a>
       
     </p>
   </footer>
@@ -311,8 +307,8 @@ end
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://pchw.github.com/blog/2012/06/02/certificate/';
-        var disqus_url = 'http://pchw.github.com/blog/2012/06/02/certificate/';
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/06/19/rm1-dot-12/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/06/19/rm1-dot-12/';
         var disqus_script = 'embed.js';
       
     (function () {

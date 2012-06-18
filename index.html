@@ -9,7 +9,8 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="iOSアプリを開発していて，友達とかチームの人に配布する時のAdHoc配布はTestFlightが便利です． XCodeでやってたときは，AdHoc用の構成を作ってEntitlementがどうとかしてオーガナイザでIPAファイルにしてTestFlightのサイトにアクセスしてUpload &hellip;">
+  <meta name="description" content="昨日ぐらいにRubyMotion 1.12が出てます．
+主にBugfixの模様． 更新内容（原文） = RubyMotion 1.12 = * Fixed a bug where sending an `init' message alone (without using `alloc' &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +78,104 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/19/rm1-dot-12/">RubyMotion 1.12 出てますよ</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-19T05:08:00+09:00" pubdate data-updated="true">Jun 19<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>昨日ぐらいにRubyMotion 1.12が出てます．
+主にBugfixの模様．</p>
+
+<h2>更新内容（原文）</h2>
+
+<pre><code>= RubyMotion 1.12 =
+
+  * Fixed a bug where sending an `init' message alone (without using `alloc'
+    before) would lead to a memory crash. This was possible when overloading
+    an initWith* method and doing `self.init' inside.
+  * Fixed a bug where performing Objective-C methods that accept CFType objects
+    would crash the program (ex. [ABPersonViewController setDisplayedPerson:]).
+  * Switched to clang++ to link the executable bits. This fixes linker crashes
+    on iOS 6.0.
+  * Added `fast' output for `rake spec'. Fixed a bug in the other outputs.
+    Patch by Marin Usalj.
+  * Improved the build system to let the user specify CPU archs that should be
+    used for a certain platform. The `app.archs' method returns a Hash that one
+    can tweak. This is so far only useful when you target 4.3 (which is armv6
+    and armv7) and want to link with a 3rd-party library that only supports
+    armv7 (ex. app.archs['iPhoneOS'] = ['armv7']).
+  * Improved `rake simulator' to honor the `deployment_target' environment
+    variable (ex. rake deployment_target=4.3). Patch by Satoshi Ebisawa.
+  * Fixed a bug in the build system where the compiler would not use the right
+    BridgeSupport files when using a lower deployment_target.
+    Patch by Satoshi Ebisawa.
+  * Fixed the build system to re-link the .app executable in case one of the
+    vendored libraries changed.
+  * Fixed bugs in both ARM/simulator compilers where structures smaller than
+    64-bit would not be following the ABI and causing unexpected behavior in
+    certain cases (ex. cocos2d). Thanks to Aaron Hurley for the detective work.
+  * Removed Kernel#select as it clashes with a private `select' method defined
+    by iOS and triggered when hittin the select button in a paste action.
+    Thanks to Francis Chong for the detective work.
+</code></pre>
+
+<h2>更新内容(訳)</h2>
+
+<ul>
+<li>alloc無しでinitを呼んだ時にメモリ破壊を引き起こすバグを修正．initWithなんとかをオーバーロードして，そのメソッド内でself.initを呼んでいた場合起こっていた模様．</li>
+<li>CFTypeを受け取るObjCのメソッドを呼んだ時にクラッシュするバグを修正．ABPersonViewControllerのsetDisplayedPerson:とか．</li>
+<li>clang++のexecutable bitを立てるようにした．これにより，iOS6.0でリンカがクラッシュを引き起こすのが修正される．</li>
+<li>rake specの出力モードにfastが追加された．他の出力モードのバグも修正．</li>
+<li>build systemが改善してapp.archsのハッシュをいじることでCPUアーキテクチャを指定できる様になった．（app.archs[&#8216;iPhoneOS&#8217;]=[&#8216;armv7&#8217;]とか）</li>
+<li>rake simulatorするときにdeployment_target環境変数を評価するようになった．(rake deployment_target4.3 とかする)</li>
+<li>deployment_targetを昔のにしてる時，BridgeSupportファイルが正しく使われなかった問題を修正</li>
+<li>vendoreライブラリが１個でも変更されてたら再リンクするようにしたよ</li>
+<li>ARM/simulator両方のコンパイラで64bitより小さい構造体がABIに反映されない問題を修正．これによってcocos2dなど期待しない動作をしていたのが修正された．</li>
+<li>Kernel#selectを削除．pasteアクションの選択ボタンを押した時とかにクラッシュする問題が修正される．</li>
+</ul>
+
+
+<h2>その他</h2>
+
+<p>deployment_target周りで問題が見つかっているらしい．</p>
+
+<p>deployment_targetに5.0を指定して5.0SDKが無い時（SDKが5.1など）にrakeに失敗するらしい．</p>
+
+<p>修正は次のリリースに入る模様．</p>
+
+<p>待てない人は，
+<a href="https://github.com/HipByte/RubyMotion/commit/01315ce30ce5e5e2f74618862a1172aca95b9cdf">https://github.com/HipByte/RubyMotion/commit/01315ce30ce5e5e2f74618862a1172aca95b9cdf</a>
+をrevertすればいいらしい．</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -949,64 +1048,6 @@ str = NSString.stringWithContentsOfFile path
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/30/18/">RubyMotion 1.8 リリースされてますね</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-30T20:52:00+09:00" pubdate data-updated="true">May 30<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>リリース周期はやい！もう1.8が出てます．</p>
-
-<pre><code>$ sudo motion update 
-</code></pre>
-
-<p>しましょう！今回は修正が少なめです．</p>
-
-<pre><code>= RubyMotion 1.8 =
-
-  * Fixed a bug in the generation of BridgeSupport files for multiple headers
-    directories.
-  * When building vendored projects, unset environment variables that could
-    potentially make the build to fail.
-    https://github.com/HipByte/motion-cocoapods/issues/12
-</code></pre>
-
-<ul>
-<li>複数のヘッダディレクトリを指定したときのBridgeSupportファイル生成のとこのバグ修正</li>
-<li>ベンダープロジェクトをビルドするときに環境変数CCが設定されてない時にビルド失敗する問題の修正．</li>
-</ul>
-
-
-<p>いつも誰かがRubyMotionの新しいバージョン出たって言ってるの見てアップデートしてるのが分かるんだけど，言ってる人はどうやって新しいバージョンが出たって知るんだろう？毎日<code>motion update</code>とかしてるのかな．</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1045,6 +1086,10 @@ str = NSString.stringWithContentsOfFile path
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/06/19/rm1-dot-12/">RubyMotion 1.12 出てますよ</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/06/17/testflight/">RubyMotionを使ってる人はTestFlight使うの簡単だからやった方がいいよ</a>
       </li>
     
@@ -1060,15 +1105,11 @@ str = NSString.stringWithContentsOfFile path
         <a href="/blog/2012/06/05/casesensitive/">[RubyMotion] Simulatorでは動くのに実機で動かなくてハマった話</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/06/02/pullreq/">RubyMotion のlib部分がソース公開してるのでPullRequestを送ってみたよ！</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (20)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (21)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 
