@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-19T06:46:31+09:00</updated>
+  <updated>2012-06-20T01:08:02+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,39 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotion 1.13が早くもリリース]]></title>
+    <link href="http://pchw.github.com/blog/2012/06/20/1-dot-13/"/>
+    <updated>2012-06-20T00:52:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/06/20/1-dot-13</id>
+    <content type="html"><![CDATA[<p>早くもRubyMotion 1.13が出てます．バグ修正が主です．</p>
+
+<h2>更新内容</h2>
+
+<pre><code>= RubyMotion 1.13 =
+
+  * Fixed a regression in `rake simulator' introduced by the last update.
+    Also, the environment variable used to set the SDK target is renamed to
+    `target' (ex. rake target=4.3).
+  * Fixed a bug in the build system where certain .rb files would be rebuilt
+    every time `rake build' was executed, because the object directory was not
+    touched.
+  * Fixed a bug in the build system where the RUBYOPT variable would not be
+    cleared when calling the gen_bridge_metadata tool, which would cause some
+    issues later on. Patch by Satoshi Ebisawa.
+</code></pre>
+
+<h2>更新内容（訳）</h2>
+
+<ul>
+<li>前回のアップデートで書いてたrake simulatorのエンバグ修正．rake target=4.3みたいに指定するようになった．</li>
+<li>オブジェクトディレクトリが更新されなかったからrake buildが実行された時に毎回.rbファイルをリビルドするようにビルドシステムを修正</li>
+<li>RUBYOPT変数がgen_bridge_metadataを呼ぶときにクリアされない問題を修正．</li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[RubyMotion 1.12 出てますよ]]></title>
@@ -409,65 +442,6 @@ Run `bundle install` to install missing gems.
 ここらへんはbundler詳しくないのでよく分からない，，，</p>
 
 <p>何か分かったら教えて頂けるとありがたいです！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[[RubyMotion] Simulatorでは動くのに実機で動かなくてハマった話]]></title>
-    <link href="http://pchw.github.com/blog/2012/06/05/casesensitive/"/>
-    <updated>2012-06-05T23:29:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/06/05/casesensitive</id>
-    <content type="html"><![CDATA[<h2>はじめに</h2>
-
-<p>アプリを作ってた時に，Simulatorでは動くのに<code>rade device</code>や<code>rake testflight</code>して実機で動かしたときに起動した瞬間落ちるという現象が起こって困った話です．</p>
-
-<h2>RubyMotionは実機でのデバッグに弱い！</h2>
-
-<p>実機を繋ぐのはめんどくさいので，基本はSimulatorで開発してるのですが，さぁ実機でうごかすかーとなったときに何故か即死して困りました．</p>
-
-<p>RubyMotionは<code>rake</code>したときにSimulatorが自動的に立ち上がってインタラクティブシェルで色々出来るという利点があるのですが，これは実機では出来ません．（よね？）</p>
-
-<p>なので，どうしてもSimulatorがメインになってしまう気がします．</p>
-
-<p>今回実機で動かして落ちるとかいうことでハマったわけですが，結果的には実機で動かしてXCodeのOrganizerのConsoleからログを見て原因調査をしました．
-それ以外で実機オンリーのバグ調査はどうやるんでしょうか，，，XCodeだと実機で繋いでブレイクポイントとか貼れると思うのですが，RubyMotionだと方法がない，，，</p>
-
-<h2>今回のケース</h2>
-
-<p>さて，今回はどういう原因で落ちていたかです．</p>
-
-<p>こういうSourceでした．</p>
-
-<pre><code>class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.bounds
-    @storyboard = UIStoryboard.storyboardWithName(
-        "StoryBoard", 
-        bundle: nil)
-    @window.rootViewController = @storyboard.instantiateViewControllerWithIdentifier "NavigationController"
-
-    @window.makeKeyAndVisible
-    true
-  end
-end
-</code></pre>
-
-<p>リソースは <code>Storyboard.storyboard</code>です．</p>
-
-<pre><code>    @storyboard = UIStoryboard.storyboardWithName(
-        "StoryBoard", 
-        bundle: nil)
-</code></pre>
-
-<p>この部分で指定しているStoryboard名の大文字小文字が間違っているからですね．（正しくは<code>"Storyboard"</code>）
-Simulatorでは何故か動くのですが，実機ではStoryboardが見つからないというログを吐いて落ちます．</p>
-
-<h2>まとめ</h2>
-
-<p>RubyMotionを使っていると，どうしてもSimulator頼りの開発になりがちですが，あまりに実機で確認しないと最終フェーズで痛いことになるっていう話でした！</p>
-
-<p>TwitterをRubyMotion検索で張ってるのですが，Twitter上でもTypoで動かなくて困ったぜみたいな話とか見ましたし，実行時評価も色々と大変ですね．
-MethodとかPropertyなら静的解析とかでなんとかなりそうですが，今回みたいに文字列部分に関するところだとどうしても発見出来ない気がする，，，</p>
 ]]></content>
   </entry>
   

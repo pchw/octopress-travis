@@ -9,8 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="昨日ぐらいにRubyMotion 1.12が出てます．
-主にBugfixの模様． 更新内容（原文） = RubyMotion 1.12 = * Fixed a bug where sending an `init' message alone (without using `alloc' &hellip;">
+  <meta name="description" content="早くもRubyMotion 1.13が出てます．バグ修正が主です． 更新内容 = RubyMotion 1.13 = * Fixed a regression in `rake simulator' introduced by the last update. Also, the &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -78,6 +77,66 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/20/1-dot-13/">RubyMotion 1.13が早くもリリース</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-20T00:52:00+09:00" pubdate data-updated="true">Jun 20<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>早くもRubyMotion 1.13が出てます．バグ修正が主です．</p>
+
+<h2>更新内容</h2>
+
+<pre><code>= RubyMotion 1.13 =
+
+  * Fixed a regression in `rake simulator' introduced by the last update.
+    Also, the environment variable used to set the SDK target is renamed to
+    `target' (ex. rake target=4.3).
+  * Fixed a bug in the build system where certain .rb files would be rebuilt
+    every time `rake build' was executed, because the object directory was not
+    touched.
+  * Fixed a bug in the build system where the RUBYOPT variable would not be
+    cleared when calling the gen_bridge_metadata tool, which would cause some
+    issues later on. Patch by Satoshi Ebisawa.
+</code></pre>
+
+<h2>更新内容（訳）</h2>
+
+<ul>
+<li>前回のアップデートで書いてたrake simulatorのエンバグ修正．rake target=4.3みたいに指定するようになった．</li>
+<li>オブジェクトディレクトリが更新されなかったからrake buildが実行された時に毎回.rbファイルをリビルドするようにビルドシステムを修正</li>
+<li>RUBYOPT変数がgen_bridge_metadataを呼ぶときにクリアされない問題を修正．</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -987,67 +1046,6 @@ end
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/30/resource/">RubyMotionでリソース読み込み</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-30T23:37:00+09:00" pubdate data-updated="true">May 30<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>すごく初歩的なところだけども，RubyMotionで画像やテキストのリソースを<code>.app</code>の中にプリセット保持して使う方法です．</p>
-
-<p>色々と試すときに画像やテキストを使いたい事が多くて，備忘録的に書いておきます．</p>
-
-<p>まず，<code>.app</code>内にリソースを保持するには，<code>/resources</code>に入れておけばOKです．</p>
-
-<p>あとは読み出しですが，画像の場合はすごく簡単で，</p>
-
-<pre><code>UIImage.imageNamed "hoge.png"
-</code></pre>
-
-<p>とかすれば，<code>/resources/hoge.png</code> が読み出されます．</p>
-
-<p>テキストとかHTMLファイルとかは，</p>
-
-<pre><code>path = NSBundle.mainBundle.resourcePath.stringByAppendingPathComponent "test.txt"
-str = NSString.stringWithContentsOfFile path
-</code></pre>
-
-<p>とかすれば<code>NSString</code>で取得できます．</p>
-
-<p><code>NSBundle.mainBundle.resourcePath</code>で<code>/resources</code>に当たる場所のPathが取得できるので，あとは好きにすればOKということですね．</p>
-
-<p>簡単なサンプルを書いといたので，置いときます．</p>
-
-<p><a href="https://github.com/pchw/rm-resource-sample">画像とテキストを読みだしてUILabelとUIImageViewに貼り付けるサンプル</a></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1086,6 +1084,10 @@ str = NSString.stringWithContentsOfFile path
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/06/20/1-dot-13/">RubyMotion 1.13が早くもリリース</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/06/19/rm1-dot-12/">RubyMotion 1.12 出てますよ</a>
       </li>
     
@@ -1101,15 +1103,11 @@ str = NSString.stringWithContentsOfFile path
         <a href="/blog/2012/06/06/bundler/">[RubyMotion] Bundlerを使って楽をしてみた！</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/06/05/casesensitive/">[RubyMotion] Simulatorでは動くのに実機で動かなくてハマった話</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (21)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (22)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 

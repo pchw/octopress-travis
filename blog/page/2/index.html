@@ -9,7 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="リリース周期はやい！もう1.8が出てます． $ sudo motion update しましょう！今回は修正が少なめです． = RubyMotion 1.8 = * Fixed a bug in the generation of BridgeSupport files for multiple &hellip;">
+  <meta name="description" content="すごく初歩的なところだけども，RubyMotionで画像やテキストのリソースを.appの中にプリセット保持して使う方法です． 色々と試すときに画像やテキストを使いたい事が多くて，備忘録的に書いておきます． まず，.app内にリソースを保持するには，/resourcesに入れておけばOKです． &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,67 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/30/resource/">RubyMotionでリソース読み込み</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-30T23:37:00+09:00" pubdate data-updated="true">May 30<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>すごく初歩的なところだけども，RubyMotionで画像やテキストのリソースを<code>.app</code>の中にプリセット保持して使う方法です．</p>
+
+<p>色々と試すときに画像やテキストを使いたい事が多くて，備忘録的に書いておきます．</p>
+
+<p>まず，<code>.app</code>内にリソースを保持するには，<code>/resources</code>に入れておけばOKです．</p>
+
+<p>あとは読み出しですが，画像の場合はすごく簡単で，</p>
+
+<pre><code>UIImage.imageNamed "hoge.png"
+</code></pre>
+
+<p>とかすれば，<code>/resources/hoge.png</code> が読み出されます．</p>
+
+<p>テキストとかHTMLファイルとかは，</p>
+
+<pre><code>path = NSBundle.mainBundle.resourcePath.stringByAppendingPathComponent "test.txt"
+str = NSString.stringWithContentsOfFile path
+</code></pre>
+
+<p>とかすれば<code>NSString</code>で取得できます．</p>
+
+<p><code>NSBundle.mainBundle.resourcePath</code>で<code>/resources</code>に当たる場所のPathが取得できるので，あとは好きにすればOKということですね．</p>
+
+<p>簡単なサンプルを書いといたので，置いときます．</p>
+
+<p><a href="https://github.com/pchw/rm-resource-sample">画像とテキストを読みだしてUILabelとUIImageViewに貼り付けるサンプル</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -928,123 +989,6 @@ end
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/22/storyboard/">Storyboardを使ってRubyMotionで開発する方法</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-22T21:53:00+09:00" pubdate data-updated="true">May 22<span>nd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><img src="https://lh6.googleusercontent.com/-ptxn4wJhqOc/T69nu2xHtLI/AAAAAAAAAYY/JKxXu3OAsYE/B6AD8776-C7D5-4F4A-A9AA-A8143868D413.jpg" alt="" /></p>
-
-<p>RubyMotionでもStoryBoardが使えるらしいので，試してみた．</p>
-
-<h1>ひな形作成</h1>
-
-<pre><code>$ motion create SB
-$ cd SB
-</code></pre>
-
-<h1>XcodeでStoryboardを作成</h1>
-
-<p>おもむろにXCodeを開きます．</p>
-
-<p><code>File&gt;New&gt;File</code>で<code>iOS&gt;User Interface&gt;Storyboard</code>を選びます．
-<img src="https://lh4.googleusercontent.com/-mLcH1PENo2w/T69nyXr7yTI/AAAAAAAAAY4/RT_Q6EIAjIY/6335FCDB-E334-486F-9A97-C62A4212F9CE.jpg" alt="" /></p>
-
-<h2>初めに表示されるViewControllerを作成</h2>
-
-<p>UIViewController設置．
-<img src="https://lh4.googleusercontent.com/-A3bJEOrvzrE/T69n2eaXo3I/AAAAAAAAAZM/gMeA45JyTv4/C59A9802-25A6-4A66-B8B7-F247989BD60B.jpg" alt="" /></p>
-
-<p>Identifierを<code>First</code>とか付けます．
-<img src="https://lh6.googleusercontent.com/-m0viQeqlxi8/T69nv3v32qI/AAAAAAAAAYg/RR6q5pe4rRg/655CD9E6-3C77-4930-95CD-D71E1CCEAFD1.jpg" alt="" /></p>
-
-<p>UILabelとUIButtonを追加します．</p>
-
-<h2>Segueで遷移する先のViewControllerを作成</h2>
-
-<p>もう一つUIViewController設置．
-<img src="https://lh5.googleusercontent.com/-pzw1VqoabCw/T69n3leryQI/AAAAAAAAAZY/wpds7icQfMk/3D867F91-1A11-442A-9E71-EE5F0475A81C.jpg" alt="" /></p>
-
-<p>Identifierを<code>Second</code>とか付けときます．</p>
-
-<h2>Segueの設定</h2>
-
-<p><code>First</code>に配置したButtonを，Ctrlを押しながら引っ張って<code>Second</code>のViewControllerへ繋ぎます．
-Storyboard Seguesの設定が出るので，<code>Modal</code>とかを選ぶ．
-<img src="https://lh3.googleusercontent.com/-XX9-8SPsWAg/T69n1E6_nlI/AAAAAAAAAZI/R9xnsie7vnE/26CE3AAA-C5FE-4209-9C35-AF20533C15B3.jpg" alt="" /></p>
-
-<p><img src="https://lh5.googleusercontent.com/-7zTj7o1d3dQ/T69nwxc2G2I/AAAAAAAAAYk/eEjmStwoOlA/78C994F8-EFE6-4643-93FD-1D8F1EBB5050.jpg" alt="" /></p>
-
-<h2>Storyboardの保存</h2>
-
-<p><code>Cmd+s</code>でStoryboardを<code>resources/Storyboard.storyboard</code>とか名前を付けて保存します．</p>
-
-<h1>storyboardのコンパイル</h1>
-
-<pre><code>$ ibtool --compile resources/Storyboard.storyboardc resources/Storyboard.storyboard
-</code></pre>
-
-<h1>コーディング</h1>
-
-<p><code>app/app_delegate.rb</code>を書く．
-Storyboardからロードします．</p>
-
-<pre><code>class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
-    @sb = UIStoryboard.storyboardWithName('Storyboard', bundle: nil)
-    rvc = @sb.instantiateViewControllerWithIdentifier("First")
-    @window.rootViewController = rvc
-    @window.rootViewController.wantsFullScreenLayout = true
-    @window.makeKeyAndVisible
-    true
-  end
-end
-</code></pre>
-
-<p>ちなみに，Buttonの動作を変えたい場合などは，<code>First</code>と付けたUIViewControllerをCustom Classに変更してUIViewControllerを継承したクラスを作成して，<code>prepareForSegue:sender:</code>で遷移前に処理を行うとか，UIButtonの<code>addTarget:sender</code>とかにselectorを登録して処理を行うとかします．</p>
-
-<h1>コンパイルして実行</h1>
-
-<pre><code>  $rake
-</code></pre>
-
-<p>とすれば，Simulatorが立ち上がります．
-設置したButtonを押せばSecondのViewへ切り替わります．</p>
-
-<p><img src="https://lh4.googleusercontent.com/-XyNt1C6cfKo/T69nxjkqNrI/AAAAAAAAAYs/V4i7HQ9rDV8/8619164C-B90D-4D8F-913F-ED11086D700A.jpg" alt="" /></p>
-
-<p><img src="https://lh5.googleusercontent.com/-4ugWozivZrg/T69nziIvs3I/AAAAAAAAAZA/HYZfkyB-WEQ/22854A71-7125-43CF-802C-7630629537F5.jpg" alt="" /></p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -1085,6 +1029,10 @@ end
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/06/20/1-dot-13/">RubyMotion 1.13が早くもリリース</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/06/19/rm1-dot-12/">RubyMotion 1.12 出てますよ</a>
       </li>
     
@@ -1100,15 +1048,11 @@ end
         <a href="/blog/2012/06/06/bundler/">[RubyMotion] Bundlerを使って楽をしてみた！</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/06/05/casesensitive/">[RubyMotion] Simulatorでは動くのに実機で動かなくてハマった話</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (21)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (22)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 
