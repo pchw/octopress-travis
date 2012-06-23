@@ -4,7 +4,7 @@
   <title><![CDATA[ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-20T01:08:02+09:00</updated>
+  <updated>2012-06-23T18:56:51+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,232 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[RubyMotion] NanoStoreを使ってデータを格納しよう！]]></title>
+    <link href="http://pchw.github.com/blog/2012/06/21/nanostore/"/>
+    <updated>2012-06-21T09:28:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/06/21/nanostore</id>
+    <content type="html"><![CDATA[<p>今日はRubyMotionでちょっとしたデータの保存がしたくなったときに使えるNanoStoreのWrapperを紹介します．</p>
+
+<p><a href="https://github.com/siuying/NanoStoreInMotion">NanoStoreInMotion</a></p>
+
+<p>NanoStoreというのは，sqliteを保存先としてスキーマレスなKeyValueStoreを実現するものらしいです．NanoStoreInMotionはそれをRubyMotionから使えるようにするWrapperです．</p>
+
+<h2>インストール</h2>
+
+<p>まずcocoapodsを入れます</p>
+
+<pre><code>$ gem install motion-cocoapods
+$ pod setup
+</code></pre>
+
+<p>NanoStoreInMotionを入れます．</p>
+
+<pre><code>$ gem isntall nano-store
+</code></pre>
+
+<p>プロジェクトを作って，Rakefileを編集します．</p>
+
+<pre><code>$ motion create nanostoretest
+$ cat Rakefile
+# -*- coding: utf-8 -*-
+$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+require 'rubygems'
+require 'motion-cocoapods'
+require 'nano-store'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'nanotest'
+  app.pods do
+    dependency 'NanoStore', '~&gt; 2.1.4'
+  end
+end
+</code></pre>
+
+<h2>使ってみる</h2>
+
+<h3>前処理</h3>
+
+<p>まず，NanoStoreの保存先を決めてインスタンス化します．</p>
+
+<pre><code>NanoStore.shared_store = NanoStore.store(:file, App.documents_path + '/store.db')
+</code></pre>
+
+<p><code>App.documents_path</code>というのは，BubbleWrapの便利Methodで，
+<code>/Users/xxxxxx/Library/Application Support/iPhone Simulator/5.1/Applications/EDC08B50-2004-42D9-8B67-2E290EF55CFF/Documents</code>みたいなアプリ毎の保存場所を返してくれます．
+中身の実装的には&#8220;を返してるだけです．</p>
+
+<pre><code>NanoStore.shared_store = NanoStore.store(:memory)
+</code></pre>
+
+<p>とすることで，ファイルに保存するのではなく，オンメモリでDbを使うこともできます．</p>
+
+<h3>Model定義</h3>
+
+<p>次に，保存するModelを定義します．</p>
+
+<p>Modelを定義するには<code>NanoStore::Model</code>を継承したクラスを定義すれば良いです．</p>
+
+<pre><code>class Label &lt; NanoStore::Model
+  attribute :text
+  attribute :x
+  attribute :y
+  attribute :height
+  attribute :width
+end
+</code></pre>
+
+<p>保存するフィールドは<code>attribute &lt;シンボル名&gt;</code>で定義できます．
+上記の例では，text, x, y, height, width というフィールド（というかKey）が定義されます．</p>
+
+<p>★ <code>attribute :key</code>は自動的に付与されるので，<code>:key</code>は書いてはいけません．（書いてもエラーにはならないが，実際に使うときに予期せぬ動作になります．なりました．）</p>
+
+<p>NanoStore はNSDataも入れれるようですが，インデックスが効かないようです．</p>
+
+<h3>データ投入</h3>
+
+<p>先ほど定義したModelクラスのnewメソッドを呼んでsaveすれば良いです．</p>
+
+<pre><code>label = Label.new(
+    :text=&gt;"test",
+    :x =&gt; 100,
+    :y =&gt; 200,
+    :height =&gt; 50,
+    :width =&gt; 250)
+label.save
+</code></pre>
+
+<p>この時点で保存されて，検索などが出来るようになります．</p>
+
+<h3>検索</h3>
+
+<p>検索も先ほど定義したModelクラスを通じて行います．</p>
+
+<pre><code># もうひとつLabelを追加しておく
+hogeLabel = Label.new(
+    :text=&gt;"test1",
+    :x =&gt; 50,
+    :y =&gt; 400,
+    :height =&gt; 100,
+    :width =&gt; 50)
+hogeLabel.save
+
+allLabels = label.all
+# =&gt; [#&lt;Label:0x8e622e0&gt;, #&lt;Label:0x8e62720&gt;]
+</code></pre>
+
+<p>条件を指定して検索は</p>
+
+<pre><code>Label.find(:text=&gt;"test")
+# =&gt; [#&lt;Label:0x8e622e0&gt;]
+</code></pre>
+
+<p>とすればできるので，あとは<code>.each</code>とかユニークなKeyで検索するなら<code>.first</code>
+とかすれば目当てのものが手に入ります．</p>
+
+<pre><code>Label.find(:x =&gt; { NSFGreaterThan =&gt; 10 }).each do |lbl|
+    p lbl.text
+end
+# =&gt; "test1"
+# =&gt; "test"
+</code></pre>
+
+<h3>アップデート</h3>
+
+<p>更新処理は，上記の検索で得られたもののプロパティを編集して再度saveを呼べば良いです．</p>
+
+<pre><code>update = Label.find(:text=&gt;"test").first
+update.text = "test2"
+update.save
+
+Label.all.each do |lbl|
+    p lbl.text
+end
+# =&gt; "test2"
+# =&gt; "test1"
+</code></pre>
+
+<h3>削除</h3>
+
+<p>削除処理は，同じく上記の検索で得られたものの<code>delete</code>を呼べば，削除できます．</p>
+
+<pre><code>del = Label.find(:text=&gt;"test1").first
+del.delete
+
+Label.all.each do |lbl|
+    p lbl.text
+end
+# =&gt; "test2"
+</code></pre>
+
+<p>全部削除したい場合は，</p>
+
+<pre><code>Label.delete
+</code></pre>
+
+<p>とすれば，全部消えます．</p>
+
+<pre><code>Label.delete(:text=&gt;"test1")
+</code></pre>
+
+<p>のように条件をつければ，条件にヒットしたものを一気に削除できます．</p>
+
+<h2>保存されるデータ</h2>
+
+<p>さて，実際に保存されているデータはどうなっているのでしょうか？</p>
+
+<p><code>NanoStore.store</code>時に<code>:file</code>を指定した場合は指定したPathにsqliteのデータベースファイルが生成されています．
+その中をsqlite3コマンドかなんかで見ていけば保存されている形を見ることができます．</p>
+
+<pre><code>$ sqlite3 store.db
+sqlite&gt; .tables
+NSFKeys    NSFValues
+</code></pre>
+
+<p>どうやら<code>NSFKeys</code>と<code>NSFValues</code>というテーブルが存在するようです．</p>
+
+<h3>NSFKeys</h3>
+
+<pre><code>$sqlite&gt; select * from NSFkeys;
+ROWID|NSFKey|NSFPlist|NSFCalendarDate|NSFObjectClass
+</code></pre>
+
+<ul>
+<li>ROWIDはautonumber</li>
+<li>NSFKeyはオブジェクトごとに異なるID</li>
+<li>NSFPlistはオブジェクトのattributeと値をplist形式で表したもの</li>
+<li>NSFCalendarDateは更新日かな？</li>
+<li>NSFObjectClass はNanoStore::Modelを継承したクラス名</li>
+</ul>
+
+
+<h3>NSFValues</h3>
+
+<pre><code>sqlite &gt; select * from NSFValues;
+ROWID|NSFKey|NSFAttribute|NSFValue|NSFDatatype
+</code></pre>
+
+<ul>
+<li>ROWIDはautonumber</li>
+<li>NSFKeyはNSFKeysテーブルのNSFKey（外部キー）</li>
+<li>NSAttributeはattributeで定義したシンボル名</li>
+<li>NSFValueは実際に入っている値</li>
+<li>NSFDatatypeは型．TEXTとかREALとか</li>
+</ul>
+
+
+<p>NSFValuesの方にModelクラスの違い関係なくattribute名と値が入っています．
+クラス名とかの情報はNSFKeysの方に入っていますね．</p>
+
+<h2>まとめ</h2>
+
+<p>NanoStoreInMotionはデータを保存，検索，削除などが簡単なステップで出来て，ちょっとしたデータの取り扱いに役立つと思います．
+<code>:memory</code>を使うことで，Web APIからデータをごっそり取ってきてさっとフィルタリングするような用途にも簡単に使えそうです．</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[RubyMotion 1.13が早くもリリース]]></title>
@@ -1356,137 +1582,6 @@ $ ruby app.rb
 <li>REPLに空を渡した時にクラッシュする不具合の修正</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[RubyMotionでGCDを使う]]></title>
-    <link href="http://pchw.github.com/blog/2012/05/22/gcd/"/>
-    <updated>2012-05-22T22:35:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/05/22/gcd</id>
-    <content type="html"><![CDATA[<p><img src="https://lh6.googleusercontent.com/-nEOFLDxo0SE/T7cKmnkUM3I/AAAAAAAAAac/F_9TagXzXTE/s300/gcd.png" alt="GCD" /></p>
-
-<p>今日はRubyMotionでGCD(Grand Central Dispatch)を使う話です．</p>
-
-<h2>GCD とは</h2>
-
-<p>GCDというのは，</p>
-
-<blockquote><p>非常に効率的なシステム機能と使い勝手のよいプログラミングモデルを併用して，マルチプロセッサを最大限に活用するために必要なコードを徹底的に簡素化</p></blockquote>
-
-<p>するものらしいです
-（AppleのGrand Central Dispatchの説明より）</p>
-
-<p>UITableViewとかそういうのはMainThreadでちょっと重い処理をすると，すぐにパフォーマンスが悪くなってなんだこのアプリ糞だな！とか言われるので，そういう時には別Threadを立ててMainThreadの処理を邪魔しないように処理を行う必要があります．
-それを楽にしてくれるのがGCD．</p>
-
-<h2>Objective-C</h2>
-
-<p>Obj-Cのコードだと，</p>
-
-<pre><code>dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-dispatch_async(queue, ^{
-    // 処理
-});
-</code></pre>
-
-<p>こんな感じになります．</p>
-
-<h2>RubyMotion</h2>
-
-<p>RubyMotionでは，GCD関連は<code>Dispatch</code>クラスを使います．</p>
-
-<p><a href="http://www.rubymotion.com/developer-center/guides/runtime/#_grand_central_dispatch">RubyMotion Runtime Guid</a> にも書いてます．</p>
-
-<p>上で書いたObj-CのコードをRubyMotionで書きなおすと，</p>
-
-<pre><code>Dispatch::Queue.concurrent.async{
-    # 処理
-}
-</code></pre>
-
-<p>こうなります．超簡単．</p>
-
-<h2>UIの更新に関して</h2>
-
-<p>さて，実際にはConcurrent Dispatch Queueで時間のかかる処理を行い，
-処理を行った結果をUIに反映させることがよくあります．
-その場合に直接UIへ値を代入とかすると落ちます．
-UIはMainThreadから更新しなければなりません．
-その場合は，</p>
-
-<pre><code>Dispatch::Queue.concurrent.async{
-    # 処理
-    Dispatch::Queue.main.async{
-        #UI更新
-    }
-}
-</code></pre>
-
-<p>このように<code>Dispatch::Queue.main</code>でMain Dispatch Queueに更新処理を入れることで実現できます．</p>
-
-<h2>実戦</h2>
-
-<p>実際に少し書いてみます．</p>
-
-<pre><code>$ motion create gcd
-$ cd gcd
-</code></pre>
-
-<h3>app/app_delegate.rb</h3>
-
-<pre><code>class AppDelegate
-  def application(application, didFinishLaunchingWithOptions:launchOptions)
-    @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.bounds
-    @window.rootViewController = NSBundle.mainBundle.loadNibNamed(
-        'RootViewController', 
-        owner: self,
-        options: nil).first
-    @window.rootViewController.wantsFullScreenLayout = true
-    @window.makeKeyAndVisible
-    true
-  end
-end
-</code></pre>
-
-<h3>InterfaceBuilder</h3>
-
-<p><code>resouces/RootViewController.xib</code> という形でUIButton(Tag 2)，UILabel(Tag 1)を追加しておいて下さい．
-（参考：<a href="http://pochixpochi.blogspot.jp/2012/05/rubymotion-interfacebuilder.html">[RUBYMOTION] INTERFACEBUILDERと合わせて使って楽をしよう</a>）</p>
-
-<h3>app/root_view_controller.rb</h3>
-
-<pre><code>class RootViewController &lt; UIViewController
-    def viewDidLoad
-        @label = view.viewWithTag 1
-        @button = view.viewWithTag 2
-        @button.addTarget(
-            self,
-            action: 'onClicked:',
-            forControlEvents:UIControlEventTouchUpInside)
-    end
-
-    def onClicked(sender)
-        p "onClicked"
-
-        Dispatch::Queue.concurrent.async {
-            NSThread.sleepForTimeInterval 5
-            Dispatch::Queue.main.async {
-                @label.text = ["hoge", "fuga", "moge"].sample
-            }
-        }
-    end
-end
-</code></pre>
-
-<h3>実行</h3>
-
-<pre><code>$ rake
-</code></pre>
-
-<p>シミュレータが立ち上がり，Buttonを押すとLabelの文字列がちょっと待ったあとに変わります．
-連打すると次々変わると思います．
-その間Buttonが押せないとかそういうことが起こらないのが分かると思います．</p>
 ]]></content>
   </entry>
   
