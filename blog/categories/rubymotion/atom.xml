@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-23T18:56:51+09:00</updated>
+  <updated>2012-06-24T11:20:29+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -68,7 +68,7 @@ end
 
 <p><code>App.documents_path</code>というのは，BubbleWrapの便利Methodで，
 <code>/Users/xxxxxx/Library/Application Support/iPhone Simulator/5.1/Applications/EDC08B50-2004-42D9-8B67-2E290EF55CFF/Documents</code>みたいなアプリ毎の保存場所を返してくれます．
-中身の実装的には``を返してるだけです．</p>
+中身の実装的には<code>NSSearchPathForDirectoriesInDomains</code>でNSDocumentDirectoryを返してるだけです．</p>
 
 <pre><code>NanoStore.shared_store = NanoStore.store(:memory)
 </code></pre>

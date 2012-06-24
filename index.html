@@ -156,7 +156,7 @@ end
 
 <p><code>App.documents_path</code>というのは，BubbleWrapの便利Methodで，
 <code>/Users/xxxxxx/Library/Application Support/iPhone Simulator/5.1/Applications/EDC08B50-2004-42D9-8B67-2E290EF55CFF/Documents</code>みたいなアプリ毎の保存場所を返してくれます．
-中身の実装的には&#8220;を返してるだけです．</p>
+中身の実装的には<code>NSSearchPathForDirectoriesInDomains</code>でNSDocumentDirectoryを返してるだけです．</p>
 
 <pre><code>NanoStore.shared_store = NanoStore.store(:memory)
 </code></pre>
