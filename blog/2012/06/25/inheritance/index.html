@@ -5,11 +5,14 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>RubyMotion 1.8 リリースされてますね - ぽっちぽちにしてやんよ</title>
+  <title>RubyMotionでUIViewを継承したViewを作る！ - ぽっちぽちにしてやんよ</title>
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="リリース周期はやい！もう1.8が出てます． $ sudo motion update しましょう！今回は修正が少なめです． = RubyMotion 1.8 = * Fixed a bug in the generation of BridgeSupport files for multiple &hellip;">
+  <meta name="description" content="アプリを作っていると独自UIViewを作りたいことが多々あります． ObjCなら self = [super initWithFrame:frame];
+if (self) { // 初期化処理
+}
+return self; という感じのをinitWithFrameに書いて// &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +21,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/30/18/">
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/06/25/inheritance/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -80,7 +83,7 @@
   
   <header>
     
-      <h1 class="entry-title">RubyMotion 1.8 リリースされてますね</h1>
+      <h1 class="entry-title">RubyMotionでUIViewを継承したViewを作る！</h1>
     
     
       <p class="meta">
@@ -96,36 +99,59 @@
   
 
 
-<time datetime="2012-05-30T20:52:00+09:00" pubdate data-updated="true">May 30<span>th</span>, 2012</time>
+<time datetime="2012-06-25T11:34:00+09:00" pubdate data-updated="true">Jun 25<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>リリース周期はやい！もう1.8が出てます．</p>
+<div class="entry-content"><p>アプリを作っていると独自UIViewを作りたいことが多々あります．</p>
 
-<pre><code>$ sudo motion update 
+<p>ObjCなら</p>
+
+<pre><code>self = [super initWithFrame:frame];
+if (self) {
+    // 初期化処理
+}
+return self;
 </code></pre>
 
-<p>しましょう！今回は修正が少なめです．</p>
+<p>という感じのをinitWithFrameに書いて<code>//初期化処理</code>の部分にその独自クラスで持ってるものを初期化したりします．</p>
 
-<pre><code>= RubyMotion 1.8 =
+<p>RubyMotionに簡単に翻訳すると，</p>
 
-  * Fixed a bug in the generation of BridgeSupport files for multiple headers
-    directories.
-  * When building vendored projects, unset environment variables that could
-    potentially make the build to fail.
-    https://github.com/HipByte/motion-cocoapods/issues/12
+<pre><code>class AwesomeView &lt; UIView
+    def initWithFrame(frame)
+        self = super.initWithFrame(frame)
+        if self
+            # 初期化処理
+        end
+
+        self
+    end
+end
 </code></pre>
 
-<ul>
-<li>複数のヘッダディレクトリを指定したときのBridgeSupportファイル生成のとこのバグ修正</li>
-<li>ベンダープロジェクトをビルドするときに環境変数CCが設定されてない時にビルド失敗する問題の修正．</li>
-</ul>
+<p>と書きたいですが，これはダメダメでエラーになります．（selfを書き換えれないとか，initWithFrameがループして落ちるとか，，，）</p>
 
+<p>RubyMotionでは</p>
 
-<p>いつも誰かがRubyMotionの新しいバージョン出たって言ってるの見てアップデートしてるのが分かるんだけど，言ってる人はどうやって新しいバージョンが出たって知るんだろう？毎日<code>motion update</code>とかしてるのかな．</p>
+<pre><code>class AwesomeView &lt; UIView
+    def initWithFrame(frame)
+        if super(frame)
+            # 初期化処理
+        end
+
+        self
+    end
+end
+</code></pre>
+
+<p>とするのが正しそうです．
+（おいおいそれイケてねーよっていう指摘があったら是非教えてください！！！）</p>
+
+<p>あとは，AwesomeなViewを実装してくだけです．</p>
 </div>
 
 
@@ -148,7 +174,7 @@
   
 
 
-<time datetime="2012-05-30T20:52:00+09:00" pubdate data-updated="true">May 30<span>th</span>, 2012</time>
+<time datetime="2012-06-25T11:34:00+09:00" pubdate data-updated="true">Jun 25<span>th</span>, 2012</time>
       
 
 <span class="categories">
@@ -161,9 +187,9 @@
     </p>
     
       <div class="sharing">
-  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/30/18/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/06/25/inheritance/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/30/18/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/30/18/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/06/25/inheritance/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/06/25/inheritance/" >Tweet</a>
   
   
   
@@ -172,10 +198,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/05/29/dottouch/" title="Previous Post: [レビュー] DotTouchというiPhone/iPadアプリを使ってみたよ！">&laquo; [レビュー] DotTouchというiPhone/iPadアプリを使ってみたよ！</a>
+        <a class="basic-alignment left" href="/blog/2012/06/21/nanostore/" title="Previous Post: [RubyMotion] NanoStoreを使ってデータを格納しよう！">&laquo; [RubyMotion] NanoStoreを使ってデータを格納しよう！</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/05/30/resource/" title="Next Post: RubyMotionでリソース読み込み">RubyMotionでリソース読み込み &raquo;</a>
       
     </p>
   </footer>
@@ -268,8 +292,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/30/18/';
-        var disqus_url = 'http://pchw.github.com/blog/2012/05/30/18/';
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/06/25/inheritance/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/06/25/inheritance/';
         var disqus_script = 'embed.js';
       
     (function () {

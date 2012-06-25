@@ -4,7 +4,7 @@
   <title><![CDATA[ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-24T11:20:29+09:00</updated>
+  <updated>2012-06-25T11:43:29+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,60 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotionでUIViewを継承したViewを作る！]]></title>
+    <link href="http://pchw.github.com/blog/2012/06/25/inheritance/"/>
+    <updated>2012-06-25T11:34:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/06/25/inheritance</id>
+    <content type="html"><![CDATA[<p>アプリを作っていると独自UIViewを作りたいことが多々あります．</p>
+
+<p>ObjCなら</p>
+
+<pre><code>self = [super initWithFrame:frame];
+if (self) {
+    // 初期化処理
+}
+return self;
+</code></pre>
+
+<p>という感じのをinitWithFrameに書いて<code>//初期化処理</code>の部分にその独自クラスで持ってるものを初期化したりします．</p>
+
+<p>RubyMotionに簡単に翻訳すると，</p>
+
+<pre><code>class AwesomeView &lt; UIView
+    def initWithFrame(frame)
+        self = super.initWithFrame(frame)
+        if self
+            # 初期化処理
+        end
+
+        self
+    end
+end
+</code></pre>
+
+<p>と書きたいですが，これはダメダメでエラーになります．（selfを書き換えれないとか，initWithFrameがループして落ちるとか，，，）</p>
+
+<p>RubyMotionでは</p>
+
+<pre><code>class AwesomeView &lt; UIView
+    def initWithFrame(frame)
+        if super(frame)
+            # 初期化処理
+        end
+
+        self
+    end
+end
+</code></pre>
+
+<p>とするのが正しそうです．
+（おいおいそれイケてねーよっていう指摘があったら是非教えてください！！！）</p>
+
+<p>あとは，AwesomeなViewを実装してくだけです．</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[RubyMotion] NanoStoreを使ってデータを格納しよう！]]></title>
@@ -1517,71 +1571,6 @@ $ ruby app.rb
 </code></pre>
 
 <p>としてまた<code>http://localhost:4567</code>を開いてみましょう．Reviewが見えるはずです！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[RubyMotionが1.4->1.5->1.6とアップデートしたよ！]]></title>
-    <link href="http://pchw.github.com/blog/2012/05/23/update/"/>
-    <updated>2012-05-23T01:03:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/05/23/update</id>
-    <content type="html"><![CDATA[<p>気づいたら，RubyMotionの更新が1.5・1.6と続いてありました．</p>
-
-<pre><code>$ sudo motion update
-</code></pre>
-
-<p>しましょう．</p>
-
-<h2>RubyMotion 1.5 更新内容</h2>
-
-<pre><code>= RubyMotion 1.5 =
-
-  * Improved the REPL to support multi-line expressions.
-  * Fixed a bug when compiling Core Data model files where the `momc' utility
-    was not given absolute paths.
-  * Removed legacy MacRuby code that was using the private `isaForAutonotifying'
-    selector and causing a warning during an App Store submission.
-  * Fixed a bug in Enumerable#sort_by that would lead to a crash.
-  * Fixed a bug in the REPL where it would not detect the iOS Simulator window
-    if certain windows were in front or created later.
-  * Fixed a bug in the build system where framework dependencies would not be
-    properly handled.
-  * Added support for .lproj directories (i18n). Thanks Aaron Hurley.
-  * Fixed a bug where objects from pure Ruby classes sent to KVO would not be
-    properly handled later (because KVO inserts a new singleton class).
-  * Fixed attr_writer to emit KVO notifications (will/didChangeValueForKey).
-</code></pre>
-
-<ul>
-<li>REPLが複数行をサポート</li>
-<li>CoreDataモデルファイルをコンパイル時のバグを修正</li>
-<li>レガシーなMacRubyコードを撤去した．</li>
-<li>Enumerable#sort_byがクラッシュを引き起こす問題を修正</li>
-<li>ウィンドウがシミュレータウィンドウの前に複数あるなどの原因でREPLがシミュレータを見つけれないバグを修正</li>
-<li>ビルド時にフレームワークの依存関係を正しく扱えなかったバグを修正</li>
-<li>.lprojディレクトリをサポート</li>
-<li>pure RubyのクラスのオブジェクトをKVOに送った時に正しくハンドリング出来なかったバグを修正</li>
-<li>attr_writerがKVO notificationを上げるように修正</li>
-</ul>
-
-
-<h2>RubyMotion 1.6 更新内容</h2>
-
-<pre><code>= RubyMotion 1.6 =
-
-  * Fixed a regression in the build system introduced by the previous update
-    (when compiling .xib files).
-  * Fixed the vendoring system to include all source code files. Merged patch
-    from https://groups.google.com/d/msg/rubymotion/tPCxSMCA2f4/w2DIHFo2AVAJ
-  * Fixed the REPL to not crash if you give it an empty expression.
-</code></pre>
-
-<ul>
-<li>ビルド時の再発バグの修正</li>
-<li>外部ライブラリ読み込み不具合修正</li>
-<li>REPLに空を渡した時にクラッシュする不具合の修正</li>
-</ul>
-
 ]]></content>
   </entry>
   

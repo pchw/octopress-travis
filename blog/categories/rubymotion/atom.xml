@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-24T11:20:29+09:00</updated>
+  <updated>2012-06-25T11:43:29+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,60 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotionでUIViewを継承したViewを作る！]]></title>
+    <link href="http://pchw.github.com/blog/2012/06/25/inheritance/"/>
+    <updated>2012-06-25T11:34:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/06/25/inheritance</id>
+    <content type="html"><![CDATA[<p>アプリを作っていると独自UIViewを作りたいことが多々あります．</p>
+
+<p>ObjCなら</p>
+
+<pre><code>self = [super initWithFrame:frame];
+if (self) {
+    // 初期化処理
+}
+return self;
+</code></pre>
+
+<p>という感じのをinitWithFrameに書いて<code>//初期化処理</code>の部分にその独自クラスで持ってるものを初期化したりします．</p>
+
+<p>RubyMotionに簡単に翻訳すると，</p>
+
+<pre><code>class AwesomeView &lt; UIView
+    def initWithFrame(frame)
+        self = super.initWithFrame(frame)
+        if self
+            # 初期化処理
+        end
+
+        self
+    end
+end
+</code></pre>
+
+<p>と書きたいですが，これはダメダメでエラーになります．（selfを書き換えれないとか，initWithFrameがループして落ちるとか，，，）</p>
+
+<p>RubyMotionでは</p>
+
+<pre><code>class AwesomeView &lt; UIView
+    def initWithFrame(frame)
+        if super(frame)
+            # 初期化処理
+        end
+
+        self
+    end
+end
+</code></pre>
+
+<p>とするのが正しそうです．
+（おいおいそれイケてねーよっていう指摘があったら是非教えてください！！！）</p>
+
+<p>あとは，AwesomeなViewを実装してくだけです．</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[RubyMotion] NanoStoreを使ってデータを格納しよう！]]></title>
@@ -511,71 +565,6 @@ end
 simulatorの起動等と同じようにターミナルで完結するのですごく楽．</p>
 
 <p>他人へのAdHoc配布だけでなく，自分で複数のdeviceに入れるときもUSBを繋ぎ変えて<code>rake device</code>を連発するより楽だと思うので，積極的に使っていくと良いと思います．</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[RubyMotion 1.11が出て，iOS 6.0 beta1 でも使える様になった！]]></title>
-    <link href="http://pchw.github.com/blog/2012/06/13/1-dot-11/"/>
-    <updated>2012-06-13T12:25:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/06/13/1-dot-11</id>
-    <content type="html"><![CDATA[<p>RubyMotion が早くもiOS 6.0で使えるようになった模様．</p>
-
-<pre><code>$ sudo motion update
-</code></pre>
-
-<p>しましょう！</p>
-
-<p>更に，blockにnilを渡しても大丈夫になったので，何もしなくていいのにlambda{}的なことを書かないといけなかったのが楽になります！</p>
-
-<h2>リリースノート</h2>
-
-<pre><code>= RubyMotion 1.11 =
-
-  * Fixed a bug where the runtime would not allow `nil' to be passed as a
-    C-level block argument.
-  * Fixed a bug where methods defined by attr_* would abort the program when
-    called by Objective-C.
-  * Improved `rake spec' to honor the `output' environment variable, which can
-    be used to select a different output format. Available formats: spec_dox,
-    test_unit, tap and knock (ex. rake spec output=test_unit).
-  * Support for the iOS 6.0 Beta 1 SDK can be generated after having installed
-    Xcode 4.5 by typing the following command:
-    $ cd /Library/RubyMotion/data/6.0; rake update
-</code></pre>
-
-<h2>リリースノート訳</h2>
-
-<ul>
-<li>blockにnilが渡せなかったのを修正</li>
-<li>attr_なんとかで定義したメソッドをObjCから呼んだら（どうやるの？）落ちる問題を修正した</li>
-<li>rake specの出力フォーマットを選べる様になったよ</li>
-<li>iOS 6.0 Beta 1 サポート</li>
-</ul>
-
-
-<h2>iOS 6.0 beta 1 を使う方法</h2>
-
-<p>XCode4.5をダウンロードしてインストールします．</p>
-
-<p>RubyMotion を 1.11 にアップデートしておきます．</p>
-
-<p>その後，</p>
-
-<pre><code>$ cd /Library/RubyMotion/data/6.0
-$ gem install nokogiri
-$ rake update
-</code></pre>
-
-<p>を行なえば，RubyMotionで使えるようになります！</p>
-
-<p>Rakefileに</p>
-
-<pre><code>app.xcode_dir = '/Applications/新XCodeの場所...'
-</code></pre>
-
-<p>とかすればいいらしいです．
-（普通に入れてる人は別にRakefileに書かなくてもいいかな）</p>
 ]]></content>
   </entry>
   
