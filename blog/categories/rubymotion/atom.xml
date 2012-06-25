@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-25T11:43:29+09:00</updated>
+  <updated>2012-06-26T08:04:01+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,154 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ]]></title>
+    <link href="http://pchw.github.com/blog/2012/06/26/nitron/"/>
+    <updated>2012-06-26T00:10:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/06/26/nitron</id>
+    <content type="html"><![CDATA[<p>前に<a href="http://pchw.github.com/blog/2012/05/22/storyboard/">Storyboardを使ってRubyMotionで開発する方法</a>とか<a href="http://pchw.github.com/blog/2012/05/22/ib/">[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう</a>いう記事を書いたのですが，IdentifierとかTagを使ったりでちょっと面倒くさかったり，コントロールが増えてくるとTag番号がどのコントロールかわからなくなったりで煩雑でした．</p>
+
+<p>そこで，Nitronというライブラリを使って普通のXcode+ObjCで言うIBOutletとかIBAction的なことを簡単にやりましょうという記事です．</p>
+
+<p><a href="https://github.com/mattgreen/nitron">Nitron</a></p>
+
+<p>公式のgithub内のWikiに<a href="https://github.com/mattgreen/nitron/wiki/Tutorial">チュートリアル</a>がありますが，ModelやNitronのViewControllerとかの説明やCoreData周りなどにも言及していてOutlet的なところだけやりたい人にはちょっと大掛かりです．</p>
+
+<p>そのため，今回は本当にOutletやAction周りだけを使いたい人向けのシンプルコースです．</p>
+
+<h2>Nitroのインストール</h2>
+
+<pre><code>$ gem install nitron
+</code></pre>
+
+<p>なにはともあれgemインストール．</p>
+
+<h2>プロジェクトの作成</h2>
+
+<pre><code>$ motion create simplenitro
+</code></pre>
+
+<h2>app_delegate.rb の削除</h2>
+
+<p>Nitronはapp_delegateに書いてあるようなのがライブラリ内部で勝手にやってくれます．
+app_delegate.rbがあると，そちらが優先されてしまい，何も画面に出なくてハマるのでサクッと削除しておきます．</p>
+
+<pre><code>$ rm app/app_delegate.rb
+</code></pre>
+
+<h2>Rakefile</h2>
+
+<pre><code>$ cat Rakefile
+# -*- coding: utf-8 -*-
+$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+require 'rubygems'
+require 'nitron'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'simplenitro'
+end
+</code></pre>
+
+<p><code>require 'rubygems'</code>と<code>require 'nitron'</code>を追加するだけですね．
+公式だと，Bundlerを使う方法が紹介されてます．</p>
+
+<h2>storyboardの追加</h2>
+
+<p>公式では，普通にXcodeのプロジェクトを作ってますが，要らないファイルが死ぬほど付いてくるので，単にXcodeを立ちあげてstoryboardファイルだけ追加しましょう．</p>
+
+<p><code>File&gt;New&gt;File</code>で<code>iOS&gt;User Interface&gt;Storyboard</code>を選べばよいです．</p>
+
+<p><img src="/images/nitron_storyboard.png" alt="new Storyboard" /></p>
+
+<p>名前は<code>MainStoryboard.storyboard</code>にして，<code>./resources</code>に作成します．</p>
+
+<h2>UINavigationControllerとUIViewControllerの追加</h2>
+
+<p>こうやって作ったStoryboardには何も置かれていないので，<code>UINavigationController</code>を置きます．</p>
+
+<p><img src="/images/nitron_navigation.png" alt="navigation" /></p>
+
+<p>不要な<code>UITableViewController</code>がくっついて来るので<code>delete</code>ボタンで消します．</p>
+
+<p><code>UIViewController</code>をD&amp;Dして置きます．</p>
+
+<p><code>UINavigationController</code>を選択してUtility View（右側のペイン）の一番右のタブを選んで<code>RelationShip</code>の所から引っ張って，追加した<code>UIViewController</code>に繋ぎます．</p>
+
+<p><img src="/images/nitron_rvc.png" alt="root view controller" /></p>
+
+<p><code>UIViewController</code>を選択して，Utility Viewの左から３番目のタブを選んで，Classを<code>RootViewController</code>とかにしておきます．</p>
+
+<h2>UITextFieldとUIButtonの追加</h2>
+
+<p>そのままでは何もないので，入力欄とボタンを追加します．</p>
+
+<p><img src="/images/nitron_control.png" alt="control" /></p>
+
+<p>UITextFieldを選択して，Utility Viewの左から３番目のタブを選んで，
+<code>User Defined Runtime Attributes</code>のところの + を選択して</p>
+
+<ul>
+<li>KeyPath: outlet</li>
+<li>Type: String</li>
+<li>Value: randomText</li>
+</ul>
+
+
+<p>とします．</p>
+
+<p><img src="/images/nitron_outlet.png" alt="outlet" /></p>
+
+<p>同様にUIButtonの方も</p>
+
+<ul>
+<li>KeyPath: outlet</li>
+<li>Type: String</li>
+<li>Value: random</li>
+</ul>
+
+
+<p>としておきます．</p>
+
+<p>この時点でstoryboardの操作は終わりなので保存して閉じます．</p>
+
+<h2>RootViewControllerの追加</h2>
+
+<p><code>root_view_controller.rb</code>を追加して，RootViewControllerクラスを作成します．</p>
+
+<pre><code>class RootViewController &lt; Nitron::ViewController
+    on :random do
+        randomText.text = @seed.sample
+    end
+end
+
+class RootViewController
+    def viewDidLoad
+        super
+        @seed = ["hoge", "fuga", "moge", "foo", "bar"]
+    end 
+end
+</code></pre>
+
+<p>先ほどoutletで指定したrandomが<code>on :random ブロック</code>という形でイベントを受けれます．</p>
+
+<p>また，先ほどoutletでしていた<code>randomText</code>という名前でUITextFieldへのアクセスが可能になりますので，textにランダムで選んだ文字列を入れてみます．</p>
+
+<h2>実行</h2>
+
+<pre><code>$ rake
+</code></pre>
+
+<p>これで，シミュレータが立ち上がり，Buttonを押した時にランダムで文字が変わります．</p>
+
+<h2>まとめ</h2>
+
+<p>Nitronを使うことで，storyboardとRubyMotionとの連携が更に高まり開発効率が上がります．
+特に軽いプロトタイプやモックなどはStoryboardでサッと作れるので，それに簡単にRubyMotionで動作を付けれれば素早い開発が可能なのではないでしょうか！</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[RubyMotionでUIViewを継承したViewを作る！]]></title>
@@ -394,177 +542,6 @@ ROWID|NSFKey|NSFAttribute|NSFValue|NSFDatatype
 <p>待てない人は，
 <a href="https://github.com/HipByte/RubyMotion/commit/01315ce30ce5e5e2f74618862a1172aca95b9cdf">https://github.com/HipByte/RubyMotion/commit/01315ce30ce5e5e2f74618862a1172aca95b9cdf</a>
 をrevertすればいいらしい．</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[RubyMotionを使ってる人はTestFlight使うの簡単だからやった方がいいよ]]></title>
-    <link href="http://pchw.github.com/blog/2012/06/17/testflight/"/>
-    <updated>2012-06-17T20:45:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/06/17/testflight</id>
-    <content type="html"><![CDATA[<p>iOSアプリを開発していて，友達とかチームの人に配布する時のAdHoc配布はTestFlightが便利です．</p>
-
-<p>XCodeでやってたときは，AdHoc用の構成を作ってEntitlementがどうとかしてオーガナイザでIPAファイルにしてTestFlightのサイトにアクセスしてUpload BuildでIPAをアップロードして配布するメンバーを選んで，，，というような事をしないといけませんでした．</p>
-
-<p>※ 最近はTestFlight Desktop Appとか出てて何かもうちょっと楽になってそうな感じだけど．</p>
-
-<p>RubyMotionでは<code>motion-testflight</code>というgemがありまして，そこらへんを楽チンに出来ます．</p>
-
-<p><img src="/images/testflight_devcenter.png" alt="developer center" /></p>
-
-<p>公式の<a href="http://www.rubymotion.com/developer-center/articles/testflight/">Developer Center</a>にもガイドがあるので，みんなやってるかな？</p>
-
-<p>まぁとりあえず導入とどう設定してるか解説してみるよ．</p>
-
-<p><code>motion-testflight</code>を使うには4つ準備が必要です．</p>
-
-<ol>
-<li>motion-testflightのインストール</li>
-<li>API TokenをRakefileに設定する</li>
-<li>Team TokenをRakefileに設定する</li>
-<li>TestFlight SDKをvendorに入れる</li>
-</ol>
-
-
-<h2>motion-testflightのインストール</h2>
-
-<pre><code>$ sudo gem install motion-testflight
-</code></pre>
-
-<h2>API TokenをRakefileに設定する</h2>
-
-<p>次に，TestFlightのWebページに行ってAPI Tokenを取得する必要があります．</p>
-
-<p><img src="/images/testflight_apitoken.png" alt="api token" /></p>
-
-<p>TestFlightのWebページに行ってログインします．
-その後，右上のをクリックしてアカウント設定を開きます．
-その中の下の方にAPI Tokenが書いてあるのでコピーします．</p>
-
-<p><code>Rakefile</code>の<code>app.testflight.api_token</code>に設定します．</p>
-
-<pre><code>Motion::Project::App.setup do |app|
-    # Use `rake config' to see complete project settings.
-    app.name = 'stickey'
-    app.testflight.api_token = '&lt;API Token&gt;'
-end
-</code></pre>
-
-<p>こんな感じになります．</p>
-
-<h2>Team TokenをRakefileに設定する</h2>
-
-<p>TestFlightにはチームとか言う配布する範囲的なものが決めれます．</p>
-
-<p>※ チーム内でもdistribution_listという更に細かく配布先を設定することも出来ます．</p>
-
-<p>そして，そのチームごとにTeam TokenというAPI Tokenとは別のものがあります．これも設定する必要があります．</p>
-
-<p><img src="/images/testflight_teamtoken.png" alt="TeamToken" /></p>
-
-<p>TeamInfoからTeamTokenをコピペして<code>Rakefile</code>の<code>app.testflight.team_token</code>に設定します．</p>
-
-<pre><code>Motion::Project::App.setup do |app|
-    # Use `rake config' to see complete project settings.
-    app.name = 'stickey'
-    app.testflight.api_token = '&lt;API Token&gt;'
-    app.testflight.team_token = '&lt;Team Token&gt;'
-end
-</code></pre>
-
-<p>こんな感じになります．</p>
-
-<h2>TestFlight SDKをダウンロードする</h2>
-
-<p><code>motion-testflight</code>はTestFlight SDKが無いと動きません．</p>
-
-<p>そのため，さっきのTeamTokenをコピーした近くにTestFlight SDKへのリンクがあるのでそこから落としておきます．</p>
-
-<p><a href="http://testflightapp.com/sdk/download">TestFlight SDK ダウンロード</a></p>
-
-<p>TestFlight SDKはzipなので，解凍して<code>vendor/TestFlight</code>とかに置いておきます．</p>
-
-<p>Rakefile にも置き場所を設定する必要があります．</p>
-
-<pre><code>Motion::Project::App.setup do |app|
-    # Use `rake config' to see complete project settings.
-    app.name = 'stickey'
-    app.testflight.api_token = '&lt;API Token&gt;'
-    app.testflight.team_token = '&lt;Team Token&gt;'
-    app.testflight.sdk = 'vendor/TestFlight'
-end
-</code></pre>
-
-<h2>TestFlightで配布する</h2>
-
-<pre><code>$ rake testflight notes="リリースノートを入れる"
-</code></pre>
-
-<p>とすれば，buildしてTestFlightへアップロードされていきます．</p>
-
-<h2>distribution_listを作った方がいい</h2>
-
-<p>ここまでだと，AdHoc BuildされたパッケージがTestFlightに上がるのは楽になりましたが，
-まだTestFlightのWebサイトにアクセスしてどのTeammateを配布先にするかを選択しないといけません．</p>
-
-<p>これは非常にめんどくさいので，distribution_listを作ります．</p>
-
-<p><img src="/images/testflight_people.png" alt="people" /></p>
-
-<p>メニューのPeopleの所を選びます．</p>
-
-<p><img src="/images/testflight_distribution.png" alt="distribution" /></p>
-
-<p>distribution_listに入れたい人を選択して，右のActionsから<code>+New Distribution List</code>を選択します．
-あとは，そのdistribution_listに名前を付けてSaveすれば完了です．</p>
-
-<p>※ distribution_listは何個も作れるっぽいので，「アプリ毎」とか「このアプリのテスターはこの人達」とか「どうせ全員に配るから全員」など色んな単位で作っておくと色々指定出来て楽ちんです．</p>
-
-<p>distribution_listを作ったら，<code>Rakefile</code>にdistribution_listを設定します．</p>
-
-<pre><code>Motion::Project::App.setup do |app|
-    # Use `rake config' to see complete project settings.
-    app.name = 'stickey'
-    app.testflight.api_token = '&lt;API Token&gt;'
-    app.testflight.team_token = '&lt;Team Token&gt;'
-    app.testflight.sdk = 'vendor/TestFlight'
-    app.testflight.distribution_lists = ['&lt;distribution_list&gt;']
-end
-</code></pre>
-
-<p>こんな感じで設定します．Arrayで設定できるので，この集団とあの集団に配布したいという時も2つ設定すればいいだけです．</p>
-
-<h2>証明書とProvisioningProfile</h2>
-
-<p>証明書(codesign_certificate)とProvisioningProfileは何も設定しないと，
-keychainの初めに見つかった証明書と<code>~/Library/MobileDevice/Provisioning</code>内にある初めの<code>.mobileprovision</code>を使ったりします．</p>
-
-<p>割りとTestFlight配布だと上手くいかなくなることが多いので，<code>Rakefile</code> で指定するといいです．</p>
-
-<pre><code>Motion::Project::App.setup do |app|
-    # Use `rake config' to see complete project settings.
-    app.name = 'stickey'
-    app.testflight.api_token = '&lt;API Token&gt;'
-    app.testflight.team_token = '&lt;Team Token&gt;'
-    app.testflight.sdk = 'vendor/TestFlight'
-    app.testflight.distribution_lists = ['&lt;distribution_list&gt;']
-
-    app.codesign_certificate = "iPhone Distribution: なまえがはいったり"
-    app.provisioning_profile = "/Users/&lt;Username&gt;/Library/MobileDevice/Provisioning Profiles/XXXXXXXXXXXXXXXX.mobileprovision"
-end
-</code></pre>
-
-<p>こんな感じに指定すると良いです．</p>
-
-<p><code>app.provisioning_profile</code>は<code>~/...</code>とか入れるとエラーになるので，普通にフルパス入れるとよいです．</p>
-
-<h2>まとめ</h2>
-
-<p>motion-testflight を入れるとAdHoc配布がすごく楽になります．
-今まではXCodeのオーガナイザとブラウザとエディタを行ったり来たりでしたが，
-simulatorの起動等と同じようにターミナルで完結するのですごく楽．</p>
-
-<p>他人へのAdHoc配布だけでなく，自分で複数のdeviceに入れるときもUSBを繋ぎ変えて<code>rake device</code>を連発するより楽だと思うので，積極的に使っていくと良いと思います．</p>
 ]]></content>
   </entry>
   

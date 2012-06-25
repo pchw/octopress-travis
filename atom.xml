@@ -4,7 +4,7 @@
   <title><![CDATA[ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-25T11:43:29+09:00</updated>
+  <updated>2012-06-26T08:04:01+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,154 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ]]></title>
+    <link href="http://pchw.github.com/blog/2012/06/26/nitron/"/>
+    <updated>2012-06-26T00:10:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/06/26/nitron</id>
+    <content type="html"><![CDATA[<p>前に<a href="http://pchw.github.com/blog/2012/05/22/storyboard/">Storyboardを使ってRubyMotionで開発する方法</a>とか<a href="http://pchw.github.com/blog/2012/05/22/ib/">[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう</a>いう記事を書いたのですが，IdentifierとかTagを使ったりでちょっと面倒くさかったり，コントロールが増えてくるとTag番号がどのコントロールかわからなくなったりで煩雑でした．</p>
+
+<p>そこで，Nitronというライブラリを使って普通のXcode+ObjCで言うIBOutletとかIBAction的なことを簡単にやりましょうという記事です．</p>
+
+<p><a href="https://github.com/mattgreen/nitron">Nitron</a></p>
+
+<p>公式のgithub内のWikiに<a href="https://github.com/mattgreen/nitron/wiki/Tutorial">チュートリアル</a>がありますが，ModelやNitronのViewControllerとかの説明やCoreData周りなどにも言及していてOutlet的なところだけやりたい人にはちょっと大掛かりです．</p>
+
+<p>そのため，今回は本当にOutletやAction周りだけを使いたい人向けのシンプルコースです．</p>
+
+<h2>Nitroのインストール</h2>
+
+<pre><code>$ gem install nitron
+</code></pre>
+
+<p>なにはともあれgemインストール．</p>
+
+<h2>プロジェクトの作成</h2>
+
+<pre><code>$ motion create simplenitro
+</code></pre>
+
+<h2>app_delegate.rb の削除</h2>
+
+<p>Nitronはapp_delegateに書いてあるようなのがライブラリ内部で勝手にやってくれます．
+app_delegate.rbがあると，そちらが優先されてしまい，何も画面に出なくてハマるのでサクッと削除しておきます．</p>
+
+<pre><code>$ rm app/app_delegate.rb
+</code></pre>
+
+<h2>Rakefile</h2>
+
+<pre><code>$ cat Rakefile
+# -*- coding: utf-8 -*-
+$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+require 'rubygems'
+require 'nitron'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'simplenitro'
+end
+</code></pre>
+
+<p><code>require 'rubygems'</code>と<code>require 'nitron'</code>を追加するだけですね．
+公式だと，Bundlerを使う方法が紹介されてます．</p>
+
+<h2>storyboardの追加</h2>
+
+<p>公式では，普通にXcodeのプロジェクトを作ってますが，要らないファイルが死ぬほど付いてくるので，単にXcodeを立ちあげてstoryboardファイルだけ追加しましょう．</p>
+
+<p><code>File&gt;New&gt;File</code>で<code>iOS&gt;User Interface&gt;Storyboard</code>を選べばよいです．</p>
+
+<p><img src="http://pchw.github.com/images/nitron_storyboard.png" alt="new Storyboard" /></p>
+
+<p>名前は<code>MainStoryboard.storyboard</code>にして，<code>./resources</code>に作成します．</p>
+
+<h2>UINavigationControllerとUIViewControllerの追加</h2>
+
+<p>こうやって作ったStoryboardには何も置かれていないので，<code>UINavigationController</code>を置きます．</p>
+
+<p><img src="http://pchw.github.com/images/nitron_navigation.png" alt="navigation" /></p>
+
+<p>不要な<code>UITableViewController</code>がくっついて来るので<code>delete</code>ボタンで消します．</p>
+
+<p><code>UIViewController</code>をD&amp;Dして置きます．</p>
+
+<p><code>UINavigationController</code>を選択してUtility View（右側のペイン）の一番右のタブを選んで<code>RelationShip</code>の所から引っ張って，追加した<code>UIViewController</code>に繋ぎます．</p>
+
+<p><img src="http://pchw.github.com/images/nitron_rvc.png" alt="root view controller" /></p>
+
+<p><code>UIViewController</code>を選択して，Utility Viewの左から３番目のタブを選んで，Classを<code>RootViewController</code>とかにしておきます．</p>
+
+<h2>UITextFieldとUIButtonの追加</h2>
+
+<p>そのままでは何もないので，入力欄とボタンを追加します．</p>
+
+<p><img src="http://pchw.github.com/images/nitron_control.png" alt="control" /></p>
+
+<p>UITextFieldを選択して，Utility Viewの左から３番目のタブを選んで，
+<code>User Defined Runtime Attributes</code>のところの + を選択して</p>
+
+<ul>
+<li>KeyPath: outlet</li>
+<li>Type: String</li>
+<li>Value: randomText</li>
+</ul>
+
+
+<p>とします．</p>
+
+<p><img src="http://pchw.github.com/images/nitron_outlet.png" alt="outlet" /></p>
+
+<p>同様にUIButtonの方も</p>
+
+<ul>
+<li>KeyPath: outlet</li>
+<li>Type: String</li>
+<li>Value: random</li>
+</ul>
+
+
+<p>としておきます．</p>
+
+<p>この時点でstoryboardの操作は終わりなので保存して閉じます．</p>
+
+<h2>RootViewControllerの追加</h2>
+
+<p><code>root_view_controller.rb</code>を追加して，RootViewControllerクラスを作成します．</p>
+
+<pre><code>class RootViewController &lt; Nitron::ViewController
+    on :random do
+        randomText.text = @seed.sample
+    end
+end
+
+class RootViewController
+    def viewDidLoad
+        super
+        @seed = ["hoge", "fuga", "moge", "foo", "bar"]
+    end 
+end
+</code></pre>
+
+<p>先ほどoutletで指定したrandomが<code>on :random ブロック</code>という形でイベントを受けれます．</p>
+
+<p>また，先ほどoutletでしていた<code>randomText</code>という名前でUITextFieldへのアクセスが可能になりますので，textにランダムで選んだ文字列を入れてみます．</p>
+
+<h2>実行</h2>
+
+<pre><code>$ rake
+</code></pre>
+
+<p>これで，シミュレータが立ち上がり，Buttonを押した時にランダムで文字が変わります．</p>
+
+<h2>まとめ</h2>
+
+<p>Nitronを使うことで，storyboardとRubyMotionとの連携が更に高まり開発効率が上がります．
+特に軽いプロトタイプやモックなどはStoryboardでサッと作れるので，それに簡単にRubyMotionで動作を付けれれば素早い開発が可能なのではないでしょうか！</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[RubyMotionでUIViewを継承したViewを作る！]]></title>
@@ -1500,77 +1648,6 @@ RubyMotionSublimeCompletions
 <p>でインストール出来るはずです．</p>
 
 <p>後は，普通にエディタを起動して<code>UIApp</code>とか打てば，補完に<code>UIApplication</code>とか<code>UIAppearance</code>とか出るようになります！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[AppReviewViewerが良い！]]></title>
-    <link href="http://pchw.github.com/blog/2012/05/26/appreviews/"/>
-    <updated>2012-05-26T22:52:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/05/26/appreviews</id>
-    <content type="html"><![CDATA[<p>今日は「第２回 iphone_dev_jp 東京iPhone/Mac勉強会」に参加してきました．</p>
-
-<p>そこで面白いものが紹介されていて，超便利だったので紹介します．</p>
-
-<p><img src="http://pchw.github.com/images/appreviews.png" alt="appreviews" /></p>
-
-<p>mixiのiOSアプリ開発という発表をなさっていた@k_kinukawaさんがAppReviewViewerというツールを紹介されていました．</p>
-
-<p><a href="https://github.com/punchdrunker/AppReviewViewer">AppReviewViewer</a></p>
-
-<p>これは，アプリのIDを登録すると，レビューページをスクレイピングしてどのバージョンでどんな評価が付いたかを一覧したり見やすく表示してくれるものです．</p>
-
-<p>また，mecabが入っているとレビュー文を形態素解析してくれて頻出名詞をタグクラウドみたいに見せてくれたりします．</p>
-
-<p><strong>Gemfileが追加されたので，Gemfileを自分で追加する必要はなくなりました！</strong></p>
-
-<p>上記の<a href="https://github.com/punchdrunker/AppReviewViewer">github</a>ページに行ってもらうと分かりますが，依存ライブラリが書いてあるんですが，Gemfileが無くてめんどくさいので書きました．</p>
-
-<div><script src='https://gist.github.com/2793067.js?file=Gemfile'></script>
-<noscript><pre><code>source :rubygems
-
-gem 'json'
-gem 'nokogiri'
-gem 'sequel'
-gem 'sqlite3'
-gem 'sinatra'
-gem 'sinatra-reloader'
-gem 'sinatra-sequel'</code></pre></noscript></div>
-
-
-<p>AppReviewViewerをGithubからcloneした後に入れちゃってください．</p>
-
-<pre><code>$ git clone git://github.com/punchdrunker/AppReviewViewer.git
-$ cd AppReviewViewer
-$ cat &gt; Gemfile
-(上記gistを入れる)
-$ bundle install
-$ ruby app.rb
-</code></pre>
-
-<p>こんな感じでやれば，AppReviewViewerが<code>http://localhost:4567</code>に起動します．</p>
-
-<p>左端に<code>+Add app</code>があるので，選択してアプリのIDと名前を入れます．</p>
-
-<p><img src="http://pchw.github.com/images/appreviewsadd.png" alt="appreviewsadd" /></p>
-
-<p>ちなみにアプリのIDはAppStoreのアプリのページを開くと，</p>
-
-<p><img src="http://pchw.github.com/images/appreviewsid.png" alt="id" /></p>
-
-<p>ココらへんに書いていたりします．</p>
-
-<p>アプリのIDと名前が入れられたら，</p>
-
-<pre><code>$ ruby scripts/fetch.rb
-</code></pre>
-
-<p>とすれば，スクレイピングが始まるので，終わったら</p>
-
-<pre><code>$ ruby app.rb
-</code></pre>
-
-<p>としてまた<code>http://localhost:4567</code>を開いてみましょう．Reviewが見えるはずです！</p>
 ]]></content>
   </entry>
   
