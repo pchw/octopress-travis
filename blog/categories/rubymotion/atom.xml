@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-07-06T11:33:35+09:00</updated>
+  <updated>2012-07-06T13:28:13+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -56,8 +56,10 @@ end
 
 <p>ドキュメントは<a href="http://www.rubymotion.com/developer-center/articles/testing/#_views_and_controllers_testing">こちら</a></p>
 
-<p>7/21(日)に行われる<a href="http://connpass.com/event/665/">第一回RubyMotion勉強会</a>での発表ネタは今回のアップデートのテストに関することにしようと思います．
+<p>7/22(日)に行われる<a href="http://connpass.com/event/665/">第一回RubyMotion勉強会</a>での発表ネタは今回のアップデートのテストに関することにしようと思います．
 あと５人ぐらい空きがあるようですね．</p>
+
+<p>修正： 第一回RubyMotion勉強会は <strong> 7/22（日）</strong> でした．</p>
 
 <p>他のアップデートは↓のような感じです．</p>
 
