@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-26T08:04:01+09:00</updated>
+  <updated>2012-07-06T11:33:35+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,97 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotion 1.15のすげえアップデート]]></title>
+    <link href="http://pchw.github.com/blog/2012/07/06/1-dot-15/"/>
+    <updated>2012-07-06T10:23:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/07/06/1-dot-15</id>
+    <content type="html"><![CDATA[<p>RubyMotion 1.15ですごいアップデートが来るよってlrzさんが言ってました．</p>
+
+<blockquote class="twitter-tweet" lang="ja"><p>Integrating a super cool new feature in RubyMotion. Will ship next week.</p>&mdash; Laurent Sansonettiさん (@lrz) <a href="https://twitter.com/lrz/status/218664619009519617" data-datetime="2012-06-29T11:18:02+00:00">6月 29, 2012</a></blockquote>
+
+
+<script src="http://pchw.github.com//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>それが今日来たのですが，スーパークールなニューフィーチャーはTestFrameworkに関するものでした．</p>
+
+<p>今までRubyMotionはbaconを使ったTestFrameworkが使われていて，
+<code>rake spec</code>とするとSimulatorが実行されメソッドを呼んで値を検証してという形でした．</p>
+
+<p>今回のアップデートでは，指でタップしたりDeviceイベント（画面を回転させたり）といったこともテストで出来るようになりました．</p>
+
+<p>ObjC + XcodeだとjsでUIAutomationのテストを行うらしいんですが（やったことない），その機能がRubyMotionのbaconに統合された感じです．</p>
+
+<pre><code>describe "The Timer view controller" do
+  tests TimerController
+
+  it "start a timer" do
+    tap 'Start'
+    controller.timer.isValid.should == true
+  end
+end
+</code></pre>
+
+<p>とすれば，<code>Start</code>というLabelのついてるButtonをタップしてcontrollerのtimerを検証してます．</p>
+
+<p>実際にVideoを見てもらうのが早いと思います．Viewがガンガン動いて面白いです．</p>
+
+<iframe src="http://player.vimeo.com/video/45193144" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+
+
+<p>公式Blogの情報は<a href="http://blog.rubymotion.com/post/26489000626/functional-view-and-controller-testing-with-rubymotion">こちら</a></p>
+
+<p>ドキュメントは<a href="http://www.rubymotion.com/developer-center/articles/testing/#_views_and_controllers_testing">こちら</a></p>
+
+<p>7/21(日)に行われる<a href="http://connpass.com/event/665/">第一回RubyMotion勉強会</a>での発表ネタは今回のアップデートのテストに関することにしようと思います．
+あと５人ぐらい空きがあるようですね．</p>
+
+<p>他のアップデートは↓のような感じです．</p>
+
+<h2>更新履歴（訳）</h2>
+
+<ul>
+<li>UIAutomationの機能を使えるTestが書けるようになったし，jsじゃなくてpure Rubyで書ける．</li>
+<li>spec/helpersの中のファイルが<code>rake spec</code>で使われるようになったよ</li>
+<li><code>rake spec</code>にfileオプションが追加されて，テストする対象が選べるようになったよ．</li>
+<li><code>RUBYMOTION_ENV</code>で実行時にtestなのかdevelopmentなのかreleaseなのかを判別出来る様になった．</li>
+<li>rake staticが追加されてuniversal statc libraryを作れるようになった．</li>
+<li>weak frameworkのサポート(app.weak_freameworks &lt;&lt; 'Twitter'とかする)</li>
+<li>symlinkのファイルがresourceディレクトリに入っていた場合にコピーされてたのを修正．</li>
+</ul>
+
+
+<h2>更新履歴（原文）</h2>
+
+<pre><code>= RubyMotion 1.15 =
+
+  * Improved the spec framework to leverage UIAutomation's functionality. This
+    lets you write functional tests on views and controllers by using the same
+    event generators, but in pure Ruby (and not Javascript).
+    Check http://www.rubymotion.com/developer-center/articles/testing for more
+    information about the new API. Feature contributed by Eloy Duran.
+  * Introduced spec helpers. `rake spec' will now honor the files inside the
+    `spec/helpers' directory (if it exists) and compile them before the spec
+    files.
+  * Introduced the `files' option to `rake spec', which can be used to filter
+    the spec files that should be run. Filters can be either the basename of
+    a spec file or its full path, and are separated by a comma.
+    Example: rake spec files=main_spec,kvo_spec,spec/foo_spec.rb 
+  * Introduced the RUBYMOTION_ENV constant in the runtime which can have one of
+    the following string values: 'test', 'development' and 'release'.
+  * Introduced the `rake static' task which creates a universal static library
+    containing the project's object files and the RubyMotion runtime, which is
+    suitable for inclusion in Objective-C/Xcode projects. 
+  * Introduced weak frameworks support. The `app.weak_frameworks' setting can
+    be set to an array of framework names, similar to how `app.frameworks'
+    works (ex. app.weak_frameworks += ['Twitter']). Patch by Satoshi Ebisawa.
+  * Fixed a bug in the build system where  files within symlinks inside of the
+    resources directory would not be copied. Patch by Nick Quaranto.
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ]]></title>
@@ -471,77 +562,6 @@ ROWID|NSFKey|NSFAttribute|NSFValue|NSFDatatype
 <li>RUBYOPT変数がgen_bridge_metadataを呼ぶときにクリアされない問題を修正．</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[RubyMotion 1.12 出てますよ]]></title>
-    <link href="http://pchw.github.com/blog/2012/06/19/rm1-dot-12/"/>
-    <updated>2012-06-19T05:08:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/06/19/rm1-dot-12</id>
-    <content type="html"><![CDATA[<p>昨日ぐらいにRubyMotion 1.12が出てます．
-主にBugfixの模様．</p>
-
-<h2>更新内容（原文）</h2>
-
-<pre><code>= RubyMotion 1.12 =
-
-  * Fixed a bug where sending an `init' message alone (without using `alloc'
-    before) would lead to a memory crash. This was possible when overloading
-    an initWith* method and doing `self.init' inside.
-  * Fixed a bug where performing Objective-C methods that accept CFType objects
-    would crash the program (ex. [ABPersonViewController setDisplayedPerson:]).
-  * Switched to clang++ to link the executable bits. This fixes linker crashes
-    on iOS 6.0.
-  * Added `fast' output for `rake spec'. Fixed a bug in the other outputs.
-    Patch by Marin Usalj.
-  * Improved the build system to let the user specify CPU archs that should be
-    used for a certain platform. The `app.archs' method returns a Hash that one
-    can tweak. This is so far only useful when you target 4.3 (which is armv6
-    and armv7) and want to link with a 3rd-party library that only supports
-    armv7 (ex. app.archs['iPhoneOS'] = ['armv7']).
-  * Improved `rake simulator' to honor the `deployment_target' environment
-    variable (ex. rake deployment_target=4.3). Patch by Satoshi Ebisawa.
-  * Fixed a bug in the build system where the compiler would not use the right
-    BridgeSupport files when using a lower deployment_target.
-    Patch by Satoshi Ebisawa.
-  * Fixed the build system to re-link the .app executable in case one of the
-    vendored libraries changed.
-  * Fixed bugs in both ARM/simulator compilers where structures smaller than
-    64-bit would not be following the ABI and causing unexpected behavior in
-    certain cases (ex. cocos2d). Thanks to Aaron Hurley for the detective work.
-  * Removed Kernel#select as it clashes with a private `select' method defined
-    by iOS and triggered when hittin the select button in a paste action.
-    Thanks to Francis Chong for the detective work.
-</code></pre>
-
-<h2>更新内容(訳)</h2>
-
-<ul>
-<li>alloc無しでinitを呼んだ時にメモリ破壊を引き起こすバグを修正．initWithなんとかをオーバーロードして，そのメソッド内でself.initを呼んでいた場合起こっていた模様．</li>
-<li>CFTypeを受け取るObjCのメソッドを呼んだ時にクラッシュするバグを修正．ABPersonViewControllerのsetDisplayedPerson:とか．</li>
-<li>clang++のexecutable bitを立てるようにした．これにより，iOS6.0でリンカがクラッシュを引き起こすのが修正される．</li>
-<li>rake specの出力モードにfastが追加された．他の出力モードのバグも修正．</li>
-<li>build systemが改善してapp.archsのハッシュをいじることでCPUアーキテクチャを指定できる様になった．（app.archs['iPhoneOS']=['armv7']とか）</li>
-<li>rake simulatorするときにdeployment_target環境変数を評価するようになった．(rake deployment_target4.3 とかする)</li>
-<li>deployment_targetを昔のにしてる時，BridgeSupportファイルが正しく使われなかった問題を修正</li>
-<li>vendoreライブラリが１個でも変更されてたら再リンクするようにしたよ</li>
-<li>ARM/simulator両方のコンパイラで64bitより小さい構造体がABIに反映されない問題を修正．これによってcocos2dなど期待しない動作をしていたのが修正された．</li>
-<li>Kernel#selectを削除．pasteアクションの選択ボタンを押した時とかにクラッシュする問題が修正される．</li>
-</ul>
-
-
-<h2>その他</h2>
-
-<p>deployment_target周りで問題が見つかっているらしい．</p>
-
-<p>deployment_targetに5.0を指定して5.0SDKが無い時（SDKが5.1など）にrakeに失敗するらしい．</p>
-
-<p>修正は次のリリースに入る模様．</p>
-
-<p>待てない人は，
-<a href="https://github.com/HipByte/RubyMotion/commit/01315ce30ce5e5e2f74618862a1172aca95b9cdf">https://github.com/HipByte/RubyMotion/commit/01315ce30ce5e5e2f74618862a1172aca95b9cdf</a>
-をrevertすればいいらしい．</p>
 ]]></content>
   </entry>
   

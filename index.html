@@ -9,7 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="前にStoryboardを使ってRubyMotionで開発する方法とか[RubyMotion] InterfaceBuilderと合わせて使って楽をしよういう記事を書いたのですが，IdentifierとかTagを使ったりでちょっと面倒くさかったり， &hellip;">
+  <meta name="description" content="RubyMotion 1.15ですごいアップデートが来るよってlrzさんが言ってました． Integrating a super cool new feature in RubyMotion. Will ship next week.&mdash; Laurent Sansonettiさん (@ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,124 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/07/06/1-dot-15/">RubyMotion 1.15のすげえアップデート</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-06T10:23:00+09:00" pubdate data-updated="true">Jul 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>RubyMotion 1.15ですごいアップデートが来るよってlrzさんが言ってました．</p>
+
+<blockquote class="twitter-tweet" lang="ja"><p>Integrating a super cool new feature in RubyMotion. Will ship next week.</p>&mdash; Laurent Sansonettiさん (@lrz) <a href="https://twitter.com/lrz/status/218664619009519617" data-datetime="2012-06-29T11:18:02+00:00">6月 29, 2012</a></blockquote>
+
+
+<script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>それが今日来たのですが，スーパークールなニューフィーチャーはTestFrameworkに関するものでした．</p>
+
+<p>今までRubyMotionはbaconを使ったTestFrameworkが使われていて，
+<code>rake spec</code>とするとSimulatorが実行されメソッドを呼んで値を検証してという形でした．</p>
+
+<p>今回のアップデートでは，指でタップしたりDeviceイベント（画面を回転させたり）といったこともテストで出来るようになりました．</p>
+
+<p>ObjC + XcodeだとjsでUIAutomationのテストを行うらしいんですが（やったことない），その機能がRubyMotionのbaconに統合された感じです．</p>
+
+<pre><code>describe "The Timer view controller" do
+  tests TimerController
+
+  it "start a timer" do
+    tap 'Start'
+    controller.timer.isValid.should == true
+  end
+end
+</code></pre>
+
+<p>とすれば，<code>Start</code>というLabelのついてるButtonをタップしてcontrollerのtimerを検証してます．</p>
+
+<p>実際にVideoを見てもらうのが早いと思います．Viewがガンガン動いて面白いです．</p>
+
+<iframe src="http://player.vimeo.com/video/45193144" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+
+
+<p>公式Blogの情報は<a href="http://blog.rubymotion.com/post/26489000626/functional-view-and-controller-testing-with-rubymotion">こちら</a></p>
+
+<p>ドキュメントは<a href="http://www.rubymotion.com/developer-center/articles/testing/#_views_and_controllers_testing">こちら</a></p>
+
+<p>7/21(日)に行われる<a href="http://connpass.com/event/665/">第一回RubyMotion勉強会</a>での発表ネタは今回のアップデートのテストに関することにしようと思います．
+あと５人ぐらい空きがあるようですね．</p>
+
+<p>他のアップデートは↓のような感じです．</p>
+
+<h2>更新履歴（訳）</h2>
+
+<ul>
+<li>UIAutomationの機能を使えるTestが書けるようになったし，jsじゃなくてpure Rubyで書ける．</li>
+<li>spec/helpersの中のファイルが<code>rake spec</code>で使われるようになったよ</li>
+<li><code>rake spec</code>にfileオプションが追加されて，テストする対象が選べるようになったよ．</li>
+<li><code>RUBYMOTION_ENV</code>で実行時にtestなのかdevelopmentなのかreleaseなのかを判別出来る様になった．</li>
+<li>rake staticが追加されてuniversal statc libraryを作れるようになった．</li>
+<li>weak frameworkのサポート(app.weak_freameworks &lt;&lt; &#8216;Twitter&#8217;とかする)</li>
+<li>symlinkのファイルがresourceディレクトリに入っていた場合にコピーされてたのを修正．</li>
+</ul>
+
+
+<h2>更新履歴（原文）</h2>
+
+<pre><code>= RubyMotion 1.15 =
+
+  * Improved the spec framework to leverage UIAutomation's functionality. This
+    lets you write functional tests on views and controllers by using the same
+    event generators, but in pure Ruby (and not Javascript).
+    Check http://www.rubymotion.com/developer-center/articles/testing for more
+    information about the new API. Feature contributed by Eloy Duran.
+  * Introduced spec helpers. `rake spec' will now honor the files inside the
+    `spec/helpers' directory (if it exists) and compile them before the spec
+    files.
+  * Introduced the `files' option to `rake spec', which can be used to filter
+    the spec files that should be run. Filters can be either the basename of
+    a spec file or its full path, and are separated by a comma.
+    Example: rake spec files=main_spec,kvo_spec,spec/foo_spec.rb 
+  * Introduced the RUBYMOTION_ENV constant in the runtime which can have one of
+    the following string values: 'test', 'development' and 'release'.
+  * Introduced the `rake static' task which creates a universal static library
+    containing the project's object files and the RubyMotion runtime, which is
+    suitable for inclusion in Objective-C/Xcode projects. 
+  * Introduced weak frameworks support. The `app.weak_frameworks' setting can
+    be set to an array of framework names, similar to how `app.frameworks'
+    works (ex. app.weak_frameworks += ['Twitter']). Patch by Satoshi Ebisawa.
+  * Fixed a bug in the build system where  files within symlinks inside of the
+    resources directory would not be copied. Patch by Nick Quaranto.
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1240,60 +1358,6 @@ MethodとかPropertyなら静的解析とかでなんとかなりそうですが
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/06/02/pullreq/">RubyMotion のlib部分がソース公開してるのでPullRequestを送ってみたよ！</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-02T12:41:00+09:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>RubyMotionのlib部分のソースが公開されてます．</p>
-
-<p>lib部分にはbuildsystemやRakefileとかvendor周りのあれこれが含まれていて，
-最近のfixがその辺りの修正が多かったので，広くpull requestを受け付けようということですかね．</p>
-
-<p>早速前の記事(<a href="http://pchw.github.com/blog/2012/06/02/certificate/">[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策</a>)の解決策なんかは，<code>motion create</code>で生成されるRakefileの修正でいけるのでパパッとPull Requestを送って本家に組み込んでもらうのがいいです．</p>
-
-<p>というわけで，Pull Requestを<a href="https://github.com/HipByte/RubyMotion/pull/1">送っておきました</a>．
-なんと<code>pull/1</code>で1番目のpullらしい．</p>
-
-<p>本家に組み込まれるまで，ローカル環境を同じように修正するには，
-<code>/Library/RubyMotion/lib/motion/project/app.rb</code>を修正します．</p>
-
-<p>修正内容は<a href="https://github.com/HipByte/RubyMotion/pull/1/files">Pull Requestの詳細</a>をみて分かると思いますけど，102行目に</p>
-
-<pre><code># -*- coding: utf-8 -*-
-</code></pre>
-
-<p>を追加するだけです．</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/2/">&larr; Older</a>
@@ -1332,6 +1396,10 @@ MethodとかPropertyなら静的解析とかでなんとかなりそうですが
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/07/06/1-dot-15/">RubyMotion 1.15のすげえアップデート</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/06/26/nitron/">[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ</a>
       </li>
     
@@ -1347,15 +1415,11 @@ MethodとかPropertyなら静的解析とかでなんとかなりそうですが
         <a href="/blog/2012/06/20/1-dot-13/">RubyMotion 1.13が早くもリリース</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/06/19/rm1-dot-12/">RubyMotion 1.12 出てますよ</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (25)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (26)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 

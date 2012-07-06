@@ -4,7 +4,7 @@
   <title><![CDATA[ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-06-26T08:04:01+09:00</updated>
+  <updated>2012-07-06T11:33:35+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,97 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[RubyMotion 1.15のすげえアップデート]]></title>
+    <link href="http://pchw.github.com/blog/2012/07/06/1-dot-15/"/>
+    <updated>2012-07-06T10:23:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/07/06/1-dot-15</id>
+    <content type="html"><![CDATA[<p>RubyMotion 1.15ですごいアップデートが来るよってlrzさんが言ってました．</p>
+
+<blockquote class="twitter-tweet" lang="ja"><p>Integrating a super cool new feature in RubyMotion. Will ship next week.</p>&mdash; Laurent Sansonettiさん (@lrz) <a href="https://twitter.com/lrz/status/218664619009519617" data-datetime="2012-06-29T11:18:02+00:00">6月 29, 2012</a></blockquote>
+
+
+<script src="http://pchw.github.com//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>それが今日来たのですが，スーパークールなニューフィーチャーはTestFrameworkに関するものでした．</p>
+
+<p>今までRubyMotionはbaconを使ったTestFrameworkが使われていて，
+<code>rake spec</code>とするとSimulatorが実行されメソッドを呼んで値を検証してという形でした．</p>
+
+<p>今回のアップデートでは，指でタップしたりDeviceイベント（画面を回転させたり）といったこともテストで出来るようになりました．</p>
+
+<p>ObjC + XcodeだとjsでUIAutomationのテストを行うらしいんですが（やったことない），その機能がRubyMotionのbaconに統合された感じです．</p>
+
+<pre><code>describe "The Timer view controller" do
+  tests TimerController
+
+  it "start a timer" do
+    tap 'Start'
+    controller.timer.isValid.should == true
+  end
+end
+</code></pre>
+
+<p>とすれば，<code>Start</code>というLabelのついてるButtonをタップしてcontrollerのtimerを検証してます．</p>
+
+<p>実際にVideoを見てもらうのが早いと思います．Viewがガンガン動いて面白いです．</p>
+
+<iframe src="http://player.vimeo.com/video/45193144" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+
+
+<p>公式Blogの情報は<a href="http://blog.rubymotion.com/post/26489000626/functional-view-and-controller-testing-with-rubymotion">こちら</a></p>
+
+<p>ドキュメントは<a href="http://www.rubymotion.com/developer-center/articles/testing/#_views_and_controllers_testing">こちら</a></p>
+
+<p>7/21(日)に行われる<a href="http://connpass.com/event/665/">第一回RubyMotion勉強会</a>での発表ネタは今回のアップデートのテストに関することにしようと思います．
+あと５人ぐらい空きがあるようですね．</p>
+
+<p>他のアップデートは↓のような感じです．</p>
+
+<h2>更新履歴（訳）</h2>
+
+<ul>
+<li>UIAutomationの機能を使えるTestが書けるようになったし，jsじゃなくてpure Rubyで書ける．</li>
+<li>spec/helpersの中のファイルが<code>rake spec</code>で使われるようになったよ</li>
+<li><code>rake spec</code>にfileオプションが追加されて，テストする対象が選べるようになったよ．</li>
+<li><code>RUBYMOTION_ENV</code>で実行時にtestなのかdevelopmentなのかreleaseなのかを判別出来る様になった．</li>
+<li>rake staticが追加されてuniversal statc libraryを作れるようになった．</li>
+<li>weak frameworkのサポート(app.weak_freameworks &lt;&lt; &#8216;Twitter&#8217;とかする)</li>
+<li>symlinkのファイルがresourceディレクトリに入っていた場合にコピーされてたのを修正．</li>
+</ul>
+
+
+<h2>更新履歴（原文）</h2>
+
+<pre><code>= RubyMotion 1.15 =
+
+  * Improved the spec framework to leverage UIAutomation's functionality. This
+    lets you write functional tests on views and controllers by using the same
+    event generators, but in pure Ruby (and not Javascript).
+    Check http://www.rubymotion.com/developer-center/articles/testing for more
+    information about the new API. Feature contributed by Eloy Duran.
+  * Introduced spec helpers. `rake spec' will now honor the files inside the
+    `spec/helpers' directory (if it exists) and compile them before the spec
+    files.
+  * Introduced the `files' option to `rake spec', which can be used to filter
+    the spec files that should be run. Filters can be either the basename of
+    a spec file or its full path, and are separated by a comma.
+    Example: rake spec files=main_spec,kvo_spec,spec/foo_spec.rb 
+  * Introduced the RUBYMOTION_ENV constant in the runtime which can have one of
+    the following string values: 'test', 'development' and 'release'.
+  * Introduced the `rake static' task which creates a universal static library
+    containing the project's object files and the RubyMotion runtime, which is
+    suitable for inclusion in Objective-C/Xcode projects. 
+  * Introduced weak frameworks support. The `app.weak_frameworks' setting can
+    be set to an array of framework names, similar to how `app.frameworks'
+    works (ex. app.weak_frameworks += ['Twitter']). Patch by Satoshi Ebisawa.
+  * Fixed a bug in the build system where  files within symlinks inside of the
+    resources directory would not be copied. Patch by Nick Quaranto.
+</code></pre>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ]]></title>
@@ -1611,43 +1702,6 @@ repl(delegate)
 <p>みたいなのを書く時でも，すごい楽なわけです．</p>
 
 <p>セットアップも有効にするのもRakefileに1行追加ですし，簡単で積極的に使って行きたいですね！</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Sublime Text 2でRubyMotionの補完が出来るようになったぞおおおお]]></title>
-    <link href="http://pchw.github.com/blog/2012/05/27/st2/"/>
-    <updated>2012-05-27T10:04:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/05/27/st2</id>
-    <content type="html"><![CDATA[<p><img src="http://pchw.github.com/images/st2.png" alt="catch" /></p>
-
-<p>ついに来ました！</p>
-
-<p>いままで，RubyMotionを書いていて補完が効くのはVimとredcarとTextMateだけでした！
-ところが，RubyMotionのフォーラムに「[RubyMotion] Sublime Text 2 Support」という質問が投げかけられ，ついに今日そのパッケージが登場しました！</p>
-
-<p><a href="https://github.com/diemer/RubyMotionSublimeCompletions">RubyMotionSublimeCompletions</a></p>
-
-<p>インストール方法は簡単で，</p>
-
-<pre><code>$ cd ~/Library/Application Support/Sublime Text 2/Packages
-$ git clone git://github.com/diemer/RubyMotionSublimeCompletions.git
-</code></pre>
-
-<p>してSublime Text2を再起動すればOKです．</p>
-
-<p>PackageControlを導入している人なら，</p>
-
-<pre><code>Cmd+Shift+p
-Package Control: Add Repository
-https://github.com/diemer/RubyMotionSublimeCompletions
-Package Control: Install Package
-RubyMotionSublimeCompletions
-</code></pre>
-
-<p>でインストール出来るはずです．</p>
-
-<p>後は，普通にエディタを起動して<code>UIApp</code>とか打てば，補完に<code>UIApplication</code>とか<code>UIAppearance</code>とか出るようになります！</p>
 ]]></content>
   </entry>
   
