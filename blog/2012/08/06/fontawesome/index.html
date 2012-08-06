@@ -5,11 +5,11 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>RubyMotionが1.4->1.5->1.6とアップデートしたよ！ - ぽっちぽちにしてやんよ</title>
+  <title>[RubyMotion] motion-fontawesomeっていうgems作りました - ぽっちぽちにしてやんよ</title>
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="気づいたら，RubyMotionの更新が1.5・1.6と続いてありました． $ sudo motion update しましょう． RubyMotion 1.5 更新内容 = RubyMotion 1.5 = * Improved the REPL to support multi-line &hellip;">
+  <meta name="description" content="1ヶ月ぶりの記事になってしまった！お久しぶりです． motion-fontawesomeというgemsを作ったので宣伝がてらエントリー書きます！ Retina環境の増加 Retina iPhone/iPadはかなり普及したんじゃないでしょうか？ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://pchw.github.com/blog/2012/05/23/update/">
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/08/06/fontawesome/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -80,7 +80,7 @@
   
   <header>
     
-      <h1 class="entry-title">RubyMotionが1.4->1.5->1.6とアップデートしたよ！</h1>
+      <h1 class="entry-title">[RubyMotion] Motion-fontawesomeっていうgems作りました</h1>
     
     
       <p class="meta">
@@ -96,70 +96,68 @@
   
 
 
-<time datetime="2012-05-23T01:03:00+09:00" pubdate data-updated="true">May 23<span>rd</span>, 2012</time>
+<time datetime="2012-08-06T01:09:00+09:00" pubdate data-updated="true">Aug 6<span>th</span>, 2012</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>気づいたら，RubyMotionの更新が1.5・1.6と続いてありました．</p>
+<div class="entry-content"><p>1ヶ月ぶりの記事になってしまった！お久しぶりです．</p>
 
-<pre><code>$ sudo motion update
+<p>motion-fontawesomeというgemsを作ったので宣伝がてらエントリー書きます！</p>
+
+<h2>Retina環境の増加</h2>
+
+<p>Retina iPhone/iPadはかなり普及したんじゃないでしょうか？
+ちょっと何か作るのにTabBarやToolbarのアイコンをいちいち探すのが面倒で，GlyphiconsのFREEを使っていたりしたんですが，非Retinaで荒いし他のアイコンを探そうとすると種類が少なかったり，Retinaじゃなかったりで面倒くさいことこの上ないです．
+（そもそも無料で探してるのが悪かったりするんですけど）</p>
+
+<p>そこで<a href="http://fortawesome.github.com/Font-Awesome/">FontAwesome</a>というWebfontを使うと便利です．</p>
+
+<h2>FontAwesomeとは</h2>
+
+<p>元々はTwitter Bootstrapで使えるようにデザインされたアイコンフォント集です．</p>
+
+<p>フォントなので拡大縮小しても荒くならないため，Retinaでも例え超Retina的なのが出てきても対応できますし，色んなサイズが必要になる場面でも力を発揮してくれます．</p>
+
+<h2>FontAwesomeをRubyMotionで使おうとすると</h2>
+
+<p>しかし，普通に使おうとすると，色々とやることがあって，
+- <code>resources</code>にフォントを追加
+- <code>app.fonts</code>に追加
+- 欲しい記号を出すためのUTF8の文字コードを調べないといけない
+- chr(Encoding::UTF_8)とか使って文字コードから文字へ変換してやらないといけない
+みたいなことをやらないといけないわけです．</p>
+
+<h2>motion-fontawesomeを作りました</h2>
+
+<p>そんな面倒なことやってられないので，上記のことを簡単にしてくれるgemsを作りました．</p>
+
+<p>使い方は，</p>
+
+<h3>Rakefileでrequire</h3>
+
+<pre><code>require 'rubygems'
+require 'motion-fontawesome'
 </code></pre>
 
-<p>しましょう．</p>
+<h3>使う</h3>
 
-<h2>RubyMotion 1.5 更新内容</h2>
-
-<pre><code>= RubyMotion 1.5 =
-
-  * Improved the REPL to support multi-line expressions.
-  * Fixed a bug when compiling Core Data model files where the `momc' utility
-    was not given absolute paths.
-  * Removed legacy MacRuby code that was using the private `isaForAutonotifying'
-    selector and causing a warning during an App Store submission.
-  * Fixed a bug in Enumerable#sort_by that would lead to a crash.
-  * Fixed a bug in the REPL where it would not detect the iOS Simulator window
-    if certain windows were in front or created later.
-  * Fixed a bug in the build system where framework dependencies would not be
-    properly handled.
-  * Added support for .lproj directories (i18n). Thanks Aaron Hurley.
-  * Fixed a bug where objects from pure Ruby classes sent to KVO would not be
-    properly handled later (because KVO inserts a new singleton class).
-  * Fixed attr_writer to emit KVO notifications (will/didChangeValueForKey).
+<pre><code>label = UILabel.alloc.initWithFrame([[0, 0],[200, 200]])
+label.text = FontAwesome.icon(key)
+label.font = FontAwesome.fontWithSize(200.0)
 </code></pre>
 
-<ul>
-<li>REPLが複数行をサポート</li>
-<li>CoreDataモデルファイルをコンパイル時のバグを修正</li>
-<li>レガシーなMacRubyコードを撤去した．</li>
-<li>Enumerable#sort_byがクラッシュを引き起こす問題を修正</li>
-<li>ウィンドウがシミュレータウィンドウの前に複数あるなどの原因でREPLがシミュレータを見つけれないバグを修正</li>
-<li>ビルド時にフレームワークの依存関係を正しく扱えなかったバグを修正</li>
-<li>.lprojディレクトリをサポート</li>
-<li>pure RubyのクラスのオブジェクトをKVOに送った時に正しくハンドリング出来なかったバグを修正</li>
-<li>attr_writerがKVO notificationを上げるように修正</li>
-</ul>
+<h3>アイコンが出る！</h3>
 
+<p><img src="/images/fontawesome.png" alt="simulator" /></p>
 
-<h2>RubyMotion 1.6 更新内容</h2>
+<p>これだけです！上のスクリーンショットを見てもらってもわかると思いますけど，こんなに大きくしても綺麗です．</p>
 
-<pre><code>= RubyMotion 1.6 =
+<p><code>FontAwesome.icon()</code>に指定する文字列は<a href="http://fortawesome.github.com/Font-Awesome/#all-icons">ここ</a>から選んで，<code>icon-</code>を取ったものを指定してください．</p>
 
-  * Fixed a regression in the build system introduced by the previous update
-    (when compiling .xib files).
-  * Fixed the vendoring system to include all source code files. Merged patch
-    from https://groups.google.com/d/msg/rubymotion/tPCxSMCA2f4/w2DIHFo2AVAJ
-  * Fixed the REPL to not crash if you give it an empty expression.
-</code></pre>
-
-<ul>
-<li>ビルド時の再発バグの修正</li>
-<li>外部ライブラリ読み込み不具合修正</li>
-<li>REPLに空を渡した時にクラッシュする不具合の修正</li>
-</ul>
-
+<p>（<code>icon-camera</code>だったら<code>camera</code>だけで良いです．）</p>
 </div>
 
 
@@ -182,7 +180,7 @@
   
 
 
-<time datetime="2012-05-23T01:03:00+09:00" pubdate data-updated="true">May 23<span>rd</span>, 2012</time>
+<time datetime="2012-08-06T01:09:00+09:00" pubdate data-updated="true">Aug 6<span>th</span>, 2012</time>
       
 
 <span class="categories">
@@ -195,9 +193,9 @@
     </p>
     
       <div class="sharing">
-  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/05/23/update/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/08/06/fontawesome/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/05/23/update/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/05/23/update/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/08/06/fontawesome/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/08/06/fontawesome/" >Tweet</a>
   
   
   
@@ -206,10 +204,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2012/05/22/gcd/" title="Previous Post: RubyMotionでGCDを使う">&laquo; RubyMotionでGCDを使う</a>
+        <a class="basic-alignment left" href="/blog/2012/07/06/1-dot-15/" title="Previous Post: RubyMotion 1.15のすげえアップデート">&laquo; RubyMotion 1.15のすげえアップデート</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2012/05/26/appreviews/" title="Next Post: AppReviewViewerが良い！">AppReviewViewerが良い！ &raquo;</a>
       
     </p>
   </footer>
@@ -302,8 +298,8 @@
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://pchw.github.com/blog/2012/05/23/update/';
-        var disqus_url = 'http://pchw.github.com/blog/2012/05/23/update/';
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/08/06/fontawesome/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/08/06/fontawesome/';
         var disqus_script = 'embed.js';
       
     (function () {

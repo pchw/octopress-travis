@@ -4,7 +4,7 @@
   <title><![CDATA[Category: RubyMotion | ぽっちぽちにしてやんよ]]></title>
   <link href="http://pchw.github.com/blog/categories/rubymotion/atom.xml" rel="self"/>
   <link href="http://pchw.github.com/"/>
-  <updated>2012-07-06T13:28:13+09:00</updated>
+  <updated>2012-08-06T09:02:06+09:00</updated>
   <id>http://pchw.github.com/</id>
   <author>
     <name><![CDATA[pchw]]></name>
@@ -12,6 +12,69 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[[RubyMotion] motion-fontawesomeっていうgems作りました]]></title>
+    <link href="http://pchw.github.com/blog/2012/08/06/fontawesome/"/>
+    <updated>2012-08-06T01:09:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/08/06/fontawesome</id>
+    <content type="html"><![CDATA[<p>1ヶ月ぶりの記事になってしまった！お久しぶりです．</p>
+
+<p>motion-fontawesomeというgemsを作ったので宣伝がてらエントリー書きます！</p>
+
+<h2>Retina環境の増加</h2>
+
+<p>Retina iPhone/iPadはかなり普及したんじゃないでしょうか？
+ちょっと何か作るのにTabBarやToolbarのアイコンをいちいち探すのが面倒で，GlyphiconsのFREEを使っていたりしたんですが，非Retinaで荒いし他のアイコンを探そうとすると種類が少なかったり，Retinaじゃなかったりで面倒くさいことこの上ないです．
+（そもそも無料で探してるのが悪かったりするんですけど）</p>
+
+<p>そこで<a href="http://fortawesome.github.com/Font-Awesome/">FontAwesome</a>というWebfontを使うと便利です．</p>
+
+<h2>FontAwesomeとは</h2>
+
+<p>元々はTwitter Bootstrapで使えるようにデザインされたアイコンフォント集です．</p>
+
+<p>フォントなので拡大縮小しても荒くならないため，Retinaでも例え超Retina的なのが出てきても対応できますし，色んなサイズが必要になる場面でも力を発揮してくれます．</p>
+
+<h2>FontAwesomeをRubyMotionで使おうとすると</h2>
+
+<p>しかし，普通に使おうとすると，色々とやることがあって，
+- <code>resources</code>にフォントを追加
+- <code>app.fonts</code>に追加
+- 欲しい記号を出すためのUTF8の文字コードを調べないといけない
+- chr(Encoding::UTF_8)とか使って文字コードから文字へ変換してやらないといけない
+みたいなことをやらないといけないわけです．</p>
+
+<h2>motion-fontawesomeを作りました</h2>
+
+<p>そんな面倒なことやってられないので，上記のことを簡単にしてくれるgemsを作りました．</p>
+
+<p>使い方は，</p>
+
+<h3>Rakefileでrequire</h3>
+
+<pre><code>require 'rubygems'
+require 'motion-fontawesome'
+</code></pre>
+
+<h3>使う</h3>
+
+<pre><code>label = UILabel.alloc.initWithFrame([[0, 0],[200, 200]])
+label.text = FontAwesome.icon(key)
+label.font = FontAwesome.fontWithSize(200.0)
+</code></pre>
+
+<h3>アイコンが出る！</h3>
+
+<p><img src="/images/fontawesome.png" alt="simulator" /></p>
+
+<p>これだけです！上のスクリーンショットを見てもらってもわかると思いますけど，こんなに大きくしても綺麗です．</p>
+
+<p><code>FontAwesome.icon()</code>に指定する文字列は<a href="http://fortawesome.github.com/Font-Awesome/#all-icons">ここ</a>から選んで，<code>icon-</code>を取ったものを指定してください．</p>
+
+<p>（<code>icon-camera</code>だったら<code>camera</code>だけで良いです．）</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[RubyMotion 1.15のすげえアップデート]]></title>
@@ -531,39 +594,6 @@ ROWID|NSFKey|NSFAttribute|NSFValue|NSFDatatype
 
 <p>NanoStoreInMotionはデータを保存，検索，削除などが簡単なステップで出来て，ちょっとしたデータの取り扱いに役立つと思います．
 <code>:memory</code>を使うことで，Web APIからデータをごっそり取ってきてさっとフィルタリングするような用途にも簡単に使えそうです．</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[RubyMotion 1.13が早くもリリース]]></title>
-    <link href="http://pchw.github.com/blog/2012/06/20/1-dot-13/"/>
-    <updated>2012-06-20T00:52:00+09:00</updated>
-    <id>http://pchw.github.com/blog/2012/06/20/1-dot-13</id>
-    <content type="html"><![CDATA[<p>早くもRubyMotion 1.13が出てます．バグ修正が主です．</p>
-
-<h2>更新内容</h2>
-
-<pre><code>= RubyMotion 1.13 =
-
-  * Fixed a regression in `rake simulator' introduced by the last update.
-    Also, the environment variable used to set the SDK target is renamed to
-    `target' (ex. rake target=4.3).
-  * Fixed a bug in the build system where certain .rb files would be rebuilt
-    every time `rake build' was executed, because the object directory was not
-    touched.
-  * Fixed a bug in the build system where the RUBYOPT variable would not be
-    cleared when calling the gen_bridge_metadata tool, which would cause some
-    issues later on. Patch by Satoshi Ebisawa.
-</code></pre>
-
-<h2>更新内容（訳）</h2>
-
-<ul>
-<li>前回のアップデートで書いてたrake simulatorのエンバグ修正．rake target=4.3みたいに指定するようになった．</li>
-<li>オブジェクトディレクトリが更新されなかったからrake buildが実行された時に毎回.rbファイルをリビルドするようにビルドシステムを修正</li>
-<li>RUBYOPT変数がgen_bridge_metadataを呼ぶときにクリアされない問題を修正．</li>
-</ul>
-
 ]]></content>
   </entry>
   

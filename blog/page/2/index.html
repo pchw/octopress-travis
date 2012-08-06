@@ -9,8 +9,7 @@
   <meta name="author" content="pchw">
 
   
-  <meta name="description" content="RubyMotionのlib部分のソースが公開されてます． lib部分にはbuildsystemやRakefileとかvendor周りのあれこれが含まれていて，
-最近のfixがその辺りの修正が多かったので，広くpull requestを受け付けようということですかね． 早速前の記事([ &hellip;">
+  <meta name="description" content="はじめに アプリを作ってた時に，Simulatorでは動くのにrade deviceやrake testflightして実機で動かしたときに起動した瞬間落ちるという現象が起こって困った話です． RubyMotionは実機でのデバッグに弱い！ 実機を繋ぐのはめんどくさいので， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -78,6 +77,92 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/05/casesensitive/">[RubyMotion] Simulatorでは動くのに実機で動かなくてハマった話</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-05T23:29:00+09:00" pubdate data-updated="true">Jun 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>はじめに</h2>
+
+<p>アプリを作ってた時に，Simulatorでは動くのに<code>rade device</code>や<code>rake testflight</code>して実機で動かしたときに起動した瞬間落ちるという現象が起こって困った話です．</p>
+
+<h2>RubyMotionは実機でのデバッグに弱い！</h2>
+
+<p>実機を繋ぐのはめんどくさいので，基本はSimulatorで開発してるのですが，さぁ実機でうごかすかーとなったときに何故か即死して困りました．</p>
+
+<p>RubyMotionは<code>rake</code>したときにSimulatorが自動的に立ち上がってインタラクティブシェルで色々出来るという利点があるのですが，これは実機では出来ません．（よね？）</p>
+
+<p>なので，どうしてもSimulatorがメインになってしまう気がします．</p>
+
+<p>今回実機で動かして落ちるとかいうことでハマったわけですが，結果的には実機で動かしてXCodeのOrganizerのConsoleからログを見て原因調査をしました．
+それ以外で実機オンリーのバグ調査はどうやるんでしょうか，，，XCodeだと実機で繋いでブレイクポイントとか貼れると思うのですが，RubyMotionだと方法がない，，，</p>
+
+<h2>今回のケース</h2>
+
+<p>さて，今回はどういう原因で落ちていたかです．</p>
+
+<p>こういうSourceでした．</p>
+
+<pre><code>class AppDelegate
+  def application(application, didFinishLaunchingWithOptions:launchOptions)
+    @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.bounds
+    @storyboard = UIStoryboard.storyboardWithName(
+        "StoryBoard", 
+        bundle: nil)
+    @window.rootViewController = @storyboard.instantiateViewControllerWithIdentifier "NavigationController"
+
+    @window.makeKeyAndVisible
+    true
+  end
+end
+</code></pre>
+
+<p>リソースは <code>Storyboard.storyboard</code>です．</p>
+
+<pre><code>    @storyboard = UIStoryboard.storyboardWithName(
+        "StoryBoard", 
+        bundle: nil)
+</code></pre>
+
+<p>この部分で指定しているStoryboard名の大文字小文字が間違っているからですね．（正しくは<code>"Storyboard"</code>）
+Simulatorでは何故か動くのですが，実機ではStoryboardが見つからないというログを吐いて落ちます．</p>
+
+<h2>まとめ</h2>
+
+<p>RubyMotionを使っていると，どうしてもSimulator頼りの開発になりがちですが，あまりに実機で確認しないと最終フェーズで痛いことになるっていう話でした！</p>
+
+<p>TwitterをRubyMotion検索で張ってるのですが，Twitter上でもTypoで動かなくて困ったぜみたいな話とか見ましたし，実行時評価も色々と大変ですね．
+MethodとかPropertyなら静的解析とかでなんとかなりそうですが，今回みたいに文字列部分に関するところだとどうしても発見出来ない気がする，，，</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -777,122 +862,6 @@ xibを使うと，<code>NSBundle.mainBundle.loadNibNamed</code>をしないと�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2012/05/27/live/">[RubyMotion]motion-liveを使ってみよう</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-27T11:17:00+09:00" pubdate data-updated="true">May 27<span>th</span>, 2012</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>RubyMotionは<code>rake</code>でBuildしてSimulatorが立ち上がります．</p>
-
-<p>その後，Terminalはインタラクティブシェルになっていて，そこで行った操作がそのままSimulatorの方に反映されます．</p>
-
-<p>ところが，そのインタラクティブシェルは1行しか打てなくて，そこで色々やろうとすると苦しいものがあります．</p>
-
-<p>そこで登場するのが<strong>motion-live</strong>です．</p>
-
-<p><a href="https://github.com/irrationalfab/motion-live">motion-live</a></p>
-
-<p>これを導入すると，<code>LiveScratchpad.rb</code>というファイルを編集してセーブしたタイミングでインタラクティブシェルに引き渡されて実行されます．</p>
-
-<h2>使い方</h2>
-
-<p>まず，motion-liveをインストールします．</p>
-
-<pre><code>$ gem install motion-live
-Fetching: colored-1.2.gem (100%)
-Fetching: rb-fsevent-0.9.1.gem (100%)
-Fetching: motion-live-0.1.gem (100%)
-Successfully installed colored-1.2
-Successfully installed rb-fsevent-0.9.1
-Successfully installed motion-live-0.1
-3 gems installed
-Installing ri documentation for colored-1.2...
-Installing ri documentation for rb-fsevent-0.9.1...
-Installing ri documentation for motion-live-0.1...
-Installing RDoc documentation for colored-1.2...
-Installing RDoc documentation for rb-fsevent-0.9.1...
-Installing RDoc documentation for motion-live-0.1...
-</code></pre>
-
-<p>その後，プロジェクトのRakefileを編集します．
-（既存の<code>motion crate</code>したのがないなら，<code>motion create &lt;hoge&gt;</code>しましょう）</p>
-
-<pre><code>$ more Rakefile
-$:.unshift("/Library/RubyMotion/lib")
-require 'motion/project'
-require 'motion-live'
-
-Motion::Project::App.setup do |app|
-  # Use `rake config' to see complete project settings.
-  app.name = 'hoge'
-end
-</code></pre>
-
-<p>変更点は<code>require 'motion-live'</code>を追加しただけです．</p>
-
-<p>あとは，実行します．</p>
-
-<pre><code>$ rake live
-</code></pre>
-
-<p>するとSimulatorが立ち上がり，ディレクトリに<code>LiveScratchpad.rb</code>が出来上がるので，編集保存するとインタラクティブシェルで実行されます．</p>
-
-<h2>利点</h2>
-
-<p>motion-liveを使った時の利点です．</p>
-
-<h3>複数行のコードをインタラクティブシェルに読ませれる</h3>
-
-<p>これによって，何回も使う処理をclassとかmethodにして使うとかいうのも簡単にかけます．</p>
-
-<h3>自分の好きなエディタが使える</h3>
-
-<p>インタラクティブシェルではTerminalの上で書くので，補完も効かなければ，キーバインディングも違って色々不便です．</p>
-
-<p>しかし，motion-liveを使うと，<code>LiveScratchpad.rb</code>というファイルを編集出来ればいいのです．</p>
-
-<p>つまり，EmacsやVimも使えますし，補完を効かせれるTextMateやRedcarを使うことも出来ます．
-<a href="http://pchw.github.com/blog/2012/05/27/st2/">前の記事</a>で書いたようにSublime Text2も補完を効かせれるようになったので，僕はSublime Text2を使ってます．</p>
-
-<pre><code>app = UIApplication.sharedApplication
-delegate = app.delegate
-repl(delegate)
-@window
-</code></pre>
-
-<p>みたいなのを書く時でも，すごい楽なわけです．</p>
-
-<p>セットアップも有効にするのもRakefileに1行追加ですし，簡単で積極的に使って行きたいですね！</p>
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/blog/page/3/">&larr; Older</a>
@@ -933,6 +902,10 @@ repl(delegate)
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2012/08/06/fontawesome/">[RubyMotion] motion-fontawesomeっていうgems作りました</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2012/07/06/1-dot-15/">RubyMotion 1.15のすげえアップデート</a>
       </li>
     
@@ -948,15 +921,11 @@ repl(delegate)
         <a href="/blog/2012/06/21/nanostore/">[RubyMotion] NanoStoreを使ってデータを格納しよう！</a>
       </li>
     
-      <li class="post">
-        <a href="/blog/2012/06/20/1-dot-13/">RubyMotion 1.13が早くもリリース</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
-    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (26)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (27)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
 </section>
 
 
