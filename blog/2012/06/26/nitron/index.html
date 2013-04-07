@@ -1,0 +1,420 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ - ぽっちぽちにしてやんよ</title>
+  <meta name="author" content="pchw">
+
+  
+  <meta name="description" content="前にStoryboardを使ってRubyMotionで開発する方法とか[RubyMotion] InterfaceBuilderと合わせて使って楽をしよういう記事を書いたのですが，IdentifierとかTagを使ったりでちょっと面倒くさかったり， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/06/26/nitron/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="ぽっちぽちにしてやんよ" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-13219359-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">ぽっちぽちにしてやんよ</a></h1>
+  
+    <h2>技術ネタとかアプリに関する話とか</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pchw.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-26T00:10:00+09:00" pubdate data-updated="true">Jun 26<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>前に<a href="http://pchw.github.com/blog/2012/05/22/storyboard/">Storyboardを使ってRubyMotionで開発する方法</a>とか<a href="http://pchw.github.com/blog/2012/05/22/ib/">[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう</a>いう記事を書いたのですが，IdentifierとかTagを使ったりでちょっと面倒くさかったり，コントロールが増えてくるとTag番号がどのコントロールかわからなくなったりで煩雑でした．</p>
+
+<p>そこで，Nitronというライブラリを使って普通のXcode+ObjCで言うIBOutletとかIBAction的なことを簡単にやりましょうという記事です．</p>
+
+<p><a href="https://github.com/mattgreen/nitron">Nitron</a></p>
+
+<p>公式のgithub内のWikiに<a href="https://github.com/mattgreen/nitron/wiki/Tutorial">チュートリアル</a>がありますが，ModelやNitronのViewControllerとかの説明やCoreData周りなどにも言及していてOutlet的なところだけやりたい人にはちょっと大掛かりです．</p>
+
+<p>そのため，今回は本当にOutletやAction周りだけを使いたい人向けのシンプルコースです．</p>
+
+<h2>Nitroのインストール</h2>
+
+<pre><code>$ gem install nitron
+</code></pre>
+
+<p>なにはともあれgemインストール．</p>
+
+<h2>プロジェクトの作成</h2>
+
+<pre><code>$ motion create simplenitro
+</code></pre>
+
+<h2>app_delegate.rb の削除</h2>
+
+<p>Nitronはapp_delegateに書いてあるようなのがライブラリ内部で勝手にやってくれます．
+app_delegate.rbがあると，そちらが優先されてしまい，何も画面に出なくてハマるのでサクッと削除しておきます．</p>
+
+<pre><code>$ rm app/app_delegate.rb
+</code></pre>
+
+<h2>Rakefile</h2>
+
+<pre><code>$ cat Rakefile
+# -*- coding: utf-8 -*-
+$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+require 'rubygems'
+require 'nitron'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'simplenitro'
+end
+</code></pre>
+
+<p><code>require 'rubygems'</code>と<code>require 'nitron'</code>を追加するだけですね．
+公式だと，Bundlerを使う方法が紹介されてます．</p>
+
+<h2>storyboardの追加</h2>
+
+<p>公式では，普通にXcodeのプロジェクトを作ってますが，要らないファイルが死ぬほど付いてくるので，単にXcodeを立ちあげてstoryboardファイルだけ追加しましょう．</p>
+
+<p><code>File&gt;New&gt;File</code>で<code>iOS&gt;User Interface&gt;Storyboard</code>を選べばよいです．</p>
+
+<p><img src="/images/nitron_storyboard.png" alt="new Storyboard" /></p>
+
+<p>名前は<code>MainStoryboard.storyboard</code>にして，<code>./resources</code>に作成します．</p>
+
+<h2>UINavigationControllerとUIViewControllerの追加</h2>
+
+<p>こうやって作ったStoryboardには何も置かれていないので，<code>UINavigationController</code>を置きます．</p>
+
+<p><img src="/images/nitron_navigation.png" alt="navigation" /></p>
+
+<p>不要な<code>UITableViewController</code>がくっついて来るので<code>delete</code>ボタンで消します．</p>
+
+<p><code>UIViewController</code>をD&amp;Dして置きます．</p>
+
+<p><code>UINavigationController</code>を選択してUtility View（右側のペイン）の一番右のタブを選んで<code>RelationShip</code>の所から引っ張って，追加した<code>UIViewController</code>に繋ぎます．</p>
+
+<p><img src="/images/nitron_rvc.png" alt="root view controller" /></p>
+
+<p><code>UIViewController</code>を選択して，Utility Viewの左から３番目のタブを選んで，Classを<code>RootViewController</code>とかにしておきます．</p>
+
+<h2>UITextFieldとUIButtonの追加</h2>
+
+<p>そのままでは何もないので，入力欄とボタンを追加します．</p>
+
+<p><img src="/images/nitron_control.png" alt="control" /></p>
+
+<p>UITextFieldを選択して，Utility Viewの左から３番目のタブを選んで，
+<code>User Defined Runtime Attributes</code>のところの + を選択して</p>
+
+<ul>
+<li>KeyPath: outlet</li>
+<li>Type: String</li>
+<li>Value: randomText</li>
+</ul>
+
+
+<p>とします．</p>
+
+<p><img src="/images/nitron_outlet.png" alt="outlet" /></p>
+
+<p>同様にUIButtonの方も</p>
+
+<ul>
+<li>KeyPath: outlet</li>
+<li>Type: String</li>
+<li>Value: random</li>
+</ul>
+
+
+<p>としておきます．</p>
+
+<p>この時点でstoryboardの操作は終わりなので保存して閉じます．</p>
+
+<h2>RootViewControllerの追加</h2>
+
+<p><code>root_view_controller.rb</code>を追加して，RootViewControllerクラスを作成します．</p>
+
+<pre><code>class RootViewController &lt; Nitron::ViewController
+    on :random do
+        randomText.text = @seed.sample
+    end
+end
+
+class RootViewController
+    def viewDidLoad
+        super
+        @seed = ["hoge", "fuga", "moge", "foo", "bar"]
+    end 
+end
+</code></pre>
+
+<p>先ほどoutletで指定したrandomが<code>on :random ブロック</code>という形でイベントを受けれます．</p>
+
+<p>また，先ほどoutletでしていた<code>randomText</code>という名前でUITextFieldへのアクセスが可能になりますので，textにランダムで選んだ文字列を入れてみます．</p>
+
+<h2>実行</h2>
+
+<pre><code>$ rake
+</code></pre>
+
+<p>これで，シミュレータが立ち上がり，Buttonを押した時にランダムで文字が変わります．</p>
+
+<h2>まとめ</h2>
+
+<p>Nitronを使うことで，storyboardとRubyMotionとの連携が更に高まり開発効率が上がります．
+特に軽いプロトタイプやモックなどはStoryboardでサッと作れるので，それに簡単にRubyMotionで動作を付けれれば素早い開発が可能なのではないでしょうか！</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">pchw</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-26T00:10:00+09:00" pubdate data-updated="true">Jun 26<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rubymotion/'>RubyMotion</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/06/26/nitron/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/06/26/nitron/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/06/26/nitron/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/06/25/inheritance/" title="Previous Post: RubyMotionでUIViewを継承したViewを作る！">&laquo; RubyMotionでUIViewを継承したViewを作る！</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/07/06/1-dot-15/" title="Next Post: RubyMotion 1.15のすげえアップデート">RubyMotion 1.15のすげえアップデート &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/pMac.png"/></p>
+  <p>ぽち</p>
+  <p>iPhoneアプリとかWebサービスとか作ってます．</p>
+</section>
+
+<section>
+  <h1>Twitter</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("pchw", 0, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/pchw" class="twitter-follow-button" data-show-count="false">Follow @pchw</a>
+  
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/08/06/fontawesome/">[RubyMotion] motion-fontawesomeっていうgems作りました</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/06/1-dot-15/">RubyMotion 1.15のすげえアップデート</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/26/nitron/">[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/25/inheritance/">RubyMotionでUIViewを継承したViewを作る！</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/21/nanostore/">[RubyMotion] NanoStoreを使ってデータを格納しよう！</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (27)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - pchw -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'pchw';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/06/26/nitron/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/06/26/nitron/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

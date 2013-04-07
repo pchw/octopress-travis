@@ -1,0 +1,498 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>[RubyMotion] NanoStoreを使ってデータを格納しよう！ - ぽっちぽちにしてやんよ</title>
+  <meta name="author" content="pchw">
+
+  
+  <meta name="description" content="今日はRubyMotionでちょっとしたデータの保存がしたくなったときに使えるNanoStoreのWrapperを紹介します． NanoStoreInMotion NanoStoreというのは，sqliteを保存先としてスキーマレスなKeyValueStoreを実現するものらしいです． &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/06/21/nanostore/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="ぽっちぽちにしてやんよ" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-13219359-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">ぽっちぽちにしてやんよ</a></h1>
+  
+    <h2>技術ネタとかアプリに関する話とか</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pchw.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">[RubyMotion] NanoStoreを使ってデータを格納しよう！</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-21T09:28:00+09:00" pubdate data-updated="true">Jun 21<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>今日はRubyMotionでちょっとしたデータの保存がしたくなったときに使えるNanoStoreのWrapperを紹介します．</p>
+
+<p><a href="https://github.com/siuying/NanoStoreInMotion">NanoStoreInMotion</a></p>
+
+<p>NanoStoreというのは，sqliteを保存先としてスキーマレスなKeyValueStoreを実現するものらしいです．NanoStoreInMotionはそれをRubyMotionから使えるようにするWrapperです．</p>
+
+<h2>インストール</h2>
+
+<p>まずcocoapodsを入れます</p>
+
+<pre><code>$ gem install motion-cocoapods
+$ pod setup
+</code></pre>
+
+<p>NanoStoreInMotionを入れます．</p>
+
+<pre><code>$ gem isntall nano-store
+</code></pre>
+
+<p>プロジェクトを作って，Rakefileを編集します．</p>
+
+<pre><code>$ motion create nanostoretest
+$ cat Rakefile
+# -*- coding: utf-8 -*-
+$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+require 'rubygems'
+require 'motion-cocoapods'
+require 'nano-store'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'nanotest'
+  app.pods do
+    dependency 'NanoStore', '~&gt; 2.1.4'
+  end
+end
+</code></pre>
+
+<h2>使ってみる</h2>
+
+<h3>前処理</h3>
+
+<p>まず，NanoStoreの保存先を決めてインスタンス化します．</p>
+
+<pre><code>NanoStore.shared_store = NanoStore.store(:file, App.documents_path + '/store.db')
+</code></pre>
+
+<p><code>App.documents_path</code>というのは，BubbleWrapの便利Methodで，
+<code>/Users/xxxxxx/Library/Application Support/iPhone Simulator/5.1/Applications/EDC08B50-2004-42D9-8B67-2E290EF55CFF/Documents</code>みたいなアプリ毎の保存場所を返してくれます．
+中身の実装的には<code>NSSearchPathForDirectoriesInDomains</code>でNSDocumentDirectoryを返してるだけです．</p>
+
+<pre><code>NanoStore.shared_store = NanoStore.store(:memory)
+</code></pre>
+
+<p>とすることで，ファイルに保存するのではなく，オンメモリでDbを使うこともできます．</p>
+
+<h3>Model定義</h3>
+
+<p>次に，保存するModelを定義します．</p>
+
+<p>Modelを定義するには<code>NanoStore::Model</code>を継承したクラスを定義すれば良いです．</p>
+
+<pre><code>class Label &lt; NanoStore::Model
+  attribute :text
+  attribute :x
+  attribute :y
+  attribute :height
+  attribute :width
+end
+</code></pre>
+
+<p>保存するフィールドは<code>attribute &lt;シンボル名&gt;</code>で定義できます．
+上記の例では，text, x, y, height, width というフィールド（というかKey）が定義されます．</p>
+
+<p>★ <code>attribute :key</code>は自動的に付与されるので，<code>:key</code>は書いてはいけません．（書いてもエラーにはならないが，実際に使うときに予期せぬ動作になります．なりました．）</p>
+
+<p>NanoStore はNSDataも入れれるようですが，インデックスが効かないようです．</p>
+
+<h3>データ投入</h3>
+
+<p>先ほど定義したModelクラスのnewメソッドを呼んでsaveすれば良いです．</p>
+
+<pre><code>label = Label.new(
+    :text=&gt;"test",
+    :x =&gt; 100,
+    :y =&gt; 200,
+    :height =&gt; 50,
+    :width =&gt; 250)
+label.save
+</code></pre>
+
+<p>この時点で保存されて，検索などが出来るようになります．</p>
+
+<h3>検索</h3>
+
+<p>検索も先ほど定義したModelクラスを通じて行います．</p>
+
+<pre><code># もうひとつLabelを追加しておく
+hogeLabel = Label.new(
+    :text=&gt;"test1",
+    :x =&gt; 50,
+    :y =&gt; 400,
+    :height =&gt; 100,
+    :width =&gt; 50)
+hogeLabel.save
+
+allLabels = label.all
+# =&gt; [#&lt;Label:0x8e622e0&gt;, #&lt;Label:0x8e62720&gt;]
+</code></pre>
+
+<p>条件を指定して検索は</p>
+
+<pre><code>Label.find(:text=&gt;"test")
+# =&gt; [#&lt;Label:0x8e622e0&gt;]
+</code></pre>
+
+<p>とすればできるので，あとは<code>.each</code>とかユニークなKeyで検索するなら<code>.first</code>
+とかすれば目当てのものが手に入ります．</p>
+
+<pre><code>Label.find(:x =&gt; { NSFGreaterThan =&gt; 10 }).each do |lbl|
+    p lbl.text
+end
+# =&gt; "test1"
+# =&gt; "test"
+</code></pre>
+
+<h3>アップデート</h3>
+
+<p>更新処理は，上記の検索で得られたもののプロパティを編集して再度saveを呼べば良いです．</p>
+
+<pre><code>update = Label.find(:text=&gt;"test").first
+update.text = "test2"
+update.save
+
+Label.all.each do |lbl|
+    p lbl.text
+end
+# =&gt; "test2"
+# =&gt; "test1"
+</code></pre>
+
+<h3>削除</h3>
+
+<p>削除処理は，同じく上記の検索で得られたものの<code>delete</code>を呼べば，削除できます．</p>
+
+<pre><code>del = Label.find(:text=&gt;"test1").first
+del.delete
+
+Label.all.each do |lbl|
+    p lbl.text
+end
+# =&gt; "test2"
+</code></pre>
+
+<p>全部削除したい場合は，</p>
+
+<pre><code>Label.delete
+</code></pre>
+
+<p>とすれば，全部消えます．</p>
+
+<pre><code>Label.delete(:text=&gt;"test1")
+</code></pre>
+
+<p>のように条件をつければ，条件にヒットしたものを一気に削除できます．</p>
+
+<h2>保存されるデータ</h2>
+
+<p>さて，実際に保存されているデータはどうなっているのでしょうか？</p>
+
+<p><code>NanoStore.store</code>時に<code>:file</code>を指定した場合は指定したPathにsqliteのデータベースファイルが生成されています．
+その中をsqlite3コマンドかなんかで見ていけば保存されている形を見ることができます．</p>
+
+<pre><code>$ sqlite3 store.db
+sqlite&gt; .tables
+NSFKeys    NSFValues
+</code></pre>
+
+<p>どうやら<code>NSFKeys</code>と<code>NSFValues</code>というテーブルが存在するようです．</p>
+
+<h3>NSFKeys</h3>
+
+<pre><code>$sqlite&gt; select * from NSFkeys;
+ROWID|NSFKey|NSFPlist|NSFCalendarDate|NSFObjectClass
+</code></pre>
+
+<ul>
+<li>ROWIDはautonumber</li>
+<li>NSFKeyはオブジェクトごとに異なるID</li>
+<li>NSFPlistはオブジェクトのattributeと値をplist形式で表したもの</li>
+<li>NSFCalendarDateは更新日かな？</li>
+<li>NSFObjectClass はNanoStore::Modelを継承したクラス名</li>
+</ul>
+
+
+<h3>NSFValues</h3>
+
+<pre><code>sqlite &gt; select * from NSFValues;
+ROWID|NSFKey|NSFAttribute|NSFValue|NSFDatatype
+</code></pre>
+
+<ul>
+<li>ROWIDはautonumber</li>
+<li>NSFKeyはNSFKeysテーブルのNSFKey（外部キー）</li>
+<li>NSAttributeはattributeで定義したシンボル名</li>
+<li>NSFValueは実際に入っている値</li>
+<li>NSFDatatypeは型．TEXTとかREALとか</li>
+</ul>
+
+
+<p>NSFValuesの方にModelクラスの違い関係なくattribute名と値が入っています．
+クラス名とかの情報はNSFKeysの方に入っていますね．</p>
+
+<h2>まとめ</h2>
+
+<p>NanoStoreInMotionはデータを保存，検索，削除などが簡単なステップで出来て，ちょっとしたデータの取り扱いに役立つと思います．
+<code>:memory</code>を使うことで，Web APIからデータをごっそり取ってきてさっとフィルタリングするような用途にも簡単に使えそうです．</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">pchw</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-21T09:28:00+09:00" pubdate data-updated="true">Jun 21<span>st</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rubymotion/'>RubyMotion</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/06/21/nanostore/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/06/21/nanostore/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/06/21/nanostore/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/06/20/1-dot-13/" title="Previous Post: RubyMotion 1.13が早くもリリース">&laquo; RubyMotion 1.13が早くもリリース</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/06/25/inheritance/" title="Next Post: RubyMotionでUIViewを継承したViewを作る！">RubyMotionでUIViewを継承したViewを作る！ &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/pMac.png"/></p>
+  <p>ぽち</p>
+  <p>iPhoneアプリとかWebサービスとか作ってます．</p>
+</section>
+
+<section>
+  <h1>Twitter</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("pchw", 0, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/pchw" class="twitter-follow-button" data-show-count="false">Follow @pchw</a>
+  
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/08/06/fontawesome/">[RubyMotion] motion-fontawesomeっていうgems作りました</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/06/1-dot-15/">RubyMotion 1.15のすげえアップデート</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/26/nitron/">[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/25/inheritance/">RubyMotionでUIViewを継承したViewを作る！</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/21/nanostore/">[RubyMotion] NanoStoreを使ってデータを格納しよう！</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (27)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - pchw -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'pchw';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/06/21/nanostore/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/06/21/nanostore/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

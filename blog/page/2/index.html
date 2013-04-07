@@ -1,0 +1,982 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>ぽっちぽちにしてやんよ</title>
+  <meta name="author" content="pchw">
+
+  
+  <meta name="description" content="はじめに アプリを作ってた時に，Simulatorでは動くのにrade deviceやrake testflightして実機で動かしたときに起動した瞬間落ちるという現象が起こって困った話です． RubyMotionは実機でのデバッグに弱い！ 実機を繋ぐのはめんどくさいので， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pchw.github.com/blog/page/2/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="ぽっちぽちにしてやんよ" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-13219359-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">ぽっちぽちにしてやんよ</a></h1>
+  
+    <h2>技術ネタとかアプリに関する話とか</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pchw.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/05/casesensitive/">[RubyMotion] Simulatorでは動くのに実機で動かなくてハマった話</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-05T23:29:00+09:00" pubdate data-updated="true">Jun 5<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>はじめに</h2>
+
+<p>アプリを作ってた時に，Simulatorでは動くのに<code>rade device</code>や<code>rake testflight</code>して実機で動かしたときに起動した瞬間落ちるという現象が起こって困った話です．</p>
+
+<h2>RubyMotionは実機でのデバッグに弱い！</h2>
+
+<p>実機を繋ぐのはめんどくさいので，基本はSimulatorで開発してるのですが，さぁ実機でうごかすかーとなったときに何故か即死して困りました．</p>
+
+<p>RubyMotionは<code>rake</code>したときにSimulatorが自動的に立ち上がってインタラクティブシェルで色々出来るという利点があるのですが，これは実機では出来ません．（よね？）</p>
+
+<p>なので，どうしてもSimulatorがメインになってしまう気がします．</p>
+
+<p>今回実機で動かして落ちるとかいうことでハマったわけですが，結果的には実機で動かしてXCodeのOrganizerのConsoleからログを見て原因調査をしました．
+それ以外で実機オンリーのバグ調査はどうやるんでしょうか，，，XCodeだと実機で繋いでブレイクポイントとか貼れると思うのですが，RubyMotionだと方法がない，，，</p>
+
+<h2>今回のケース</h2>
+
+<p>さて，今回はどういう原因で落ちていたかです．</p>
+
+<p>こういうSourceでした．</p>
+
+<pre><code>class AppDelegate
+  def application(application, didFinishLaunchingWithOptions:launchOptions)
+    @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.bounds
+    @storyboard = UIStoryboard.storyboardWithName(
+        "StoryBoard", 
+        bundle: nil)
+    @window.rootViewController = @storyboard.instantiateViewControllerWithIdentifier "NavigationController"
+
+    @window.makeKeyAndVisible
+    true
+  end
+end
+</code></pre>
+
+<p>リソースは <code>Storyboard.storyboard</code>です．</p>
+
+<pre><code>    @storyboard = UIStoryboard.storyboardWithName(
+        "StoryBoard", 
+        bundle: nil)
+</code></pre>
+
+<p>この部分で指定しているStoryboard名の大文字小文字が間違っているからですね．（正しくは<code>"Storyboard"</code>）
+Simulatorでは何故か動くのですが，実機ではStoryboardが見つからないというログを吐いて落ちます．</p>
+
+<h2>まとめ</h2>
+
+<p>RubyMotionを使っていると，どうしてもSimulator頼りの開発になりがちですが，あまりに実機で確認しないと最終フェーズで痛いことになるっていう話でした！</p>
+
+<p>TwitterをRubyMotion検索で張ってるのですが，Twitter上でもTypoで動かなくて困ったぜみたいな話とか見ましたし，実行時評価も色々と大変ですね．
+MethodとかPropertyなら静的解析とかでなんとかなりそうですが，今回みたいに文字列部分に関するところだとどうしても発見出来ない気がする，，，</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/02/pullreq/">RubyMotion のlib部分がソース公開してるのでPullRequestを送ってみたよ！</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-02T12:41:00+09:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>RubyMotionのlib部分のソースが公開されてます．</p>
+
+<p>lib部分にはbuildsystemやRakefileとかvendor周りのあれこれが含まれていて，
+最近のfixがその辺りの修正が多かったので，広くpull requestを受け付けようということですかね．</p>
+
+<p>早速前の記事(<a href="http://pchw.github.com/blog/2012/06/02/certificate/">[RubyMotion] 証明書の名前に日本語が入っていた時にrake device出来ない問題の解決策</a>)の解決策なんかは，<code>motion create</code>で生成されるRakefileの修正でいけるのでパパッとPull Requestを送って本家に組み込んでもらうのがいいです．</p>
+
+<p>というわけで，Pull Requestを<a href="https://github.com/HipByte/RubyMotion/pull/1">送っておきました</a>．
+なんと<code>pull/1</code>で1番目のpullらしい．</p>
+
+<p>本家に組み込まれるまで，ローカル環境を同じように修正するには，
+<code>/Library/RubyMotion/lib/motion/project/app.rb</code>を修正します．</p>
+
+<p>修正内容は<a href="https://github.com/HipByte/RubyMotion/pull/1/files">Pull Requestの詳細</a>をみて分かると思いますけど，102行目に</p>
+
+<pre><code># -*- coding: utf-8 -*-
+</code></pre>
+
+<p>を追加するだけです．</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/02/certificate/">[RubyMotion] 証明書の名前に日本語が入っていた時にrake Device出来ない問題の解決策</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-02T12:10:00+09:00" pubdate data-updated="true">Jun 2<span>nd</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>RubyMotionを色々いじって記事書いてたのですが，全然実機で試してませんでした．</p>
+
+<p>BT周りの実装をしてて，ついにシミュレータで確認ができなくなったので，実機に転送しようとして<code>rake device</code>したら</p>
+
+<pre><code>"iPhone Developper: &lt;your escaped name&gt; : no identity found
+rake aborted!
+Command failed with status (1): [CODESIGN_ALLOCATE="/Developer/Platforms/iP...]
+</code></pre>
+
+<p>とか出やがりました．</p>
+
+<p>マルチバイト文字を何かエスケープして<code>\123\456</code>みたいな形式にしてくれて，codesignに渡してしまうので，codesign側がそんなidentifyがねえよと言ってるわけですね．</p>
+
+<p><a href="http://www.rubymotion.com/developer-center/guides/project-management/#_configuration">RubyMotion Project Management Guide#2.Configuration</a>
+によれば，</p>
+
+<pre><code>codesign_certificate
+The name of the certificate to use for codesigning, as a String. The default value is the first iPhone Developer certificate found in keychain. Example: "iPhone Developer: Darth Vader (A3LKZY369Q)".
+</code></pre>
+
+<p>とあるので，Rakefileに指定すればいいかなーとか思って</p>
+
+<pre><code>$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'hoge'
+  app.codesign_certificate = "iPhone Developer: &lt;your name&gt;" # added
+end
+</code></pre>
+
+<p>こんな感じで，<code>app.codesign_certificate</code>を追加したらですね，</p>
+
+<pre><code>rake aborted!
+Rakefile:9: invalid multibyte char (US-ASCII)
+Rakefile:9: invalid multibyte char (US-ASCII)
+Rakefile:9: syntax error, unexpected $end, expecting keyword_end
+</code></pre>
+
+<p>こういうエラーが出て，もしかしてRakefileにマルチバイト文字は指定出来ないのか，，，ピンチ！</p>
+
+<pre><code>$ file Rakefile
+Rakefile: UTF-8 Unicode text
+</code></pre>
+
+<p>ちゃんとUTF8だよな，，，</p>
+
+<h2>解決策</h2>
+
+<p>と，まぁ色々悩んだんですが，結局解決策は</p>
+
+<pre><code># -*- coding: utf-8 -*-
+$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+
+Motion::Project::App.setup do |app|
+  # Use `rake config' to see complete project settings.
+  app.name = 'hoge'
+  app.codesign_certificate = "iPhone Developer: &lt;your name&gt;"
+end
+</code></pre>
+
+<p>これが正解です．</p>
+
+<p><code># -*- coding: utf-8 -*-</code> を追加すればいいだけでした．</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/06/01/19/">RubyMotion 1.9が出てた！早い！</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-01T12:29:00+09:00" pubdate data-updated="true">Jun 1<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>一昨日ぐらいに1.8が出たと思ったら，もう1.9が出てきました．</p>
+
+<p>しかも変更点が多い．</p>
+
+<p>次は2.0なのか1.10なのか気になりますね！</p>
+
+<pre><code>= RubyMotion 1.9 =
+
+  * Fixed a bug in the build system where the paths of vendored libraries
+    would not be properly quoted and cause a build failure in case they
+    contain space characters.
+  * Fixed a bug in the build system where using a lower deployment_target
+    version would cause a link error at runtime because the application was
+    linking against a framework that does not exist (ex. CoreImage on 4.3).
+  * Fixed the `rake spec' task to not move the simulator window to the
+    foreground.
+  * Fixed a bug in the compiler where APIs accepting pointers to
+    CoreFoundation types could not be given Pointer objects of the :object
+    type (ex. CFErrorRef*).
+  * Added support for CoreAudio (experimental). At the very least, constants
+    pointing to four-bytes characters should be properly covered.
+  * Fixed a typo in "expected array of %d elements, got %d" exception message
+    where the numbers were inverted. Thanks Enrico Thierbach.
+  * Fixed a bug in the compiler where compiling strings containing only null
+    characters (ex. "\x00") would cause a crash.
+</code></pre>
+
+<ul>
+<li>vendorライブラリのpathがQuoteで囲まれてなくてスペースが含まれてたときにビルドが失敗するのを修正</li>
+<li>CoreImageを4.3で使おうとするみたいなdevelopment_targetを昔のに設定してるのに存在しないフレームワークを指定したときにリンクエラーになるビルドの問題を修正</li>
+<li><code>rake spec</code>した時にシミュレータが前に出てこないのを修正</li>
+<li>CFなんちゃらへのポインタをAPIに渡せない問題の修正</li>
+<li>CoreAudioのサポートを追加．</li>
+<li>例外メッセージのtypo修正</li>
+<li>nullキャラクターだけが含まれたstringをコンパイルする時にクラッシュしてた問題を修正</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/31/bubblewrap/">[RubyMotion]Bubble-Wrapを使ってみた</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-31T22:44:00+09:00" pubdate data-updated="true">May 31<span>st</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>今日はBubble-Wrapというライブラリを使ってみました．</p>
+
+<p><a href="http://matt.aimonetti.net/BubbleWrap/">Bubble-Wrap</a></p>
+
+<p>Bubble-Wrap はめんどくさいことを簡単にしてくれるヘルパーとかRubyっぽく書けない部分をよりRubyっぽくしてくれるライブラリです．</p>
+
+<p>例えば，<a href="http://pchw.github.com/blog/2012/05/30/resource/">昨日書いた</a>リソースの読み込みの所で，</p>
+
+<pre><code>path = NSBundle.mainBundle.resourcePath.stringByAppendingPathComponent "test.txt"
+</code></pre>
+
+<p>とか書きましたけど，<code>NSBundle.mainBundle.resoucePath</code>とかめんどくさいですよね．</p>
+
+<p>それを，</p>
+
+<pre><code>path = resources_path.stringByAppendingPathComponent "text.txt"
+</code></pre>
+
+<p>にしてくれたりします．
+（他にも色々と<code>documents_path</code>とか<code>notification_center</code>とか）</p>
+
+<pre><code>alert "Hoge"
+</code></pre>
+
+<p>とするだけで，</p>
+
+<pre><code>alert = UIAlertView.alloc.initWithTitle "Hoge",
+    message: nil,
+    delegate: nil,
+    cancelButtonTitle: 'OK',
+    otherButtonTitles: nil
+alert.show
+</code></pre>
+
+<p>とやってくれたりするのもあります．</p>
+
+<p>色々ありますが，Wikiを見ても一部しか載っていないので，何が出来るか全部把握するには，<a href="https://github.com/mattetti/BubbleWrap/tree/master/lib/bubble-wrap">Githubでコード</a>を見るしか無いっぽいです．</p>
+
+<p>他にも便利なものがあって，HTTPアクセスやJSONのラッパーも提供されています．
+例えば，Twitter APIにアクセスして，取得したJSONのデータのアクセスは</p>
+
+<pre><code>BubbleWrap::HTTP.get("https://api.twitter.com/1/users/show.json?screen_name=TwitterAPI&amp;include_entities=true") do |response|
+    json = BubbleWrap::JSON.parse response.body.to_str
+    p json['name']
+end
+</code></pre>
+
+<p>のように書けます．
+元が NSURLConnectionを作って，delegateで受けてみたいなことを書かないのと比べるととても簡単です．</p>
+
+<p><code>response</code> も<code>body</code>だけでなく，<code>headers</code>や<code>status_code</code>とか<code>ok?</code>（200 OKかどうかを調べる）などもあります．</p>
+
+<p>他にも，device情報を取ったり，gestureを簡単に扱ったりするものもあるので，有効に活用して素早くRubyMotionでアプリ作って行きましょう！</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/30/resource/">RubyMotionでリソース読み込み</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-30T23:37:00+09:00" pubdate data-updated="true">May 30<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>すごく初歩的なところだけども，RubyMotionで画像やテキストのリソースを<code>.app</code>の中にプリセット保持して使う方法です．</p>
+
+<p>色々と試すときに画像やテキストを使いたい事が多くて，備忘録的に書いておきます．</p>
+
+<p>まず，<code>.app</code>内にリソースを保持するには，<code>/resources</code>に入れておけばOKです．</p>
+
+<p>あとは読み出しですが，画像の場合はすごく簡単で，</p>
+
+<pre><code>UIImage.imageNamed "hoge.png"
+</code></pre>
+
+<p>とかすれば，<code>/resources/hoge.png</code> が読み出されます．</p>
+
+<p>テキストとかHTMLファイルとかは，</p>
+
+<pre><code>path = NSBundle.mainBundle.resourcePath.stringByAppendingPathComponent "test.txt"
+str = NSString.stringWithContentsOfFile path
+</code></pre>
+
+<p>とかすれば<code>NSString</code>で取得できます．</p>
+
+<p><code>NSBundle.mainBundle.resourcePath</code>で<code>/resources</code>に当たる場所のPathが取得できるので，あとは好きにすればOKということですね．</p>
+
+<p>簡単なサンプルを書いといたので，置いときます．</p>
+
+<p><a href="https://github.com/pchw/rm-resource-sample">画像とテキストを読みだしてUILabelとUIImageViewに貼り付けるサンプル</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/30/18/">RubyMotion 1.8 リリースされてますね</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-30T20:52:00+09:00" pubdate data-updated="true">May 30<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>リリース周期はやい！もう1.8が出てます．</p>
+
+<pre><code>$ sudo motion update 
+</code></pre>
+
+<p>しましょう！今回は修正が少なめです．</p>
+
+<pre><code>= RubyMotion 1.8 =
+
+  * Fixed a bug in the generation of BridgeSupport files for multiple headers
+    directories.
+  * When building vendored projects, unset environment variables that could
+    potentially make the build to fail.
+    https://github.com/HipByte/motion-cocoapods/issues/12
+</code></pre>
+
+<ul>
+<li>複数のヘッダディレクトリを指定したときのBridgeSupportファイル生成のとこのバグ修正</li>
+<li>ベンダープロジェクトをビルドするときに環境変数CCが設定されてない時にビルド失敗する問題の修正．</li>
+</ul>
+
+
+<p>いつも誰かがRubyMotionの新しいバージョン出たって言ってるの見てアップデートしてるのが分かるんだけど，言ってる人はどうやって新しいバージョンが出たって知るんだろう？毎日<code>motion update</code>とかしてるのかな．</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/29/dottouch/">[レビュー] DotTouchというiPhone/iPadアプリを使ってみたよ！</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-29T21:44:00+09:00" pubdate data-updated="true">May 29<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>今日はDotTouchというドット絵を描くiPhoneアプリの紹介です．</p>
+
+<div class="sticky-itslink" style="margin-bottom:1em;"><a href="http://itunes.apple.com/jp/app/dottouch/id333614008?mt=8&uo=4" rel="nofollow" target="_blank"><img src="http://a3.mzstatic.com/us/r1000/110/Purple/v4/84/9b/d8/849bd8e5-ba16-f769-9efa-28b23bdc56a9/mza_2802615915717116417.100x100-75.png" style="border-style:none;float:left;margin-right:5px;" alt="DotTouch" title="DotTouch" /></a><div class="sticky-itslinktext" style="float:left;"><a href="http://itunes.apple.com/jp/app/dottouch/id333614008?mt=8&uo=4" rel="nofollow" target="_blank">DotTouch</a><br />STUDIO SHIN<br />ジャンル： ユーティリティ - エンターテインメント<br />リリース日： 2009-10-15<br />価格： 350円<br /> <a href="http://itunes.apple.com/jp/app/dottouch/id333614008?mt=8&uo=4" rel="nofollow" target="_blank"><img src="http://ax.phobos.apple.com.edgesuite.net/ja_jp/images/web/linkmaker/badge_appstore-sm.gif" alt ="iTunesで見る" style="border-style:none;" /></a><br /><span style="font-size:xx-small;">posted with <a href="http://sticky.linclip.com/rank/" target="_blank">sticky</a> on 2012.5.29</span></div><br style="clear:left;" /></div>
+
+
+<p></p>
+
+</div>
+  
+  
+    <footer>
+      <a rel="full-article" href="/blog/2012/05/29/dottouch/">Read on &rarr;</a>
+    </footer>
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/29/17/">RubyMotion 1.7出てます</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-29T08:14:00+09:00" pubdate data-updated="true">May 29<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>RubyMotion 1.7が出てました．</p>
+
+<pre><code>$ sudo motion update
+</code></pre>
+
+<p>しましょう！</p>
+
+<p>ところで，RubyMotion がアップデートされたかどうかを素早く知る方法ってないんですかね．</p>
+
+<pre><code>= RubyMotion 1.7 =
+
+  * Fixed a bug in the compiler where the proper signature would not be used
+    when defining informal protocol methods with CF types as arguments.
+  * Fixed iOS constants to be looked up at demand (when being used) and not
+    when the app starts, because certain constants are not set until a certain
+    API is called (ex: the kAB... constants of the AddressBook framework).
+    This change should also speed up a little bit the app starting time.
+  * Fixed a bug in the compiler where very long selectors would be truncated
+    and causing exceptions later at runtime.
+  * Fixed a bug in the compiler where memory-related selectors (alloc, dealloc,
+    retain, release, etc.) could not be defined in Ruby.
+  * Fixed a bug in the compiler where NSObject instance methods could not be
+    called on classes (ex. MyClass.performSelector(...)).
+  * Fixed a bug in the build system where vendored 3rd-party APIs dealing with
+    types defined in iOS headers could not be used (ex: enums or structs).
+</code></pre>
+
+<ul>
+<li>非公式プロトコルでCFタイプを引数にとった時に正しいシグネチャを吐かないことの修正</li>
+<li>アプリ開始時のiOS定数発見の部分を修正．この影響でアプリ開始時間がちょっと早くなる．</li>
+<li>超長いセレクタが途中で切れて実行時エラーになる問題の修正</li>
+<li>メモリ関係（allocとかreleaseとか）がRubyで定義出来なかったのを修正．</li>
+<li>NSObjectのインスタンスメソッドをクラスから呼べなかった問題を修正</li>
+<li>外部ベンダのライブラリを読み込むやつでiOSヘッダに定義されたenumとかstructsが使われなかった問題を修正</li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2012/05/28/routable/">[RubyMotion]Routableを使ってみた</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-05-28T12:32:00+09:00" pubdate data-updated="true">May 28<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Routableというgemがあるみたいという話を聞いて，使ってみました．</p>
+
+<p><a href="https://github.com/clayallsopp/Routable">Routable - GitHub</a></p>
+
+<h2>インストール</h2>
+
+<pre><code>gem install routable
+</code></pre>
+
+<h2>Rakefileの編集</h2>
+
+<pre><code>$:.unshift("/Library/RubyMotion/lib")
+require 'motion/project'
+require 'routable'
+</code></pre>
+
+<p>のように<code>require 'routable'</code>を追加します．</p>
+
+<h2>使い方</h2>
+
+<pre><code>class AppDelegate
+  def application(application, didFinishLaunchingWithOptions:launchOptions)
+    @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.applicationFrame
+    @window.makeKeyAndVisible
+
+    @rootView = NSBundle.mainBundle.loadNibNamed(
+        'RootViewController',
+        owner: self,
+        options: nil).first
+
+    @router = Routable::Router.router
+    @router.navigation_controller = UINavigationController.alloc.init
+    @router.navigation_controller.pushViewController(@rootView, animated: false)
+    @rootView.title = "TOP"
+
+    @router.map("one", OneViewController)
+    @router.map("two/:param", TwoViewController)
+
+    @window.rootViewController = @router.navigation_controller
+
+    @one = @rootView.view.viewWithTag 1
+    @one.addTarget(
+        self, 
+        action: 'onClickOne:', 
+        forControlEvents: UIControlEventTouchUpInside)
+
+    @two = @rootView.view.viewWithTag 2
+    @two.addTarget(
+        self, 
+        action: 'onClickTwo:', 
+        forControlEvents: UIControlEventTouchUpInside)
+
+    true
+  end
+
+  def onClickOne(sender)
+    @router.open('one', true)
+  end
+
+  def onClickTwo(sender)
+    @router.open('two/100', true)
+  end
+end
+</code></pre>
+
+<p>こんな感じで使います．</p>
+
+<p><code>Routable::Router.router</code>を取得して，<code>navigation_controller</code>に<code>UINavigationController</code>を設定しておきます．</p>
+
+<p><code>map(&lt;URL&gt;, &lt;viewController&gt;)</code>のようにすると，そのURL文字列をキーにviewControllerの遷移を書けるようになります．</p>
+
+<p><URL>には<code>hoge/:id</code>のようにパラメータを記述することができて，この場合だと<code>hoge/1</code>とかいう遷移をさせれば，宛先のviewControllerに<code>1</code>というパラメータが渡されます．</p>
+
+<p>遷移する時は<code>open(&lt;URL&gt;, &lt;animation?&gt;)</code>とすれば設定したviewControllerへ遷移出来ます．</p>
+
+<h2>遷移先ViewController</h2>
+
+<pre><code>class TwoViewController &lt; UIViewController
+    attr_accessor :param
+
+    def initWithParams(params = {})
+        init()
+        self.param = params[:param]
+        self
+    end
+
+    def viewDidLoad
+        @label = UILabel.alloc.init
+        @label.bounds = [[50, 150],[300, 50]]
+        @label.text = "TwoViewController" + self.param.to_s
+    end
+end
+</code></pre>
+
+<p>のようにして，<code>initWithParams</code>で引数を受け取れます．</p>
+
+<h2>問題点</h2>
+
+<p>ViewControllerをコードで場所設定とかすごくめんどくさいので，僕はIBを使います．</p>
+
+<p>しかし，IBを使って<code>resouces/HogeViewController.xib</code>を作って，Controlを配置して，，，というフローを辿ってやると，<code>router.open</code>の時にエラーが出ます．</p>
+
+<p>routerの内部では，<code>HogeViewController.alloc.initWithParams()</code>を呼んでインスタンス化しているわけですが，
+xibを使うと，<code>NSBundle.mainBundle.loadNibNamed</code>をしないとダメっぽいんですね．</p>
+
+<p>なので，routerをいじって，mapするときにそれ用の情報を入れてあげるかしないといけません．</p>
+
+<h2>まとめ</h2>
+
+<p>僕はStoryboardを使うと思います．</p>
+
+<p>XCodeが嫌でRubyMotionをやっている人は多いと思うので，コードでControlを配置するのが苦じゃない人にとってはrouterはいいソリューションなんじゃないでしょうか．</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/3/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/pMac.png"/></p>
+  <p>ぽち</p>
+  <p>iPhoneアプリとかWebサービスとか作ってます．</p>
+</section>
+
+<section>
+  <h1>Twitter</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("pchw", 0, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/pchw" class="twitter-follow-button" data-show-count="false">Follow @pchw</a>
+  
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/08/06/fontawesome/">[RubyMotion] motion-fontawesomeっていうgems作りました</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/06/1-dot-15/">RubyMotion 1.15のすげえアップデート</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/26/nitron/">[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/25/inheritance/">RubyMotionでUIViewを継承したViewを作る！</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/21/nanostore/">[RubyMotion] NanoStoreを使ってデータを格納しよう！</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (27)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - pchw -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'pchw';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: AppStore | ぽっちぽちにしてやんよ]]></title>
+  <link href="http://pchw.github.com/blog/categories/appstore/atom.xml" rel="self"/>
+  <link href="http://pchw.github.com/"/>
+  <updated>2012-08-06T23:45:40+09:00</updated>
+  <id>http://pchw.github.com/</id>
+  <author>
+    <name><![CDATA[pchw]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[AppReviewViewerが良い！]]></title>
+    <link href="http://pchw.github.com/blog/2012/05/26/appreviews/"/>
+    <updated>2012-05-26T22:52:00+09:00</updated>
+    <id>http://pchw.github.com/blog/2012/05/26/appreviews</id>
+    <content type="html"><![CDATA[<p>今日は「第２回 iphone_dev_jp 東京iPhone/Mac勉強会」に参加してきました．</p>
+
+<p>そこで面白いものが紹介されていて，超便利だったので紹介します．</p>
+
+<p><img src="/images/appreviews.png" alt="appreviews" /></p>
+
+<p>mixiのiOSアプリ開発という発表をなさっていた@k_kinukawaさんがAppReviewViewerというツールを紹介されていました．</p>
+
+<p><a href="https://github.com/punchdrunker/AppReviewViewer">AppReviewViewer</a></p>
+
+<p>これは，アプリのIDを登録すると，レビューページをスクレイピングしてどのバージョンでどんな評価が付いたかを一覧したり見やすく表示してくれるものです．</p>
+
+<p>また，mecabが入っているとレビュー文を形態素解析してくれて頻出名詞をタグクラウドみたいに見せてくれたりします．</p>
+
+<p><strong>Gemfileが追加されたので，Gemfileを自分で追加する必要はなくなりました！</strong></p>
+
+<p>上記の<a href="https://github.com/punchdrunker/AppReviewViewer">github</a>ページに行ってもらうと分かりますが，依存ライブラリが書いてあるんですが，Gemfileが無くてめんどくさいので書きました．</p>
+
+<p><div><script src='https://gist.github.com/2793067.js?file=Gemfile'></script>
+<noscript><pre><code>source :rubygems
+
+gem 'json'
+gem 'nokogiri'
+gem 'sequel'
+gem 'sqlite3'
+gem 'sinatra'
+gem 'sinatra-reloader'
+gem 'sinatra-sequel'</code></pre></noscript></div>
+</p>
+
+<p>AppReviewViewerをGithubからcloneした後に入れちゃってください．</p>
+
+<pre><code>$ git clone git://github.com/punchdrunker/AppReviewViewer.git
+$ cd AppReviewViewer
+$ cat &gt; Gemfile
+(上記gistを入れる)
+$ bundle install
+$ ruby app.rb
+</code></pre>
+
+<p>こんな感じでやれば，AppReviewViewerが<code>http://localhost:4567</code>に起動します．</p>
+
+<p>左端に<code>+Add app</code>があるので，選択してアプリのIDと名前を入れます．</p>
+
+<p><img src="/images/appreviewsadd.png" alt="appreviewsadd" /></p>
+
+<p>ちなみにアプリのIDはAppStoreのアプリのページを開くと，</p>
+
+<p><img src="/images/appreviewsid.png" alt="id" /></p>
+
+<p>ココらへんに書いていたりします．</p>
+
+<p>アプリのIDと名前が入れられたら，</p>
+
+<pre><code>$ ruby scripts/fetch.rb
+</code></pre>
+
+<p>とすれば，スクレイピングが始まるので，終わったら</p>
+
+<pre><code>$ ruby app.rb
+</code></pre>
+
+<p>としてまた<code>http://localhost:4567</code>を開いてみましょう．Reviewが見えるはずです！</p>
+]]></content>
+  </entry>
+  
+</feed>

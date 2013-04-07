@@ -1,0 +1,337 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>RubyMotion 1.11が出て，iOS 6.0 beta1 でも使える様になった！ - ぽっちぽちにしてやんよ</title>
+  <meta name="author" content="pchw">
+
+  
+  <meta name="description" content="RubyMotion が早くもiOS 6.0で使えるようになった模様． $ sudo motion update しましょう！ 更に，blockにnilを渡しても大丈夫になったので，何もしなくていいのにlambda{}的なことを書かないといけなかったのが楽になります！ リリースノート = &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/06/13/1-dot-11/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="ぽっちぽちにしてやんよ" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-13219359-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">ぽっちぽちにしてやんよ</a></h1>
+  
+    <h2>技術ネタとかアプリに関する話とか</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pchw.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">RubyMotion 1.11が出て，iOS 6.0 Beta1 でも使える様になった！</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-13T12:25:00+09:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>RubyMotion が早くもiOS 6.0で使えるようになった模様．</p>
+
+<pre><code>$ sudo motion update
+</code></pre>
+
+<p>しましょう！</p>
+
+<p>更に，blockにnilを渡しても大丈夫になったので，何もしなくていいのにlambda{}的なことを書かないといけなかったのが楽になります！</p>
+
+<h2>リリースノート</h2>
+
+<pre><code>= RubyMotion 1.11 =
+
+  * Fixed a bug where the runtime would not allow `nil' to be passed as a
+    C-level block argument.
+  * Fixed a bug where methods defined by attr_* would abort the program when
+    called by Objective-C.
+  * Improved `rake spec' to honor the `output' environment variable, which can
+    be used to select a different output format. Available formats: spec_dox,
+    test_unit, tap and knock (ex. rake spec output=test_unit).
+  * Support for the iOS 6.0 Beta 1 SDK can be generated after having installed
+    Xcode 4.5 by typing the following command:
+    $ cd /Library/RubyMotion/data/6.0; rake update
+</code></pre>
+
+<h2>リリースノート訳</h2>
+
+<ul>
+<li>blockにnilが渡せなかったのを修正</li>
+<li>attr_なんとかで定義したメソッドをObjCから呼んだら（どうやるの？）落ちる問題を修正した</li>
+<li>rake specの出力フォーマットを選べる様になったよ</li>
+<li>iOS 6.0 Beta 1 サポート</li>
+</ul>
+
+
+<h2>iOS 6.0 beta 1 を使う方法</h2>
+
+<p>XCode4.5をダウンロードしてインストールします．</p>
+
+<p>RubyMotion を 1.11 にアップデートしておきます．</p>
+
+<p>その後，</p>
+
+<pre><code>$ cd /Library/RubyMotion/data/6.0
+$ gem install nokogiri
+$ rake update
+</code></pre>
+
+<p>を行なえば，RubyMotionで使えるようになります！</p>
+
+<p>Rakefileに</p>
+
+<pre><code>app.xcode_dir = '/Applications/新XCodeの場所...'
+</code></pre>
+
+<p>とかすればいいらしいです．
+（普通に入れてる人は別にRakefileに書かなくてもいいかな）</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">pchw</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-13T12:25:00+09:00" pubdate data-updated="true">Jun 13<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rubymotion/'>RubyMotion</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/06/13/1-dot-11/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/06/13/1-dot-11/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/06/13/1-dot-11/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/06/06/bundler/" title="Previous Post: [RubyMotion] Bundlerを使って楽をしてみた！">&laquo; [RubyMotion] Bundlerを使って楽をしてみた！</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/06/17/testflight/" title="Next Post: RubyMotionを使ってる人はTestFlight使うの簡単だからやった方がいいよ">RubyMotionを使ってる人はTestFlight使うの簡単だからやった方がいいよ &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/pMac.png"/></p>
+  <p>ぽち</p>
+  <p>iPhoneアプリとかWebサービスとか作ってます．</p>
+</section>
+
+<section>
+  <h1>Twitter</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("pchw", 0, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/pchw" class="twitter-follow-button" data-show-count="false">Follow @pchw</a>
+  
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/08/06/fontawesome/">[RubyMotion] motion-fontawesomeっていうgems作りました</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/06/1-dot-15/">RubyMotion 1.15のすげえアップデート</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/26/nitron/">[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/25/inheritance/">RubyMotionでUIViewを継承したViewを作る！</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/21/nanostore/">[RubyMotion] NanoStoreを使ってデータを格納しよう！</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (27)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - pchw -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'pchw';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/06/13/1-dot-11/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/06/13/1-dot-11/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

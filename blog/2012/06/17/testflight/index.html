@@ -1,0 +1,443 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>RubyMotionを使ってる人はTestFlight使うの簡単だからやった方がいいよ - ぽっちぽちにしてやんよ</title>
+  <meta name="author" content="pchw">
+
+  
+  <meta name="description" content="iOSアプリを開発していて，友達とかチームの人に配布する時のAdHoc配布はTestFlightが便利です． XCodeでやってたときは，AdHoc用の構成を作ってEntitlementがどうとかしてオーガナイザでIPAファイルにしてTestFlightのサイトにアクセスしてUpload &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/06/17/testflight/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="ぽっちぽちにしてやんよ" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-13219359-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">ぽっちぽちにしてやんよ</a></h1>
+  
+    <h2>技術ネタとかアプリに関する話とか</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pchw.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">RubyMotionを使ってる人はTestFlight使うの簡単だからやった方がいいよ</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-17T20:45:00+09:00" pubdate data-updated="true">Jun 17<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>iOSアプリを開発していて，友達とかチームの人に配布する時のAdHoc配布はTestFlightが便利です．</p>
+
+<p>XCodeでやってたときは，AdHoc用の構成を作ってEntitlementがどうとかしてオーガナイザでIPAファイルにしてTestFlightのサイトにアクセスしてUpload BuildでIPAをアップロードして配布するメンバーを選んで，，，というような事をしないといけませんでした．</p>
+
+<p>※ 最近はTestFlight Desktop Appとか出てて何かもうちょっと楽になってそうな感じだけど．</p>
+
+<p>RubyMotionでは<code>motion-testflight</code>というgemがありまして，そこらへんを楽チンに出来ます．</p>
+
+<p><img src="/images/testflight_devcenter.png" alt="developer center" /></p>
+
+<p>公式の<a href="http://www.rubymotion.com/developer-center/articles/testflight/">Developer Center</a>にもガイドがあるので，みんなやってるかな？</p>
+
+<p>まぁとりあえず導入とどう設定してるか解説してみるよ．</p>
+
+<p><code>motion-testflight</code>を使うには4つ準備が必要です．</p>
+
+<ol>
+<li>motion-testflightのインストール</li>
+<li>API TokenをRakefileに設定する</li>
+<li>Team TokenをRakefileに設定する</li>
+<li>TestFlight SDKをvendorに入れる</li>
+</ol>
+
+
+<h2>motion-testflightのインストール</h2>
+
+<pre><code>$ sudo gem install motion-testflight
+</code></pre>
+
+<h2>API TokenをRakefileに設定する</h2>
+
+<p>次に，TestFlightのWebページに行ってAPI Tokenを取得する必要があります．</p>
+
+<p><img src="/images/testflight_apitoken.png" alt="api token" /></p>
+
+<p>TestFlightのWebページに行ってログインします．
+その後，右上のをクリックしてアカウント設定を開きます．
+その中の下の方にAPI Tokenが書いてあるのでコピーします．</p>
+
+<p><code>Rakefile</code>の<code>app.testflight.api_token</code>に設定します．</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+    # Use `rake config' to see complete project settings.
+    app.name = 'stickey'
+    app.testflight.api_token = '&lt;API Token&gt;'
+end
+</code></pre>
+
+<p>こんな感じになります．</p>
+
+<h2>Team TokenをRakefileに設定する</h2>
+
+<p>TestFlightにはチームとか言う配布する範囲的なものが決めれます．</p>
+
+<p>※ チーム内でもdistribution_listという更に細かく配布先を設定することも出来ます．</p>
+
+<p>そして，そのチームごとにTeam TokenというAPI Tokenとは別のものがあります．これも設定する必要があります．</p>
+
+<p><img src="/images/testflight_teamtoken.png" alt="TeamToken" /></p>
+
+<p>TeamInfoからTeamTokenをコピペして<code>Rakefile</code>の<code>app.testflight.team_token</code>に設定します．</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+    # Use `rake config' to see complete project settings.
+    app.name = 'stickey'
+    app.testflight.api_token = '&lt;API Token&gt;'
+    app.testflight.team_token = '&lt;Team Token&gt;'
+end
+</code></pre>
+
+<p>こんな感じになります．</p>
+
+<h2>TestFlight SDKをダウンロードする</h2>
+
+<p><code>motion-testflight</code>はTestFlight SDKが無いと動きません．</p>
+
+<p>そのため，さっきのTeamTokenをコピーした近くにTestFlight SDKへのリンクがあるのでそこから落としておきます．</p>
+
+<p><a href="http://testflightapp.com/sdk/download">TestFlight SDK ダウンロード</a></p>
+
+<p>TestFlight SDKはzipなので，解凍して<code>vendor/TestFlight</code>とかに置いておきます．</p>
+
+<p>Rakefile にも置き場所を設定する必要があります．</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+    # Use `rake config' to see complete project settings.
+    app.name = 'stickey'
+    app.testflight.api_token = '&lt;API Token&gt;'
+    app.testflight.team_token = '&lt;Team Token&gt;'
+    app.testflight.sdk = 'vendor/TestFlight'
+end
+</code></pre>
+
+<h2>TestFlightで配布する</h2>
+
+<pre><code>$ rake testflight notes="リリースノートを入れる"
+</code></pre>
+
+<p>とすれば，buildしてTestFlightへアップロードされていきます．</p>
+
+<h2>distribution_listを作った方がいい</h2>
+
+<p>ここまでだと，AdHoc BuildされたパッケージがTestFlightに上がるのは楽になりましたが，
+まだTestFlightのWebサイトにアクセスしてどのTeammateを配布先にするかを選択しないといけません．</p>
+
+<p>これは非常にめんどくさいので，distribution_listを作ります．</p>
+
+<p><img src="/images/testflight_people.png" alt="people" /></p>
+
+<p>メニューのPeopleの所を選びます．</p>
+
+<p><img src="/images/testflight_distribution.png" alt="distribution" /></p>
+
+<p>distribution_listに入れたい人を選択して，右のActionsから<code>+New Distribution List</code>を選択します．
+あとは，そのdistribution_listに名前を付けてSaveすれば完了です．</p>
+
+<p>※ distribution_listは何個も作れるっぽいので，「アプリ毎」とか「このアプリのテスターはこの人達」とか「どうせ全員に配るから全員」など色んな単位で作っておくと色々指定出来て楽ちんです．</p>
+
+<p>distribution_listを作ったら，<code>Rakefile</code>にdistribution_listを設定します．</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+    # Use `rake config' to see complete project settings.
+    app.name = 'stickey'
+    app.testflight.api_token = '&lt;API Token&gt;'
+    app.testflight.team_token = '&lt;Team Token&gt;'
+    app.testflight.sdk = 'vendor/TestFlight'
+    app.testflight.distribution_lists = ['&lt;distribution_list&gt;']
+end
+</code></pre>
+
+<p>こんな感じで設定します．Arrayで設定できるので，この集団とあの集団に配布したいという時も2つ設定すればいいだけです．</p>
+
+<h2>証明書とProvisioningProfile</h2>
+
+<p>証明書(codesign_certificate)とProvisioningProfileは何も設定しないと，
+keychainの初めに見つかった証明書と<code>~/Library/MobileDevice/Provisioning</code>内にある初めの<code>.mobileprovision</code>を使ったりします．</p>
+
+<p>割りとTestFlight配布だと上手くいかなくなることが多いので，<code>Rakefile</code> で指定するといいです．</p>
+
+<pre><code>Motion::Project::App.setup do |app|
+    # Use `rake config' to see complete project settings.
+    app.name = 'stickey'
+    app.testflight.api_token = '&lt;API Token&gt;'
+    app.testflight.team_token = '&lt;Team Token&gt;'
+    app.testflight.sdk = 'vendor/TestFlight'
+    app.testflight.distribution_lists = ['&lt;distribution_list&gt;']
+
+    app.codesign_certificate = "iPhone Distribution: なまえがはいったり"
+    app.provisioning_profile = "/Users/&lt;Username&gt;/Library/MobileDevice/Provisioning Profiles/XXXXXXXXXXXXXXXX.mobileprovision"
+end
+</code></pre>
+
+<p>こんな感じに指定すると良いです．</p>
+
+<p><code>app.provisioning_profile</code>は<code>~/...</code>とか入れるとエラーになるので，普通にフルパス入れるとよいです．</p>
+
+<h2>まとめ</h2>
+
+<p>motion-testflight を入れるとAdHoc配布がすごく楽になります．
+今まではXCodeのオーガナイザとブラウザとエディタを行ったり来たりでしたが，
+simulatorの起動等と同じようにターミナルで完結するのですごく楽．</p>
+
+<p>他人へのAdHoc配布だけでなく，自分で複数のdeviceに入れるときもUSBを繋ぎ変えて<code>rake device</code>を連発するより楽だと思うので，積極的に使っていくと良いと思います．</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">pchw</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-17T20:45:00+09:00" pubdate data-updated="true">Jun 17<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rubymotion/'>RubyMotion</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/06/17/testflight/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/06/17/testflight/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/06/17/testflight/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/06/13/1-dot-11/" title="Previous Post: RubyMotion 1.11が出て，iOS 6.0 beta1 でも使える様になった！">&laquo; RubyMotion 1.11が出て，iOS 6.0 beta1 でも使える様になった！</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/06/19/rm1-dot-12/" title="Next Post: RubyMotion 1.12 出てますよ">RubyMotion 1.12 出てますよ &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/pMac.png"/></p>
+  <p>ぽち</p>
+  <p>iPhoneアプリとかWebサービスとか作ってます．</p>
+</section>
+
+<section>
+  <h1>Twitter</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("pchw", 0, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/pchw" class="twitter-follow-button" data-show-count="false">Follow @pchw</a>
+  
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/08/06/fontawesome/">[RubyMotion] motion-fontawesomeっていうgems作りました</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/06/1-dot-15/">RubyMotion 1.15のすげえアップデート</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/26/nitron/">[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/25/inheritance/">RubyMotionでUIViewを継承したViewを作る！</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/21/nanostore/">[RubyMotion] NanoStoreを使ってデータを格納しよう！</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (27)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - pchw -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'pchw';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/06/17/testflight/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/06/17/testflight/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

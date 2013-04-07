@@ -1,0 +1,365 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>RubyMotion 1.15のすげえアップデート - ぽっちぽちにしてやんよ</title>
+  <meta name="author" content="pchw">
+
+  
+  <meta name="description" content="RubyMotion 1.15ですごいアップデートが来るよってlrzさんが言ってました． Integrating a super cool new feature in RubyMotion. Will ship next week.&mdash; Laurent Sansonettiさん (@ &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://pchw.github.com/blog/2012/07/06/1-dot-15/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="ぽっちぽちにしてやんよ" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href='http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-13219359-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">ぽっちぽちにしてやんよ</a></h1>
+  
+    <h2>技術ネタとかアプリに関する話とか</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:pchw.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">RubyMotion 1.15のすげえアップデート</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-06T10:23:00+09:00" pubdate data-updated="true">Jul 6<span>th</span>, 2012</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>RubyMotion 1.15ですごいアップデートが来るよってlrzさんが言ってました．</p>
+
+<blockquote class="twitter-tweet" lang="ja"><p>Integrating a super cool new feature in RubyMotion. Will ship next week.</p>&mdash; Laurent Sansonettiさん (@lrz) <a href="https://twitter.com/lrz/status/218664619009519617" data-datetime="2012-06-29T11:18:02+00:00">6月 29, 2012</a></blockquote>
+
+
+<script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+<p>それが今日来たのですが，スーパークールなニューフィーチャーはTestFrameworkに関するものでした．</p>
+
+<p>今までRubyMotionはbaconを使ったTestFrameworkが使われていて，
+<code>rake spec</code>とするとSimulatorが実行されメソッドを呼んで値を検証してという形でした．</p>
+
+<p>今回のアップデートでは，指でタップしたりDeviceイベント（画面を回転させたり）といったこともテストで出来るようになりました．</p>
+
+<p>ObjC + XcodeだとjsでUIAutomationのテストを行うらしいんですが（やったことない），その機能がRubyMotionのbaconに統合された感じです．</p>
+
+<pre><code>describe "The Timer view controller" do
+  tests TimerController
+
+  it "start a timer" do
+    tap 'Start'
+    controller.timer.isValid.should == true
+  end
+end
+</code></pre>
+
+<p>とすれば，<code>Start</code>というLabelのついてるButtonをタップしてcontrollerのtimerを検証してます．</p>
+
+<p>実際にVideoを見てもらうのが早いと思います．Viewがガンガン動いて面白いです．</p>
+
+<iframe src="http://player.vimeo.com/video/45193144" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+
+
+<p>公式Blogの情報は<a href="http://blog.rubymotion.com/post/26489000626/functional-view-and-controller-testing-with-rubymotion">こちら</a></p>
+
+<p>ドキュメントは<a href="http://www.rubymotion.com/developer-center/articles/testing/#_views_and_controllers_testing">こちら</a></p>
+
+<p>7/22(日)に行われる<a href="http://connpass.com/event/665/">第一回RubyMotion勉強会</a>での発表ネタは今回のアップデートのテストに関することにしようと思います．
+あと５人ぐらい空きがあるようですね．</p>
+
+<p>修正： 第一回RubyMotion勉強会は <strong> 7/22（日）</strong> でした．</p>
+
+<p>他のアップデートは↓のような感じです．</p>
+
+<h2>更新履歴（訳）</h2>
+
+<ul>
+<li>UIAutomationの機能を使えるTestが書けるようになったし，jsじゃなくてpure Rubyで書ける．</li>
+<li>spec/helpersの中のファイルが<code>rake spec</code>で使われるようになったよ</li>
+<li><code>rake spec</code>にfileオプションが追加されて，テストする対象が選べるようになったよ．</li>
+<li><code>RUBYMOTION_ENV</code>で実行時にtestなのかdevelopmentなのかreleaseなのかを判別出来る様になった．</li>
+<li>rake staticが追加されてuniversal statc libraryを作れるようになった．</li>
+<li>weak frameworkのサポート(app.weak_freameworks &lt;&lt; &#8216;Twitter&#8217;とかする)</li>
+<li>symlinkのファイルがresourceディレクトリに入っていた場合にコピーされてたのを修正．</li>
+</ul>
+
+
+<h2>更新履歴（原文）</h2>
+
+<pre><code>= RubyMotion 1.15 =
+
+  * Improved the spec framework to leverage UIAutomation's functionality. This
+    lets you write functional tests on views and controllers by using the same
+    event generators, but in pure Ruby (and not Javascript).
+    Check http://www.rubymotion.com/developer-center/articles/testing for more
+    information about the new API. Feature contributed by Eloy Duran.
+  * Introduced spec helpers. `rake spec' will now honor the files inside the
+    `spec/helpers' directory (if it exists) and compile them before the spec
+    files.
+  * Introduced the `files' option to `rake spec', which can be used to filter
+    the spec files that should be run. Filters can be either the basename of
+    a spec file or its full path, and are separated by a comma.
+    Example: rake spec files=main_spec,kvo_spec,spec/foo_spec.rb 
+  * Introduced the RUBYMOTION_ENV constant in the runtime which can have one of
+    the following string values: 'test', 'development' and 'release'.
+  * Introduced the `rake static' task which creates a universal static library
+    containing the project's object files and the RubyMotion runtime, which is
+    suitable for inclusion in Objective-C/Xcode projects. 
+  * Introduced weak frameworks support. The `app.weak_frameworks' setting can
+    be set to an array of framework names, similar to how `app.frameworks'
+    works (ex. app.weak_frameworks += ['Twitter']). Patch by Satoshi Ebisawa.
+  * Fixed a bug in the build system where  files within symlinks inside of the
+    resources directory would not be copied. Patch by Nick Quaranto.
+</code></pre>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">pchw</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-07-06T10:23:00+09:00" pubdate data-updated="true">Jul 6<span>th</span>, 2012</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rubymotion/'>RubyMotion</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  <a href="http://b.hatena.ne.jp/entry/http://pchw.github.com/blog/2012/07/06/1-dot-15/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://pchw.github.com/blog/2012/07/06/1-dot-15/" data-via="pchw" data-counturl="http://pchw.github.com/blog/2012/07/06/1-dot-15/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2012/06/26/nitron/" title="Previous Post: [RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ">&laquo; [RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2012/08/06/fontawesome/" title="Next Post: [RubyMotion] motion-fontawesomeっていうgems作りました">[RubyMotion] motion-fontawesomeっていうgems作りました &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>About Me</h1>
+  <p><img src="/images/pMac.png"/></p>
+  <p>ぽち</p>
+  <p>iPhoneアプリとかWebサービスとか作ってます．</p>
+</section>
+
+<section>
+  <h1>Twitter</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("pchw", 0, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/pchw" class="twitter-follow-button" data-show-count="false">Follow @pchw</a>
+  
+</section>
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2012/08/06/fontawesome/">[RubyMotion] motion-fontawesomeっていうgems作りました</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/07/06/1-dot-15/">RubyMotion 1.15のすげえアップデート</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/26/nitron/">[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/25/inheritance/">RubyMotionでUIViewを継承したViewを作る！</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2012/06/21/nanostore/">[RubyMotion] NanoStoreを使ってデータを格納しよう！</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/app'>App (1)</a></li><li><a href='/blog/categories/appstore'>AppStore (1)</a></li><li><a href='/blog/categories/rubymotion'>RubyMotion (27)</a></li><li><a href='/blog/categories/sublimetext2'>SublimeText2 (1)</a></li></ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2012 - pchw -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'pchw';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://pchw.github.com/blog/2012/07/06/1-dot-15/';
+        var disqus_url = 'http://pchw.github.com/blog/2012/07/06/1-dot-15/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
