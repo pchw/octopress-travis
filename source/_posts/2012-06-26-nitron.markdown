@@ -1,0 +1,127 @@
+---
+layout: post
+title: "[RubyMotion] Nitronを使ってOutletやActionっぽいことできるよ"
+date: 2012-06-26 00:10
+comments: true
+categories: RubyMotion
+---
+
+前に[Storyboardを使ってRubyMotionで開発する方法](http://pchw.github.com/blog/2012/05/22/storyboard/)とか[[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう](http://pchw.github.com/blog/2012/05/22/ib/)いう記事を書いたのですが，IdentifierとかTagを使ったりでちょっと面倒くさかったり，コントロールが増えてくるとTag番号がどのコントロールかわからなくなったりで煩雑でした．
+
+そこで，Nitronというライブラリを使って普通のXcode+ObjCで言うIBOutletとかIBAction的なことを簡単にやりましょうという記事です．
+
+[Nitron](https://github.com/mattgreen/nitron)
+
+公式のgithub内のWikiに[チュートリアル](https://github.com/mattgreen/nitron/wiki/Tutorial)がありますが，ModelやNitronのViewControllerとかの説明やCoreData周りなどにも言及していてOutlet的なところだけやりたい人にはちょっと大掛かりです．
+
+そのため，今回は本当にOutletやAction周りだけを使いたい人向けのシンプルコースです．
+
+## Nitroのインストール
+    $ gem install nitron
+
+なにはともあれgemインストール．
+
+## プロジェクトの作成
+    $ motion create simplenitro
+
+## app_delegate.rb の削除
+Nitronはapp_delegateに書いてあるようなのがライブラリ内部で勝手にやってくれます．
+app_delegate.rbがあると，そちらが優先されてしまい，何も画面に出なくてハマるのでサクッと削除しておきます．
+
+    $ rm app/app_delegate.rb
+
+## Rakefile
+    $ cat Rakefile
+	# -*- coding: utf-8 -*-
+	$:.unshift("/Library/RubyMotion/lib")
+	require 'motion/project'
+	require 'rubygems'
+	require 'nitron'
+
+	Motion::Project::App.setup do |app|
+	  # Use `rake config' to see complete project settings.
+	  app.name = 'simplenitro'
+	end
+
+`require 'rubygems'`と`require 'nitron'`を追加するだけですね．
+公式だと，Bundlerを使う方法が紹介されてます．
+
+## storyboardの追加
+公式では，普通にXcodeのプロジェクトを作ってますが，要らないファイルが死ぬほど付いてくるので，単にXcodeを立ちあげてstoryboardファイルだけ追加しましょう．
+
+`File>New>File`で`iOS>User Interface>Storyboard`を選べばよいです．
+
+![new Storyboard](/images/nitron_storyboard.png)
+
+名前は`MainStoryboard.storyboard`にして，`./resources`に作成します．
+
+## UINavigationControllerとUIViewControllerの追加
+こうやって作ったStoryboardには何も置かれていないので，`UINavigationController`を置きます．
+
+![navigation](/images/nitron_navigation.png)
+
+不要な`UITableViewController`がくっついて来るので`delete`ボタンで消します．
+
+`UIViewController`をD&Dして置きます．
+
+`UINavigationController`を選択してUtility View（右側のペイン）の一番右のタブを選んで`RelationShip`の所から引っ張って，追加した`UIViewController`に繋ぎます．
+
+![root view controller](/images/nitron_rvc.png)
+
+`UIViewController`を選択して，Utility Viewの左から３番目のタブを選んで，Classを`RootViewController`とかにしておきます．
+
+## UITextFieldとUIButtonの追加
+そのままでは何もないので，入力欄とボタンを追加します．
+
+![control](/images/nitron_control.png)
+
+UITextFieldを選択して，Utility Viewの左から３番目のタブを選んで，
+`User Defined Runtime Attributes`のところの + を選択して
+
+- KeyPath: outlet
+- Type: String
+- Value: randomText
+
+とします．
+
+![outlet](/images/nitron_outlet.png)
+
+同様にUIButtonの方も
+
+- KeyPath: outlet
+- Type: String
+- Value: random
+
+としておきます．
+
+この時点でstoryboardの操作は終わりなので保存して閉じます．
+
+## RootViewControllerの追加
+`root_view_controller.rb`を追加して，RootViewControllerクラスを作成します．
+
+	class RootViewController < Nitron::ViewController
+		on :random do
+			randomText.text = @seed.sample
+		end
+	end
+
+	class RootViewController
+		def viewDidLoad
+			super
+			@seed = ["hoge", "fuga", "moge", "foo", "bar"]
+		end	
+	end
+
+先ほどoutletで指定したrandomが`on :random ブロック`という形でイベントを受けれます．
+
+また，先ほどoutletでしていた`randomText`という名前でUITextFieldへのアクセスが可能になりますので，textにランダムで選んだ文字列を入れてみます．
+
+## 実行
+    $ rake
+
+これで，シミュレータが立ち上がり，Buttonを押した時にランダムで文字が変わります．
+
+## まとめ
+Nitronを使うことで，storyboardとRubyMotionとの連携が更に高まり開発効率が上がります．
+特に軽いプロトタイプやモックなどはStoryboardでサッと作れるので，それに簡単にRubyMotionで動作を付けれれば素早い開発が可能なのではないでしょうか！
+

@@ -1,0 +1,39 @@
+---
+layout: post
+title: "RubyMotion 1.7出てます"
+date: 2012-05-29 08:14
+comments: true
+categories: RubyMotion
+---
+
+RubyMotion 1.7が出てました．
+
+    $ sudo motion update
+
+しましょう！
+
+ところで，RubyMotion がアップデートされたかどうかを素早く知る方法ってないんですかね．
+
+    = RubyMotion 1.7 =
+
+      * Fixed a bug in the compiler where the proper signature would not be used
+        when defining informal protocol methods with CF types as arguments.
+      * Fixed iOS constants to be looked up at demand (when being used) and not
+        when the app starts, because certain constants are not set until a certain
+        API is called (ex: the kAB... constants of the AddressBook framework).
+        This change should also speed up a little bit the app starting time.
+      * Fixed a bug in the compiler where very long selectors would be truncated
+        and causing exceptions later at runtime.
+      * Fixed a bug in the compiler where memory-related selectors (alloc, dealloc,
+        retain, release, etc.) could not be defined in Ruby.
+      * Fixed a bug in the compiler where NSObject instance methods could not be
+        called on classes (ex. MyClass.performSelector(...)).
+      * Fixed a bug in the build system where vendored 3rd-party APIs dealing with
+        types defined in iOS headers could not be used (ex: enums or structs).
+
+- 非公式プロトコルでCFタイプを引数にとった時に正しいシグネチャを吐かないことの修正
+- アプリ開始時のiOS定数発見の部分を修正．この影響でアプリ開始時間がちょっと早くなる．
+- 超長いセレクタが途中で切れて実行時エラーになる問題の修正
+- メモリ関係（allocとかreleaseとか）がRubyで定義出来なかったのを修正．
+- NSObjectのインスタンスメソッドをクラスから呼べなかった問題を修正
+- 外部ベンダのライブラリを読み込むやつでiOSヘッダに定義されたenumとかstructsが使われなかった問題を修正

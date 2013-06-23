@@ -1,0 +1,70 @@
+---
+layout: post
+title: "[rubymotion] rake specをカラフルにしよう！"
+date: 2012-05-22 21:52
+comments: true
+categories: RubyMotion
+---
+
+
+![](https://lh3.googleusercontent.com/-i-36UEH1H1s/T6_Myv_1m1I/AAAAAAAAAZk/-jGU9jUlXSU/F45FE6D0-B302-438F-ABBE-3E67018268CD.jpg)
+
+RubyMotionはBaconというテストフレームワークを使っています．
+RSpecとの違いがよく分からない．
+
+    $ rake spec
+とやると，`spec`以下のテストが実行されるっぽいです．
+
+ところが，普通に
+
+    $ motion crate redgreen
+    $ cd redgreen
+    $ rake spec
+とやると，ビルドされてシミュレータが立ち上がりテストが実行されますが，白黒です．
+
+![](https://lh4.googleusercontent.com/-MaF986VQLXQ/T6_MzjUWnKI/AAAAAAAAAZs/0kTlIiLoETE/25518394-DF4D-4FC5-A0AD-FC1AAB8C3DCE.jpg)
+
+そこで，`spec`フォルダで一番初めに読み込まれる .rbの中でカラー表示にさせるスクリプトを実行させれば，カラー表示になるようです．
+（そのため， `00***.rb`のような名前にすれば良いようです．）
+
+RedGreenというrake specをカラフルにするライブラリがあるらしいのですが，それをRubyMotion用にアレンジしたものがgithubで公開されています．
+
+[rm-redgreen](https://github.com/mdks/rm-redgreen)
+
+spec/00-redgreen.rb
+app/app.rb
+app/kernel.rb
+app/rm-ansiterm.rb
+app/string.rb
+を自分のとこに持ってくれば使えます．
+
+先程の`motion create`しただけのやつにコピーして再度テストをすると，このようになります．
+
+カラフルになりましたね．
+
+![](https://lh5.googleusercontent.com/-2YNpuBaKr6E/T6_M3QeAYUI/AAAAAAAAAaM/h5NFJ1YEO2g/8C43CDC6-042C-4899-9532-BDD6890057ED.jpg)
+
+デフォルトのテストはWindowがあるのを調べるテストなので，実装を書いてGreenにしましょう．
+
+`./app/app_delegate.rb`
+ 
+    class AppDelegate
+      def application(application, didFinishLaunchingWithOptions:launchOptions)
+        @window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
+        true
+      end
+    end
+
+テストを再実行します．
+
+    $ rake spec
+
+Greenになりました．
+
+![](https://lh6.googleusercontent.com/-qQcnS4YpH98/T6_M2qdo6qI/AAAAAAAAAaE/NvQU_ZKe9qc/D3BC7FB7-D043-4EA1-AB2F-DB837A7632FA.jpg)
+
+`./spec/00-redgreen.rb`の`style = :focused`となっている部分を`style = :full`とすると長めのログが出ます．
+
+![](https://lh4.googleusercontent.com/-iXVNZArvvxU/T6_M0ixSIsI/AAAAAAAAAZ0/f3_Irg2MqM8/CCDD4D42-D3EB-405B-BA59-9BED5C685ECD.jpg)
+
+![](https://lh6.googleusercontent.com/-ImTqn7jZiR8/T6_M11kTpsI/AAAAAAAAAZ8/-fVYGOMWifM/8A8B0EBF-3173-486C-AD54-EE1BAAB49511.jpg)

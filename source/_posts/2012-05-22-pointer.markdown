@@ -1,0 +1,31 @@
+---
+layout: post
+title: "[RubyMotion] NSError ** とかを引数に取るメソッドを使う時どうすればいいか"
+date: 2012-05-21 23:53
+comments: true
+categories: RubyMotion
+---
+
+iOS SDK 使ってると，こんな感じのコードがよくあります．
+
+    NSHTTPURLResponse *res;
+    NSError *error;
+    NSURL *url = [NSURL URLWithString:@"http://google.com"];
+    NSURLRequest *req = [NSURLRequest requestWithURL:url];
+    NSData *data = [NSURLConnection sendSynchronousRequest:req returningResponse:&res error:&error];
+
+最後の`[NSURLConnection sendSynchronousRequest: returningResponse: error:]`の部分で，`(NSHTTPURLResponse**)`とか`(NSError**)`とかを引数に取ります．
+
+この場合は，RubyMotionで書くとこうなります．
+
+    err_ptr = Pointer.new(:object)
+    res_ptr = Pointer.new(:object)
+    url = NSURL.URLWithString("http://google.com")
+    req = NSURLRequest.requestWithURL(url)
+    data = NSURLConnection.sendSynchronousRequest(
+    	req, 
+    	returningResponse:res_ptr,
+    	error:err_ptr)
+    
+    @label.text = res_ptr[0].statusCode.to_s
+簡単に言うと，`(NSError**)`とかを渡す所になっているメソッドは，Pointerのインスタンスを渡してあげて，`error = err_ptr[0]`とかしてデリファレンスして使ってやるといいです．

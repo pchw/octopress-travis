@@ -1,0 +1,22 @@
+---
+layout: post
+title: "Octopress始めてみた"
+date: 2012-05-21 22:43
+comments: true
+categories: 
+---
+
+## あいさつ
+Posterous→Bloggerと来て次はOctopressでやってみようと思います．
+
+## なんでOctopressでやってみようと思ったか？
+最近RubyMotionをやってて，それ関連の記事を書くことが何回ありました．
+基本的に調べながらやってるんですけど，その時はDayOneとかを使ってやってるわけです．
+
+そこで，BloggerがMarkdownでそのまま投稿出来ないのが辛かった．
+
+DayOneで書いて，MouにコピペしてHTMLとして吐かせてコピペしてました．苦行．
+それに更に最近ではKobitoにもコピペしてQiitaにも投稿してました．
+
+これはもうMarkdownで統一するしかないだろうということで，
+Octopressをやってみようということになったのですよ．

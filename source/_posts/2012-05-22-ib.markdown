@@ -1,0 +1,98 @@
+---
+layout: post
+title: "[RubyMotion] InterfaceBuilderと合わせて使って楽をしよう"
+date: 2012-05-22 21:53
+comments: true
+categories: RubyMotion
+---
+
+![catch](https://lh4.googleusercontent.com/-_NT2-Tz_5I4/T6vRbwXZyHI/AAAAAAAAAXM/nYYnYrq0AWQ/8B0A2DB1-E3D7-4847-A0EF-006C171E8B43.jpg)
+
+RubyMotionはいいんだけど，UIをコードで作るのはめんどくさい．
+そのため，InterfaceBuilderで作りたい．
+
+RubyMotionの進化が早くて，もう1.3のアップデートが来てます．
+このエントリーは1.3にアップデートしてからやってね．
+
+    $ sudo motion update
+
+やってみます．まずはひな形作成．
+
+    $ motion create IB
+    $ cd IB
+
+`app/app_delegate.rb` を編集します．
+
+    class AppDelegate
+      def application(application, didFinishLaunchingWithOptions:launchOptions)
+      	@window = UIWindow.alloc.initWithFrame(UIScreen.mainScreen.bounds)
+      	@window.rootViewController = NSBundle.mainBundle.loadNibNamed(
+      		'MyView', 
+      		owner: self,
+      		options: nil).first
+      	@window.rootViewController.wantsFullScreenLayout = true
+      	@window.makeKeyAndVisible
+        true
+      end
+    end
+こんな感じで，MyViewっていうNibを読み込んでやることにします．
+
+おもむろにXCodeをたちあげて，（すでに開いている人は開いてるProjectを閉じろ！）File>New>File(Cmd + N)を選んで新規ファイル作成する．
+iOSのUser InterfaceのEmptyを選んで，`resources/MyView.xib`として保存する．
+
+このままだと，ただの方眼紙なので，オブジェクトを追加していきます．
+
+ObjectLibrary(Cmd+Shift+Alt+3)からViewControllerを追加．
+
+![viewcontroller](https://lh4.googleusercontent.com/-NJi7vxGoKU0/T6vRejaSSwI/AAAAAAAAAXk/NANN6sYn43s/75A106D3-E836-4771-A3B2-23F0711E9F75.jpg)
+
+CustomClassの所で，`MyViewController`とする．
+
+![](https://lh6.googleusercontent.com/-9WOU446JvMM/T6vRZBfeFOI/AAAAAAAAAW8/8EttpBF8QbM/C3CE5E58-2F05-48FB-8EAF-0E8C400B86CE.jpg)
+
+ObjectLibraryからViewを追加．
+
+![](https://lh5.googleusercontent.com/-F13DxPSNxEw/T6vRczq6fNI/AAAAAAAAAXQ/ZhLWZFvZ8HI/62F0D7FB-D117-4FED-8CBC-65AEC3ECC194.jpg)
+
+ObjectLibraryからButtonとLabelを追加．
+
+![](https://lh3.googleusercontent.com/-lXNWDyg3b3s/T6vRYFzTWvI/AAAAAAAAAW0/7MpGkaUa3a4/386D9AF1-8520-41B6-975D-02D2D80A777A.jpg)
+
+この部分が重要で、それぞれのTagに1とか2とかつけます
+
+![](https://lh6.googleusercontent.com/-Ror1NoaBxkM/T6vRfzELJRI/AAAAAAAAAXs/iQi_iMXKNh8/40DC78B0-948E-4DCE-804F-EC366856DC31.jpg)
+
+保存して終了．
+
+次に`app/my_view_controller.rb`を作成します．
+
+    class MyViewController < UIViewController
+    	def viewDidLoad
+    		@button = view.viewWithTag 1
+    		@label = view.viewWithTag 2
+    		@button.addTarget(
+			self, 
+			action:'onClicked', 
+			forControlEvents:UIControlEventTouchUpInside)
+	end
+
+	def onClicked
+		@label.text = "Clicked"
+	end
+    end
+
+1のTagを付けたのをbuttonとして，クリックのイベントをonClickedメソッドに登録．
+2のTagを付けたのをlabelとして，クリックされた時に変更したりするようにしました．
+
+    $ rake
+でビルドしてシミュレータが立ち上がります．
+
+![](https://lh6.googleusercontent.com/-O4MoAszjcnA/T6vRaVj5WmI/AAAAAAAAAXE/rptfrEs0b9A/624D2637-6D50-4DF1-9001-C0505A3B0B25.jpg)
+
+押します．
+
+変わります！
+
+![](https://lh5.googleusercontent.com/-3DmRBCOWUjs/T6vRdl7j0xI/AAAAAAAAAXY/5cnHlb61Lbw/658F46A6-8C07-485C-A589-6E32327BD13F.jpg)
+
+出来ました！

@@ -1,0 +1,32 @@
+---
+layout: post
+title: "RubyMotionでリソース読み込み"
+date: 2012-05-30 23:37
+comments: true
+categories: RubyMotion
+---
+
+すごく初歩的なところだけども，RubyMotionで画像やテキストのリソースを`.app`の中にプリセット保持して使う方法です．
+
+色々と試すときに画像やテキストを使いたい事が多くて，備忘録的に書いておきます．
+
+まず，`.app`内にリソースを保持するには，`/resources`に入れておけばOKです．
+
+あとは読み出しですが，画像の場合はすごく簡単で，
+
+    UIImage.imageNamed "hoge.png"
+
+とかすれば，`/resources/hoge.png` が読み出されます．
+
+テキストとかHTMLファイルとかは，
+
+    path = NSBundle.mainBundle.resourcePath.stringByAppendingPathComponent "test.txt"
+    str = NSString.stringWithContentsOfFile path
+
+とかすれば`NSString`で取得できます．
+
+`NSBundle.mainBundle.resourcePath`で`/resources`に当たる場所のPathが取得できるので，あとは好きにすればOKということですね．
+
+簡単なサンプルを書いといたので，置いときます．
+
+[画像とテキストを読みだしてUILabelとUIImageViewに貼り付けるサンプル](https://github.com/pchw/rm-resource-sample)

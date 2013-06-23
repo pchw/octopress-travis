@@ -1,0 +1,83 @@
+---
+layout: post
+title: "[RubyMotion] Bundlerを使って楽をしてみた！"
+date: 2012-06-06 08:53
+comments: true
+categories: RubyMotion
+---
+
+
+昨日[Using Bundler With Rubymotion](http://thunderboltlabs.com/posts/using-bundler-with-rubymotion)という記事が投稿されて，話題になっていたので早速ためしてみた．
+
+記事の内容的には，色々`require`したり`gem install`したりするのめんどくさいよね！それ`bundle`使えばできるよ！てな感じでした．
+
+## やってみよう！
+
+何はともあれ，bundlerを入れます．
+
+    $ gem install bundler
+
+`Rakefile`の`require 'motion/project'`の下辺りに
+
+	require 'bundler'
+	Bundler.require
+
+を追加しておきます．
+
+あとは，Gemfileを作成して
+
+    $ cat > Gemfile
+    source :rubygems
+
+	gem "rake"
+	gem "motion-testflight"
+
+とかして保存しておきます．あとは，
+
+    $ bundle install
+
+と実行すれば，自動的にgemを入れてくれます．
+
+    $ rake testflight
+
+とか打てば，`Rakefile`に`require 'motion-testflight'` とか書かなくてもOKです！
+
+## 罠
+上記のは`motion-testflight`でやっているのは訳があって，
+`motion-testflight`は実は`gem install`だけでは完結していなくて，
+TestFlight SDKをダウンロードして`vendor/testflight`に入れないとダメなんですねー．残念です．
+
+ここらへんどうすればいいんだろう，，，？僕はRuby畑の人ではないので，どうすればいいのかよく分からないです．Gemfileにダウンロードするスクリプトとか書けばいいの？（書けるの？）
+
+## One more thing
+
+んで，そのbundleの記事に反応していた中で
+
+
+<blockquote class="twitter-tweet tw-align-left" width="350" lang="ja"><p>せっかく使うんだったら bundle install --path vendor/bundle とかにして、システムにgemを入れないようにした方がいいかも？</p>&mdash; Satoshi Ebisawaさん (@satococoa) <a href="https://twitter.com/satococoa/status/209836315833925635" data-datetime="2012-06-05T02:37:30+00:00">6月 5, 2012</a></blockquote>
+<script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+という意見がありましたので，やってみました．
+
+    $ bundle install --path vendor/bundle
+
+とやると，`vendor/bundle`以下に`ruby/<version>/gems`やらなんやら色んなファイルが出来てました．
+
+これでシステムグローバルに入れるのではなくて，そのProject内にgemsをインストールしているわけですね．
+
+その後は，いつもどおり`rake`でいいのかな？と思ったのですが，
+
+    $ rake
+    Could not find rake-0.9.2.2 in any of the sources
+    Run `bundle install` to install missing gems.
+
+とかいう警告が出てました．
+しかし，rake自体は成功している模様．よく分からない．
+
+    $ bundle exec rake
+
+とやる必要があるのかな？と思ったのですが，同じメッセージが出てました．
+ここらへんはbundler詳しくないのでよく分からない，，，
+
+何か分かったら教えて頂けるとありがたいです！

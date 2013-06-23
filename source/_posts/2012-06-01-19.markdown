@@ -1,0 +1,42 @@
+---
+layout: post
+title: "RubyMotion 1.9が出てた！早い！"
+date: 2012-06-01 12:29
+comments: true
+categories: RubyMotion
+---
+
+一昨日ぐらいに1.8が出たと思ったら，もう1.9が出てきました．
+
+しかも変更点が多い．
+
+次は2.0なのか1.10なのか気になりますね！
+
+    = RubyMotion 1.9 =
+
+      * Fixed a bug in the build system where the paths of vendored libraries
+        would not be properly quoted and cause a build failure in case they
+        contain space characters.
+      * Fixed a bug in the build system where using a lower deployment_target
+        version would cause a link error at runtime because the application was
+        linking against a framework that does not exist (ex. CoreImage on 4.3).
+      * Fixed the `rake spec' task to not move the simulator window to the
+        foreground.
+      * Fixed a bug in the compiler where APIs accepting pointers to
+        CoreFoundation types could not be given Pointer objects of the :object
+        type (ex. CFErrorRef*).
+      * Added support for CoreAudio (experimental). At the very least, constants
+        pointing to four-bytes characters should be properly covered.
+      * Fixed a typo in "expected array of %d elements, got %d" exception message
+        where the numbers were inverted. Thanks Enrico Thierbach.
+      * Fixed a bug in the compiler where compiling strings containing only null
+        characters (ex. "\x00") would cause a crash.
+
+
+- vendorライブラリのpathがQuoteで囲まれてなくてスペースが含まれてたときにビルドが失敗するのを修正
+- CoreImageを4.3で使おうとするみたいなdevelopment_targetを昔のに設定してるのに存在しないフレームワークを指定したときにリンクエラーになるビルドの問題を修正
+- `rake spec`した時にシミュレータが前に出てこないのを修正
+- CFなんちゃらへのポインタをAPIに渡せない問題の修正
+- CoreAudioのサポートを追加．
+- 例外メッセージのtypo修正
+- nullキャラクターだけが含まれたstringをコンパイルする時にクラッシュしてた問題を修正

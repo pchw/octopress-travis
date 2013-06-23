@@ -1,0 +1,58 @@
+---
+layout: post
+title: "RubyMotion 1.11が出て，iOS 6.0 beta1 でも使える様になった！"
+date: 2012-06-13 12:25
+comments: true
+categories: RubyMotion
+---
+
+RubyMotion が早くもiOS 6.0で使えるようになった模様．
+
+    $ sudo motion update
+
+しましょう！
+
+更に，blockにnilを渡しても大丈夫になったので，何もしなくていいのにlambda{}的なことを書かないといけなかったのが楽になります！
+
+## リリースノート
+    = RubyMotion 1.11 =
+
+      * Fixed a bug where the runtime would not allow `nil' to be passed as a
+        C-level block argument.
+      * Fixed a bug where methods defined by attr_* would abort the program when
+        called by Objective-C.
+      * Improved `rake spec' to honor the `output' environment variable, which can
+        be used to select a different output format. Available formats: spec_dox,
+        test_unit, tap and knock (ex. rake spec output=test_unit).
+      * Support for the iOS 6.0 Beta 1 SDK can be generated after having installed
+        Xcode 4.5 by typing the following command:
+        $ cd /Library/RubyMotion/data/6.0; rake update
+
+## リリースノート訳
+ - blockにnilが渡せなかったのを修正
+ - attr_なんとかで定義したメソッドをObjCから呼んだら（どうやるの？）落ちる問題を修正した
+ - rake specの出力フォーマットを選べる様になったよ
+ - iOS 6.0 Beta 1 サポート
+
+## iOS 6.0 beta 1 を使う方法
+XCode4.5をダウンロードしてインストールします．
+
+RubyMotion を 1.11 にアップデートしておきます．
+
+その後，
+
+    $ cd /Library/RubyMotion/data/6.0
+    $ gem install nokogiri
+    $ rake update
+
+を行なえば，RubyMotionで使えるようになります！
+
+Rakefileに
+
+    app.xcode_dir = '/Applications/新XCodeの場所...'
+
+とかすればいいらしいです．
+（普通に入れてる人は別にRakefileに書かなくてもいいかな）
+
+
+

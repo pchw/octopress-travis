@@ -1,0 +1,55 @@
+---
+layout: post
+title: "RubyMotionが1.4->1.5->1.6とアップデートしたよ！"
+date: 2012-05-23 01:03
+comments: true
+categories: RubyMotion
+---
+
+気づいたら，RubyMotionの更新が1.5・1.6と続いてありました．
+
+    $ sudo motion update
+
+しましょう．
+
+## RubyMotion 1.5 更新内容
+    = RubyMotion 1.5 =
+
+      * Improved the REPL to support multi-line expressions.
+      * Fixed a bug when compiling Core Data model files where the `momc' utility
+        was not given absolute paths.
+      * Removed legacy MacRuby code that was using the private `isaForAutonotifying'
+        selector and causing a warning during an App Store submission.
+      * Fixed a bug in Enumerable#sort_by that would lead to a crash.
+      * Fixed a bug in the REPL where it would not detect the iOS Simulator window
+        if certain windows were in front or created later.
+      * Fixed a bug in the build system where framework dependencies would not be
+        properly handled.
+      * Added support for .lproj directories (i18n). Thanks Aaron Hurley.
+      * Fixed a bug where objects from pure Ruby classes sent to KVO would not be
+        properly handled later (because KVO inserts a new singleton class).
+      * Fixed attr_writer to emit KVO notifications (will/didChangeValueForKey).
+
+- REPLが複数行をサポート
+- CoreDataモデルファイルをコンパイル時のバグを修正
+- レガシーなMacRubyコードを撤去した．
+- Enumerable#sort_byがクラッシュを引き起こす問題を修正
+- ウィンドウがシミュレータウィンドウの前に複数あるなどの原因でREPLがシミュレータを見つけれないバグを修正
+- ビルド時にフレームワークの依存関係を正しく扱えなかったバグを修正
+- .lprojディレクトリをサポート
+- pure RubyのクラスのオブジェクトをKVOに送った時に正しくハンドリング出来なかったバグを修正
+- attr_writerがKVO notificationを上げるように修正
+
+## RubyMotion 1.6 更新内容
+    = RubyMotion 1.6 =
+
+      * Fixed a regression in the build system introduced by the previous update
+        (when compiling .xib files).
+      * Fixed the vendoring system to include all source code files. Merged patch
+        from https://groups.google.com/d/msg/rubymotion/tPCxSMCA2f4/w2DIHFo2AVAJ
+      * Fixed the REPL to not crash if you give it an empty expression.
+
+- ビルド時の再発バグの修正
+- 外部ライブラリ読み込み不具合修正
+- REPLに空を渡した時にクラッシュする不具合の修正
+

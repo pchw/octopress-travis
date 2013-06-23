@@ -1,0 +1,115 @@
+---
+layout: post
+title: "[RubyMotion]Routableを使ってみた"
+date: 2012-05-28 12:32
+comments: true
+categories: RubyMotion
+---
+
+Routableというgemがあるみたいという話を聞いて，使ってみました．
+
+[Routable - GitHub](https://github.com/clayallsopp/Routable)
+
+## インストール
+
+    gem install routable
+
+
+## Rakefileの編集
+
+    $:.unshift("/Library/RubyMotion/lib")
+    require 'motion/project'
+    require 'routable'
+
+のように`require 'routable'`を追加します．
+
+## 使い方
+
+    class AppDelegate
+      def application(application, didFinishLaunchingWithOptions:launchOptions)
+        @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.applicationFrame
+        @window.makeKeyAndVisible
+
+        @rootView = NSBundle.mainBundle.loadNibNamed(
+            'RootViewController',
+            owner: self,
+            options: nil).first
+
+        @router = Routable::Router.router
+        @router.navigation_controller = UINavigationController.alloc.init
+        @router.navigation_controller.pushViewController(@rootView, animated: false)
+        @rootView.title = "TOP"
+
+        @router.map("one", OneViewController)
+        @router.map("two/:param", TwoViewController)
+
+        @window.rootViewController = @router.navigation_controller
+
+        @one = @rootView.view.viewWithTag 1
+        @one.addTarget(
+            self, 
+            action: 'onClickOne:', 
+            forControlEvents: UIControlEventTouchUpInside)
+
+        @two = @rootView.view.viewWithTag 2
+        @two.addTarget(
+            self, 
+            action: 'onClickTwo:', 
+            forControlEvents: UIControlEventTouchUpInside)
+
+        true
+      end
+
+      def onClickOne(sender)
+        @router.open('one', true)
+      end
+
+      def onClickTwo(sender)
+        @router.open('two/100', true)
+      end
+    end
+
+こんな感じで使います．
+
+`Routable::Router.router`を取得して，`navigation_controller`に`UINavigationController`を設定しておきます．
+
+`map(<URL>, <viewController>)`のようにすると，そのURL文字列をキーにviewControllerの遷移を書けるようになります．
+
+<URL>には`hoge/:id`のようにパラメータを記述することができて，この場合だと`hoge/1`とかいう遷移をさせれば，宛先のviewControllerに`1`というパラメータが渡されます．
+
+遷移する時は`open(<URL>, <animation?>)`とすれば設定したviewControllerへ遷移出来ます．
+
+## 遷移先ViewController
+    class TwoViewController < UIViewController
+        attr_accessor :param
+
+        def initWithParams(params = {})
+            init()
+            self.param = params[:param]
+            self
+        end
+
+        def viewDidLoad
+            @label = UILabel.alloc.init
+            @label.bounds = [[50, 150],[300, 50]]
+            @label.text = "TwoViewController" + self.param.to_s
+        end
+    end
+
+のようにして，`initWithParams`で引数を受け取れます．
+
+## 問題点
+ViewControllerをコードで場所設定とかすごくめんどくさいので，僕はIBを使います．
+
+しかし，IBを使って`resouces/HogeViewController.xib`を作って，Controlを配置して，，，というフローを辿ってやると，`router.open`の時にエラーが出ます．
+
+routerの内部では，`HogeViewController.alloc.initWithParams()`を呼んでインスタンス化しているわけですが，
+xibを使うと，`NSBundle.mainBundle.loadNibNamed`をしないとダメっぽいんですね．
+
+なので，routerをいじって，mapするときにそれ用の情報を入れてあげるかしないといけません．
+
+## まとめ
+僕はStoryboardを使うと思います．
+
+XCodeが嫌でRubyMotionをやっている人は多いと思うので，コードでControlを配置するのが苦じゃない人にとってはrouterはいいソリューションなんじゃないでしょうか．
+

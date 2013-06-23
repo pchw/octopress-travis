@@ -1,0 +1,119 @@
+---
+layout: post
+title: "RubyMotionでGCDを使う"
+date: 2012-05-22 22:35
+comments: true
+categories: RubyMotion
+---
+
+![GCD](https://lh6.googleusercontent.com/-nEOFLDxo0SE/T7cKmnkUM3I/AAAAAAAAAac/F_9TagXzXTE/s300/gcd.png)
+
+今日はRubyMotionでGCD(Grand Central Dispatch)を使う話です．
+
+## GCD とは
+GCDというのは，
+
+> 非常に効率的なシステム機能と使い勝手のよいプログラミングモデルを併用して，マルチプロセッサを最大限に活用するために必要なコードを徹底的に簡素化
+
+するものらしいです
+（AppleのGrand Central Dispatchの説明より）
+
+UITableViewとかそういうのはMainThreadでちょっと重い処理をすると，すぐにパフォーマンスが悪くなってなんだこのアプリ糞だな！とか言われるので，そういう時には別Threadを立ててMainThreadの処理を邪魔しないように処理を行う必要があります．
+それを楽にしてくれるのがGCD．
+
+## Objective-C
+Obj-Cのコードだと，
+
+
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, ^{
+        // 処理
+    });
+
+こんな感じになります．
+
+## RubyMotion
+RubyMotionでは，GCD関連は`Dispatch`クラスを使います．
+
+[RubyMotion Runtime Guid](http://www.rubymotion.com/developer-center/guides/runtime/#_grand_central_dispatch) にも書いてます．
+
+上で書いたObj-CのコードをRubyMotionで書きなおすと，
+
+
+    Dispatch::Queue.concurrent.async{
+        # 処理
+    }
+
+こうなります．超簡単．
+
+## UIの更新に関して
+さて，実際にはConcurrent Dispatch Queueで時間のかかる処理を行い，
+処理を行った結果をUIに反映させることがよくあります．
+その場合に直接UIへ値を代入とかすると落ちます．
+UIはMainThreadから更新しなければなりません．
+その場合は，
+
+
+    Dispatch::Queue.concurrent.async{
+        # 処理
+        Dispatch::Queue.main.async{
+            #UI更新
+        }
+    }
+
+このように`Dispatch::Queue.main`でMain Dispatch Queueに更新処理を入れることで実現できます．
+
+## 実戦
+実際に少し書いてみます．
+
+    $ motion create gcd
+    $ cd gcd
+
+### app/app_delegate.rb
+
+    class AppDelegate
+      def application(application, didFinishLaunchingWithOptions:launchOptions)
+        @window = UIWindow.alloc.initWithFrame UIScreen.mainScreen.bounds
+        @window.rootViewController = NSBundle.mainBundle.loadNibNamed(
+            'RootViewController', 
+            owner: self,
+            options: nil).first
+        @window.rootViewController.wantsFullScreenLayout = true
+        @window.makeKeyAndVisible
+        true
+      end
+    end
+
+### InterfaceBuilder
+`resouces/RootViewController.xib` という形でUIButton(Tag 2)，UILabel(Tag 1)を追加しておいて下さい．
+（参考：[[RUBYMOTION] INTERFACEBUILDERと合わせて使って楽をしよう](http://pochixpochi.blogspot.jp/2012/05/rubymotion-interfacebuilder.html)）
+
+### app/root_view_controller.rb
+
+    class RootViewController < UIViewController
+        def viewDidLoad
+            @label = view.viewWithTag 1
+            @button = view.viewWithTag 2
+            @button.addTarget(
+                self,
+                action: 'onClicked:',
+                forControlEvents:UIControlEventTouchUpInside)
+        end
+
+        def onClicked(sender)
+            p "onClicked"
+
+            Dispatch::Queue.concurrent.async {
+                NSThread.sleepForTimeInterval 5
+                Dispatch::Queue.main.async {
+                    @label.text = ["hoge", "fuga", "moge"].sample
+                }
+            }
+        end
+    end
+
+### 実行
+    $ rake
+シミュレータが立ち上がり，Buttonを押すとLabelの文字列がちょっと待ったあとに変わります．
+連打すると次々変わると思います．
+その間Buttonが押せないとかそういうことが起こらないのが分かると思います．

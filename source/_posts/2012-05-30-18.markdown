@@ -1,0 +1,26 @@
+---
+layout: post
+title: "RubyMotion 1.8 リリースされてますね"
+date: 2012-05-30 20:52
+comments: true
+categories: RubyMotion
+---
+
+リリース周期はやい！もう1.8が出てます．
+
+    $ sudo motion update 
+
+しましょう！今回は修正が少なめです．
+
+    = RubyMotion 1.8 =
+
+      * Fixed a bug in the generation of BridgeSupport files for multiple headers
+        directories.
+      * When building vendored projects, unset environment variables that could
+        potentially make the build to fail.
+        https://github.com/HipByte/motion-cocoapods/issues/12
+
+- 複数のヘッダディレクトリを指定したときのBridgeSupportファイル生成のとこのバグ修正
+- ベンダープロジェクトをビルドするときに環境変数CCが設定されてない時にビルド失敗する問題の修正．
+
+いつも誰かがRubyMotionの新しいバージョン出たって言ってるの見てアップデートしてるのが分かるんだけど，言ってる人はどうやって新しいバージョンが出たって知るんだろう？毎日`motion update`とかしてるのかな．

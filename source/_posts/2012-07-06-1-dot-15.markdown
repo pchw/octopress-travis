@@ -1,0 +1,82 @@
+---
+layout: post
+title: "RubyMotion 1.15のすげえアップデート"
+date: 2012-07-06 10:23
+comments: true
+categories: RubyMotion
+---
+
+RubyMotion 1.15ですごいアップデートが来るよってlrzさんが言ってました．
+<blockquote class="twitter-tweet" lang="ja"><p>Integrating a super cool new feature in RubyMotion. Will ship next week.</p>&mdash; Laurent Sansonettiさん (@lrz) <a href="https://twitter.com/lrz/status/218664619009519617" data-datetime="2012-06-29T11:18:02+00:00">6月 29, 2012</a></blockquote>
+<script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+それが今日来たのですが，スーパークールなニューフィーチャーはTestFrameworkに関するものでした．
+
+今までRubyMotionはbaconを使ったTestFrameworkが使われていて，
+`rake spec`とするとSimulatorが実行されメソッドを呼んで値を検証してという形でした．
+
+今回のアップデートでは，指でタップしたりDeviceイベント（画面を回転させたり）といったこともテストで出来るようになりました．
+
+ObjC + XcodeだとjsでUIAutomationのテストを行うらしいんですが（やったことない），その機能がRubyMotionのbaconに統合された感じです．
+
+    describe "The Timer view controller" do
+      tests TimerController
+
+      it "start a timer" do
+        tap 'Start'
+        controller.timer.isValid.should == true
+      end
+    end
+
+とすれば，`Start`というLabelのついてるButtonをタップしてcontrollerのtimerを検証してます．
+
+実際にVideoを見てもらうのが早いと思います．Viewがガンガン動いて面白いです．
+
+<iframe src="http://player.vimeo.com/video/45193144" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
+
+公式Blogの情報は[こちら](http://blog.rubymotion.com/post/26489000626/functional-view-and-controller-testing-with-rubymotion)
+
+ドキュメントは[こちら](http://www.rubymotion.com/developer-center/articles/testing/#_views_and_controllers_testing)
+
+7/22(日)に行われる[第一回RubyMotion勉強会](http://connpass.com/event/665/)での発表ネタは今回のアップデートのテストに関することにしようと思います．
+あと５人ぐらい空きがあるようですね．
+
+修正： 第一回RubyMotion勉強会は ** 7/22（日）** でした．
+
+
+他のアップデートは↓のような感じです．
+
+## 更新履歴（訳）
+- UIAutomationの機能を使えるTestが書けるようになったし，jsじゃなくてpure Rubyで書ける．
+- spec/helpersの中のファイルが`rake spec`で使われるようになったよ
+- `rake spec`にfileオプションが追加されて，テストする対象が選べるようになったよ．
+- `RUBYMOTION_ENV`で実行時にtestなのかdevelopmentなのかreleaseなのかを判別出来る様になった．
+- rake staticが追加されてuniversal statc libraryを作れるようになった．
+- weak frameworkのサポート(app.weak_freameworks << 'Twitter'とかする)
+- symlinkのファイルがresourceディレクトリに入っていた場合にコピーされてたのを修正．
+
+## 更新履歴（原文）
+    = RubyMotion 1.15 =
+
+      * Improved the spec framework to leverage UIAutomation's functionality. This
+        lets you write functional tests on views and controllers by using the same
+        event generators, but in pure Ruby (and not Javascript).
+        Check http://www.rubymotion.com/developer-center/articles/testing for more
+        information about the new API. Feature contributed by Eloy Duran.
+      * Introduced spec helpers. `rake spec' will now honor the files inside the
+        `spec/helpers' directory (if it exists) and compile them before the spec
+        files.
+      * Introduced the `files' option to `rake spec', which can be used to filter
+        the spec files that should be run. Filters can be either the basename of
+        a spec file or its full path, and are separated by a comma.
+        Example: rake spec files=main_spec,kvo_spec,spec/foo_spec.rb 
+      * Introduced the RUBYMOTION_ENV constant in the runtime which can have one of
+        the following string values: 'test', 'development' and 'release'.
+      * Introduced the `rake static' task which creates a universal static library
+        containing the project's object files and the RubyMotion runtime, which is
+        suitable for inclusion in Objective-C/Xcode projects. 
+      * Introduced weak frameworks support. The `app.weak_frameworks' setting can
+        be set to an array of framework names, similar to how `app.frameworks'
+        works (ex. app.weak_frameworks += ['Twitter']). Patch by Satoshi Ebisawa.
+      * Fixed a bug in the build system where  files within symlinks inside of the
+        resources directory would not be copied. Patch by Nick Quaranto.
