@@ -6,9 +6,9 @@ before_script:
 - git config --global user.name "pchw(via TravisCI)"
 - git config --global user.email "bump.luv@gmail.com"
 - git remote set-url origin $REPO.git
-- if [ -z "$id_rsa_{1..23}" ]; then echo 'No $id_rsa_{1..23} found !' ; exit 1; fi
-- echo -n $id_rsa_{00..30} >> ~/.ssh/id_rsa_base64
-- base64 --decode --ignore-garbage ~/.ssh/id_rsa_base64 > ~/.ssh/id_rsa
+- if [ -z "$id_rsa_{1..32}" ]; then echo 'No $id_rsa_{1..32} found !' ; exit 1; fi
+- echo -n $id_rsa_{1..32} >> ~/.ssh/travis_rsa_64
+- base64 --decode --ignore-garbage ~/.ssh/travis_rsa_64 > ~/.ssh/id_rsa
 - chmod 600 ~/.ssh/id_rsa
 - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
 - rake setup_github_pages[$REPO]
