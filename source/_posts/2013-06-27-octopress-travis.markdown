@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "OctopressとTravis CIを連携させてBlog生成を自動にする"
-date: 2013-04-07 17:14
+date: 2013-06-27 10:00
 comments: true
 categories: octopress
 ---
