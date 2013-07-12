@@ -1,0 +1,23 @@
+---
+layout: post
+title: "hubでpull-requestした後に自動でgithub上のPullRequestをブラウザで開く方法"
+date: 2013-07-12 18:50
+comments: true
+categories: GitHub hub
+---
+
+GitHubを使って開発していると，PullRequestをブラウザでぽちぽちやるのは凄くダルいです．特に[Github Flow](http://scottchacon.com/2011/08/31/github-flow.html) だとぽこぽこPullRequest投げまくるので毎回ブラウザ開いてPullRequest投げるのが凄くダルい．
+
+そこでコマンドラインからPullRequestを送れる[hub](http://defunkt.io/hub/) を使います．
+
+`hub`コマンドは便利なんだけど，`hub pull-request`するとデフォルトでPullRequestされたGitHubのPullRequestのURL（`https://github.com/pchw/fontawesome/pull/1` みたいなの）をTerminalに出力するだけです．
+
+チームでやってると，PullRequest送ったあとにちょっとコメントしたりするのがあったりして，いちいちTerminalからコピペしてブラウザに貼り付けるのがダルいです．
+
+そこでhubにPullRequest後に勝手にブラウザで今作ったGitHubのPullRequestのURLを開くオプションを追加しようとちょっとPullRequestを[送ってみたら](https://github.com/github/hub/pull/344)
+```
+open `git pull-request`
+```
+ってやればいいじゃんって教えてもらいました．
+
+便利だからみんな使うといいと思うよ．
