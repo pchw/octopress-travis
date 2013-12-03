@@ -6,9 +6,7 @@ comments: true
 categories: github
 ---
 
-Github 2段階認証の設定方法
-
-Githubがログインアタック受けたみたいですね．
+Githubがログインアタック受けたみたいですね．[Weak passwords brute forced](https://github.com/blog/1698-weak-passwords-brute-forced)
 そんなときにハラハラしないために2段階認証（two-factor authentication）を入れましょう．
 
 Githubにログインして右上の工具マーク（Account Setting）から設定画面に行きます．
