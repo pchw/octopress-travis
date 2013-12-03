@@ -47,7 +47,7 @@ script#hoge_tmpl(type="text/html")
 よくあるのだと、こういう書き方しますよね．
 この場合、elを指定しているので、既に存在する要素にViewを紐付けています．
 
-__テンプレートエンジンはICanHaz.jsです．__
+_ここで使っているテンプレートエンジンは[ICanHaz.js](http://icanhazjs.com/)です．_
 
 ## 要素を作成する場合
 次は，既存のの要素ではなく，あるボタンをクリックして
@@ -232,4 +232,4 @@ Class HogeView extends Backbone.View
 のようにすることで，テンプレートの構造そのままをViewに適用することが出来て，正しく表示も更新されます．
 
 ## refs
-http://stackoverflow.com/questions/11594961/backbone-not-this-el-wrapping
+[http://stackoverflow.com/questions/11594961/backbone-not-this-el-wrapping](http://stackoverflow.com/questions/11594961/backbone-not-this-el-wrapping)
