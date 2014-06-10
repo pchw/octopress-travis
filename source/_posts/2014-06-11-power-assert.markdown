@@ -157,8 +157,8 @@ assert(this.arr.indexOf(zero) === two)
 ```
 こんなのが得られて，coffee-scriptでpower-assertが使えました！
 
-ちなみに他のファイルとかはこんな感じでやりました．
-{% gist 3fbed13bd69fb31faca6 %}
+ちなみに他のファイルとかは[こんな感じ](https://gist.github.com/pchw/3fbed13bd69fb31faca6)でやりました．
+
 
 注意点
 ----
