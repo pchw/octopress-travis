@@ -1,0 +1,195 @@
+---
+layout: post
+title: "Synthを試してみた"
+date: 2014-06-27 07:00
+comments: true
+categories: synth
+---
+
+tl;dr
+====
+- SynthっていうAPI-firstなWebフレームワークがある
+- Turoialを回してみた
+- RESTfullなAPIとディレクトリ構造，exportsのI/Fを合わせる規約で見通し良い
+- プリロードの仕組みで初めからレンダリングできるよ！
+- まだ超beta．
+
+前説
+====
+[Synth](http://www.synthjs.com/) はNode.js製のAPI-firstなWebフレームワーク．
+`back/resources`ディレクトリに.js/.coffeeを配置して，`exports.get = ...`とか`exports.getIndex =`とか`exports.<method><optional: ActionName>`な形で書いておくと，`myapp/back/resources/memoes`が`GET /api/memoes`とかに答えてくれる．
+
+ひとまず，[Tutorial](http://www.synthjs.com/tutorial/) を回して，Angular以外を使う道を探ろう．
+
+あと超betaらしいから地雷踏む勇気が無い人はProductionに使えない．
+
+インストールとセットアップ
+====
+```
+$ npm install -g synth
+$ $ synth new my_app
+Successfully created a new synth app in my_app
+```
+
+ディレクトリ構造
+----
+```
+$ cd my_app
+$ ls
+back       front      synth.json
+$ ls front/
+bower.json css        html       images     index.jade js         misc
+$ ls back/
+back-app.js       generateTweets.js package.json      resources
+```
+こんな感じになっている．
+
+**front**はクライアントサイドのやつが詰まってる．
+**back**はサーバサイドのやつが詰まってる．
+
+`synth new`はTwitterクローンが生成されるみたい．
+
+パッケージインストール
+----
+```
+$ synth install -b
+$ synth install -f
+```
+でそれぞれfrontの`bower install`とbackの`npm install`が走る．
+
+起動
+----
+```
+$ synth server -p 5000
+synth (in development mode) is now listening on port 5000
+```
+
+http://localhost:5000 にアクセスすると表示される．
+`Synth App`とか出て何も表示されない．Tweetを生成してあげないといけないらしい．
+
+```
+$ node back/generateTweets.js
+```
+
+そしてリロードするとTweetが出た．
+
+処理の追加
+----
+
+このままだとただのTweet表示君なので，Tweetする機能を付ける．
+
+### backend側
+`back/resources/tweets/`に`.js`ファイルを置いて`exports.post = ...`を書けばいい．
+```
+$ touch back/resources/tweets/createTweets.js
+```
+
+```
+$ cat back/resources/tweets/createTweets.js 
+  exports.post = function(req, res) {
+    if (!req.body.content) {
+      throw 422;
+    }
+    return req.db.collection('tweets').insert({
+      content: req.body.content.slice(0, 140),
+      created_at: new Date
+    });
+  };
+```
+
+ちなみに`back/resources/tweets/createTweets.coffee`を置いたら読んでくれなかった．
+きっと全部`.coffee`にしないとダメ．とりあえず先に行く．
+
+
+### frontend側
+`/front/js/controllers/tweets.js` に処理を追記．
+
+```
+$ cat front/js/controllers/tweets.js 
+angular.module('my_app')
+.controller('tweetsController', function ($scope, $http, data) {
+  $scope.tweets = data.tweets;
+  $scope.publish = function () {
+    $http.post('/api/tweets', { content: $scope.newTweet })
+    .success(function (tweet) {
+      $scope.tweets.unshift(tweet);
+    });
+    $scope.newTweet = '';
+  };
+```
+こうする．
+
+HTMLの方もボタンを付けたり，textareaを付けたりしないといけない．
+
+```
+$ cat front/html/tweets/getIndex.jade
+textarea(ng-model="newTweet")
+button(ng-click="publish()", ng-disabled="newTweet.length == 0") Publish
+ul.tweet-timeline
+  li.tweet(ng-repeat="tweet in tweets")
+    .content {{ tweet.content}}
+    .date {{ tweet.created_at | date:'medium' }}
+```
+こうする．
+
+### 確認
+もう一度 http://localhost:5000 にアクセスすれば，textareaとpublishボタンがある．
+hogeとか書いてpublishすればめでたくTweetが追加される．
+
+Preload
+----
+
+[Synth](http://www.synthjs.com/)の強みとしてプリロードの機能があるらしい．
+backend側でpromiseで返せば，front側で初めからデータを持った状態でレンダリング出来る．
+[rendr](https://github.com/rendrjs/rendr) みたいなものか．
+
+
+`front/index.jade`を確認してみると，
+
+```
+    // Preloaded Data
+    script.
+      var preloadedData = !{data};
+```
+
+とか
+
+```
+    if preloadHTML
+      script(type="text/ng-template", id="#{preloadHTMLPath}")
+        != preloadHTML
+```
+
+ここらへんがプリロードの鍵らしい．
+
+[ソース](https://github.com/JonAbrams/synth/blob/7085c027881fbc8dcfba2f539508fb82df0a833d/lib/frontendRenderer.js#L26) を覗いてみると，
+
+```
+    var renderData = {
+      appName: req.appName || 'Synth App',
+      jsFiles: assets.jsFiles,
+      cssFiles: assets.cssFiles,
+      data: prepareData(preload.data),
+      preloadHTML: preload.html,
+      preloadHTMLPath: htmlPath
+    };
+    for (var key in res.renderData) {
+      renderData[key] = res.renderData[key];
+    }
+```
+がres.renderに渡ってるっぽい．
+
+```
+exports.get = function(req, res) {
+  :
+  res.renderData[hoge] = 'fuga'
+  :
+}
+```
+とかbackend側でやってあげれば，front側にデータを渡せそう．
+
+Angular以外で使ってみる
+----
+
+時間が来たから，また夜にでも続き書く．
+
