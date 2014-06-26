@@ -6,6 +6,9 @@ comments: true
 categories: synth
 ---
 
+![synth](https://cloud.githubusercontent.com/assets/1183484/3405341/2b8563a0-fd7c-11e3-8782-4eb6dbd4a420.png)
+
+
 tl;dr
 ====
 - SynthっていうAPI-firstなWebフレームワークがある
