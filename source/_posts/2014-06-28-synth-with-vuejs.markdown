@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "SynthとVue.jsを組み合わせてみた"
+title: "[Synth] SynthとVue.jsを組み合わせてみた"
 date: 2014-06-28 16:00
 comments: true
 categories: synth, Vue.js

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Synthを試してみた"
+title: "[Synth] Synthを試してみた"
 date: 2014-06-27 07:00
 comments: true
 categories: synth
