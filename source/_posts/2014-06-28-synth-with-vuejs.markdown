@@ -3,7 +3,7 @@ layout: post
 title: "[Synth] SynthとVue.jsを組み合わせてみた"
 date: 2014-06-28 16:00
 comments: true
-categories: synth, Vue.js
+categories: synth Vue.js
 ---
 
 [前回](/blog/2014/06/27/synth/)紹介したAPI-firstなフレームワーク[Synth](http://synthjs.com)と[Vue.js](http://vuejs.org)を組み合わせて使ってみる．

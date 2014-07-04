@@ -3,7 +3,7 @@ layout: post
 title: "[Synth] ルーティングを増やしてみる"
 date: 2014-07-04 10:00
 comments: true
-categories: synth, Vue.js
+categories: synth Vue.js
 ---
 
 前説
