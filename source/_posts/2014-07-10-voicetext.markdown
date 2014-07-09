@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "VoiceText Web APIのNode.jsライブラリ作った"
-date: 2014-07-04 10:00
+date: 2014-07-10 09:00
 comments: true
 categories: voicetext
 ---
